@@ -1,0 +1,22 @@
+{
+  "name": "problems",
+  "version": "1.0.0",
+  "description": "",
+  "main": "sync-problems.ts",
+  "scripts": {
+    "sync-problems": "tsx sync-problems.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "6.4.1",
+    "@types/node": "^22.13.9",
+    "dotenv": "^16.4.7",
+    "fs": "0.0.1-security",
+    "gray-matter": "^4.0.3",
+    "prisma": "^6.4.1",
+    "tsx": "^4.19.3"
+  }
+}

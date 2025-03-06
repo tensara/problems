@@ -1,0 +1,148 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  username      String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  refreshToken  String?   @unique
+  lastLogin     DateTime?
+
+  accounts     Account[]
+  problems     Problem[]
+  submissions  Submission[]
+  RevokedToken RevokedToken[]
+  Session      Session[]
+
+  @@index([email])
+  @@index([createdAt])
+  @@index([refreshToken])
+}
+
+model Account {
+  id                       String   @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String?  @db.Text
+  access_token             String?  @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String?  @db.Text
+  session_state            String?
+  refresh_token_expires_in Int?
+  user                     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt                DateTime @default(now())
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model RevokedToken {
+  id        String   @id @default(cuid())
+  jti       String   @unique
+  expiresAt DateTime
+  reason    String?
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@index([jti])
+  @@index([expiresAt])
+}
+
+model Problem {
+  id String @id @default(cuid())
+
+  title       String
+  slug        String     @unique
+  description String?
+  difficulty  Difficulty
+  author      String
+
+  starterCode String  @default("")
+  tests       String? @db.Text
+  reference   String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  submissions Submission[]
+  User        User?        @relation(fields: [userId], references: [id])
+  userId      String?
+
+  @@index([author])
+  @@index([difficulty])
+  @@index([slug])
+}
+
+model Submission {
+  id          String  @id @default(cuid())
+  code        String  @db.Text
+  language    String
+  status      String? // Can be: PENDING, CHECKING, BENCHMARKING, ACCEPTED, ERROR, WRONG_ANSWER, TIMEOUT
+  runtime     Float?
+  memory      Int?
+  passedTests Int?
+  totalTests  Int?
+  logs        String? @db.Text
+  gpuType     String?
+  timeMs      Float?
+  memoryMB    Float?
+  verified    Boolean @default(false)
+
+  gflops           Float?
+  errorMessage     String?
+  errorDetails     String? @db.Text
+  benchmarkResults Json?
+
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  problem   Problem  @relation(fields: [problemId], references: [id])
+  problemId String
+  createdAt DateTime @default(now())
+
+  callId   String?
+  isPublic Boolean @default(false)
+
+  @@index([userId])
+  @@index([problemId])
+  @@index([createdAt])
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+  EXPERT
+}
