@@ -17,3 +17,6 @@ $$
 
 ## Output
 - Matrix $C$ of size $M \times N$
+
+## Notes
+- Assume that the matrices $A$, $B$, and $C$ are stored in row-major order.
