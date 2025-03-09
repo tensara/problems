@@ -4,6 +4,36 @@ title: "Matrix Multiplication"
 difficulty: "EASY"
 author: "sarthak"
 tags: ["cuda-basics", "parallel-computing"]
+parameters:
+  - name: "input_a"
+    type: "[VAR]"
+    pointer: "true"
+    const: "true"
+  
+  - name: "input_b"
+    type: "[VAR]"
+    pointer: "true"
+    const: "true"
+
+  - name: "output_c" 
+    type: "[VAR]"
+    pointer: "true"
+    const: "false"
+
+  - name: "m"
+    type: "size_t"
+    pointer: "false"
+    constant: "false"
+    
+  - name: "n" 
+    type: "size_t"
+    pointer: "false"
+    constant: "false"
+    
+  - name: "k"
+    type: "size_t"
+    pointer: "false"
+    constant: "false"
 ---
 
 Perform matrix multiplication of two matrices:
@@ -18,5 +48,5 @@ $$
 ## Output
 - Matrix $C$ of size $M \times N$
 
-## Notes
-- Assume that the matrices $A$, $B$, and $C$ are stored in row-major order.
+## Notes:
+- All matrices $\text{A}$, $\text{B}$, and $\text{C}$ are stored in row-major order
