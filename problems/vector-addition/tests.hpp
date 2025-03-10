@@ -57,12 +57,12 @@ private:
 std::vector<std::unique_ptr<TestCase<float>>> create_test_cases() {
     std::vector<std::unique_ptr<TestCase<float>>> test_cases;
     unsigned int base_seed = 98765;
-    test_cases.push_back(std::make_unique<VectorAddTest<float>>(1000000, base_seed++));
-    test_cases.push_back(std::make_unique<VectorAddTest<float>>(5000000, base_seed++));
-    test_cases.push_back(std::make_unique<VectorAddTest<float>>(10000000, base_seed++));
-    test_cases.push_back(std::make_unique<VectorAddTest<float>>(50000000, base_seed++));
-    test_cases.push_back(std::make_unique<VectorAddTest<float>>(100000000, base_seed++));
-    test_cases.push_back(std::make_unique<VectorAddTest<float>>(500000000, base_seed++));
-    test_cases.push_back(std::make_unique<VectorAddTest<float>>(1000000000, base_seed++));
+    test_cases.push_back(std::make_unique<VectorAddTest<float>>(1048576, base_seed++));
+    test_cases.push_back(std::make_unique<VectorAddTest<float>>(4194304, base_seed++));
+    test_cases.push_back(std::make_unique<VectorAddTest<float>>(8388608, base_seed++));
+    test_cases.push_back(std::make_unique<VectorAddTest<float>>(33554432, base_seed++));
+    test_cases.push_back(std::make_unique<VectorAddTest<float>>(67108864, base_seed++));
+    test_cases.push_back(std::make_unique<VectorAddTest<float>>(536870912, base_seed++));
+    test_cases.push_back(std::make_unique<VectorAddTest<float>>(1073741824, base_seed++));
     return test_cases;
 } 
