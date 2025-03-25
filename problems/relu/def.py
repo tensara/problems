@@ -26,7 +26,7 @@ class relu(Problem):
         with torch.no_grad():
             return torch.relu(input_matrix)
     
-    def generate_test_cases(self) -> List[Dict[str, Any]]:
+    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """
         Generate test cases for ReLU.
         
@@ -48,14 +48,14 @@ class relu(Problem):
                 "rows": m,
                 "cols": n,
                 "create_inputs": lambda m=m, n=n: (
-                    torch.rand((m, n), device="cuda", dtype=torch.float32) * 20000.0 - 10000.0,  # uniform [-10000, 10000]
+                    torch.rand((m, n), device="cuda", dtype=dtype) * 20000.0 - 10000.0,  # uniform [-10000, 10000]
                 )
             }
             for name, m, n in test_configs
         ]
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the ReLU result is correct.
         

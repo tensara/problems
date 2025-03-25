@@ -27,7 +27,7 @@ class square_matmul(Problem):
         with torch.no_grad():
             return torch.matmul(matrix_a, matrix_b)
     
-    def generate_test_cases(self) -> List[Dict[str, Any]]:
+    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """
         Generate test cases for square matrix multiplication.
         
@@ -42,15 +42,15 @@ class square_matmul(Problem):
                 "name": f"{n}x{n}",
                 "size": n,
                 "create_inputs": lambda n=n: (
-                    torch.randn((n, n), device="cuda", dtype=torch.float32) * 500.0,  # normal (-500, 500)
-                    torch.randn((n, n), device="cuda", dtype=torch.float32) * 500.0   # normal (-500, 500)
+                    torch.randn((n, n), device="cuda", dtype=dtype) * 500.0,  # normal (-500, 500)
+                    torch.randn((n, n), device="cuda", dtype=dtype) * 500.0   # normal (-500, 500)
                 )
             }
             for n in matrix_sizes
         ]
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the matrix multiplication result is correct.
         

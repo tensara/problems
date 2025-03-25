@@ -27,7 +27,7 @@ class leaky_relu(Problem):
         with torch.no_grad():
             return torch.nn.functional.leaky_relu(input_matrix, alpha)
     
-    def generate_test_cases(self) -> List[Dict[str, Any]]:
+    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """
         Generate test cases for Leaky ReLU.
         
@@ -51,7 +51,7 @@ class leaky_relu(Problem):
                     "cols": n,
                     "alpha": alpha,
                     "create_inputs": lambda m=m, n=n, alpha=alpha: (
-                        torch.rand((m, n), device="cuda", dtype=torch.float32) * 20000.0 - 10000.0,  # uniform [-10000, 10000]
+                        torch.rand((m, n), device="cuda", dtype=dtype) * 20000.0 - 10000.0,  # uniform [-10000, 10000]
                         alpha
                     )
                 })
@@ -59,7 +59,7 @@ class leaky_relu(Problem):
         return test_cases
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the Leaky ReLU result is correct.
         

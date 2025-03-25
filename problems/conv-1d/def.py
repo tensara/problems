@@ -46,7 +46,7 @@ class conv_1d(Problem):
             # Reshape back to original dimensions
             return result.view(-1)
     
-    def generate_test_cases(self) -> List[Dict[str, Any]]:
+    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """
         Generate test cases for 1D convolution.
         
@@ -67,15 +67,15 @@ class conv_1d(Problem):
                 "signal_size": signal_size,
                 "kernel_size": kernel_size,
                 "create_inputs": lambda s=signal_size, k=kernel_size: (
-                    torch.rand(s, device="cuda", dtype=torch.float32),
-                    torch.rand(k, device="cuda", dtype=torch.float32)
+                    torch.rand(s, device="cuda", dtype=dtype),
+                    torch.rand(k, device="cuda", dtype=dtype)
                 )
             }
             for name, signal_size, kernel_size in test_configs
         ]
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the convolution result is correct.
         

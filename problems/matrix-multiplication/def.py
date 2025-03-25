@@ -27,7 +27,7 @@ class matrix_multiplication(Problem):
         with torch.no_grad():
             return torch.matmul(A, B)
     
-    def generate_test_cases(self) -> List[Dict[str, Any]]:
+    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """
         Generate test cases for matrix multiplication.
         
@@ -60,15 +60,15 @@ class matrix_multiplication(Problem):
                 "name": matrix["name"],
                 "dims": matrix["dims"],
                 "create_inputs": lambda m=matrix["dims"]: (
-                    torch.rand(m[0], m[2], device="cuda", dtype=torch.float32),
-                    torch.rand(m[2], m[1], device="cuda", dtype=torch.float32)
+                    torch.rand(m[0], m[2], device="cuda", dtype=dtype),
+                    torch.rand(m[2], m[1], device="cuda", dtype=dtype)
                 )
             }
             for matrix in test_matrices
         ]
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the matrix multiplication result is correct.
         

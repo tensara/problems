@@ -27,7 +27,7 @@ class matrix_vector(Problem):
         with torch.no_grad():
             return torch.matmul(matrix, vector)
     
-    def generate_test_cases(self) -> List[Dict[str, Any]]:
+    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """
         Generate test cases for matrix-vector multiplication.
         
@@ -49,15 +49,15 @@ class matrix_vector(Problem):
                 "rows": m,
                 "cols": k,
                 "create_inputs": lambda m=m, k=k: (
-                    torch.rand((m, k), device="cuda", dtype=torch.float32) * 20000.0 - 10000.0,  # uniform [-10000, 10000]
-                    torch.rand((k), device="cuda", dtype=torch.float32) * 20000.0 - 10000.0      # uniform [-10000, 10000]
+                    torch.rand((m, k), device="cuda", dtype=dtype) * 20000.0 - 10000.0,  # uniform [-10000, 10000]
+                    torch.rand((k), device="cuda", dtype=dtype) * 20000.0 - 10000.0      # uniform [-10000, 10000]
                 )
             }
             for name, m, k in test_configs
         ]
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the matrix-vector multiplication result is correct.
         

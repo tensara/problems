@@ -35,7 +35,7 @@ class gemm_relu(Problem):
             
             return result
     
-    def generate_test_cases(self) -> List[Dict[str, Any]]:
+    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """
         Generate test cases for GEMM with Bias and ReLU.
         
@@ -57,16 +57,16 @@ class gemm_relu(Problem):
                 "in_features": in_features,
                 "out_features": out_features,
                 "create_inputs": lambda b=batch_size, n=in_features, m=out_features: (
-                    torch.rand((b, n), device="cuda", dtype=torch.float32) * 20.0 - 10.0,  # uniform [-10, 10]
-                    torch.randn((m, n), device="cuda", dtype=torch.float32),               # normal (0, 1)
-                    torch.rand((m), device="cuda", dtype=torch.float32) * 200.0 - 100.0    # uniform [-100, 100]
+                    torch.rand((b, n), device="cuda", dtype=dtype) * 20.0 - 10.0,  # uniform [-10, 10]
+                    torch.randn((m, n), device="cuda", dtype=dtype),               # normal (0, 1)
+                    torch.rand((m), device="cuda", dtype=dtype) * 200.0 - 100.0    # uniform [-100, 100]
                 )
             }
             for name, batch_size, in_features, out_features in test_configs
         ]
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the GEMM with Bias and ReLU result is correct.
         

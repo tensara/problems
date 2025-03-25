@@ -48,7 +48,7 @@ class conv_2d(Problem):
             # Reshape back to original dimensions
             return result.view(input_image.size(0), input_image.size(1))
     
-    def generate_test_cases(self) -> List[Dict[str, Any]]:
+    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """
         Generate test cases for 2D convolution.
         
@@ -75,15 +75,15 @@ class conv_2d(Problem):
                 "kernel_height": kh,
                 "kernel_width": kw,
                 "create_inputs": lambda h=h, w=w, kh=kh, kw=kw: (
-                    torch.rand((h, w), device="cuda", dtype=torch.float32) * 20.0 - 10.0,  # uniform [-10, 10]
-                    torch.randn((kh, kw), device="cuda", dtype=torch.float32)  # normal (0, 1)
+                    torch.rand((h, w), device="cuda", dtype=dtype) * 20.0 - 10.0,  # uniform [-10, 10]
+                    torch.randn((kh, kw), device="cuda", dtype=dtype)  # normal (0, 1)
                 )
             }
             for name, h, w, kh, kw in test_configs
         ]
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the convolution result is correct.
         
