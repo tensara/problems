@@ -38,19 +38,19 @@ class matrix_multiplication(Problem):
         # dims represents (M, N, K)
         test_matrices = [
             {
-                "name": "4096x4096 x 4096x4096 matrices",
+                "name": "4096x4096 x 4096x4096",
                 "dims": (4096, 4096, 4096),
             },
             {
-                "name": "8192x8192 x 8192x4096 matrices",
+                "name": "8192x8192 x 8192x4096",
                 "dims": (8192, 4096, 8192),
             },
             {
-                "name": "4096x4096 x 4096x8192 matrices",
+                "name": "4096x4096 x 4096x8192",
                 "dims": (4096, 8192, 4096),
             },
             {
-                "name": "8192x8192 x 8192x8192 matrices",
+                "name": "8192x8192 x 8192x8192",
                 "dims": (8192, 8192, 8192),
             }
         ]
@@ -60,8 +60,8 @@ class matrix_multiplication(Problem):
                 "name": matrix["name"],
                 "dims": matrix["dims"],
                 "create_inputs": lambda m=matrix["dims"]: (
-                    torch.rand(m[0], m[2], device="cuda", dtype=dtype),
-                    torch.rand(m[2], m[1], device="cuda", dtype=dtype)
+                    torch.rand(m[0], m[2], device="cuda", dtype=dtype) * 2 - 1,  # uniform [-1, 1]
+                    torch.rand(m[2], m[1], device="cuda", dtype=dtype) * 2 - 1   # uniform [-1, 1]
                 )
             }
             for matrix in test_matrices

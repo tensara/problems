@@ -33,14 +33,14 @@ class vector_addition(Problem):
         Returns:
             List of test case dictionaries with varying sizes
         """
-        # Standard sizes for testing
         sizes = [
-            ("n = 1000000", 1_000_000),
-            ("n = 5000000", 5_000_000),
-            ("n = 10000000", 10_000_000),
-            ("n = 50000000", 50_000_000),
-            ("n = 100000000", 100_000_000),
-            ("n = 1000000000", 1_000_000_000)
+            ("n = 2^20", 1048576),
+            ("n = 2^22", 4194304),
+            ("n = 2^23", 8388608),
+            ("n = 2^25", 33554432),
+            ("n = 2^26", 67108864),
+            ("n = 2^29", 536870912),
+            ("n = 2^30", 1073741824),
         ]
         
         return [
@@ -48,8 +48,8 @@ class vector_addition(Problem):
                 "name": name,
                 "dims": (size,),
                 "create_inputs": lambda size=size: (
-                    torch.rand(size, device="cuda", dtype=dtype),
-                    torch.rand(size, device="cuda", dtype=dtype)
+                    torch.rand(size, device="cuda", dtype=dtype) * 2 - 1,  # uniform [-1, 1]
+                    torch.rand(size, device="cuda", dtype=dtype) * 2 - 1   # uniform [-1, 1]
                 )
             }
             for name, size in sizes

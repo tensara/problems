@@ -55,23 +55,23 @@ class conv_1d(Problem):
         """
         
         test_configs = [
-            ("Config 1", 65536, 8191),
-            ("Config 2", 32768, 8191),
-            ("Config 3", 131072, 8191),
-            ("Config 4", 524288, 8191)
+            (65536, 8191),
+            (32768, 8191),
+            (131072, 8191),
+            (524288, 8191)
         ]
         
         return [
             {
-                "name": f"{name} (N={signal_size}, K={kernel_size})",
+                "name": f"N={signal_size}, K={kernel_size}",
                 "signal_size": signal_size,
                 "kernel_size": kernel_size,
                 "create_inputs": lambda s=signal_size, k=kernel_size: (
-                    torch.rand(s, device="cuda", dtype=dtype),
-                    torch.rand(k, device="cuda", dtype=dtype)
+                    torch.rand(s, device="cuda", dtype=dtype) * 10.0 - 5.0,
+                    torch.rand(k, device="cuda", dtype=dtype) * 2.0 - 1.0
                 )
             }
-            for name, signal_size, kernel_size in test_configs
+            for signal_size, kernel_size in test_configs
         ]
     
     def verify_result(self, expected_output: torch.Tensor, 

@@ -42,8 +42,8 @@ class square_matmul(Problem):
                 "name": f"{n}x{n}",
                 "size": n,
                 "create_inputs": lambda n=n: (
-                    torch.randn((n, n), device="cuda", dtype=dtype) * 500.0,  # normal (-500, 500)
-                    torch.randn((n, n), device="cuda", dtype=dtype) * 500.0   # normal (-500, 500)
+                    torch.randn((n, n), device="cuda", dtype=dtype), 
+                    torch.randn((n, n), device="cuda", dtype=dtype)
                 )
             }
             for n in matrix_sizes

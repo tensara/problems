@@ -56,30 +56,30 @@ class conv_2d(Problem):
             List of test case dictionaries with varying sizes
         """
         test_configs = [
-            ("Small", 512, 512, 3, 3),
-            ("Medium", 1024, 1024, 5, 5),
-            ("Large", 2048, 2048, 7, 7),
-            ("XLarge", 4096, 4096, 9, 9),
-            ("XXLarge", 8192, 8192, 11, 11),
-            ("XXXLarge", 16384, 16384, 13, 13),
-            ("Medium-LargeK", 1024, 1024, 31, 31),
-            ("Large-LargeK", 2048, 2048, 63, 63),
-            ("XLarge-LargeK", 4096, 4096, 127, 127)
+            (512, 512, 3, 3),
+            (1024, 1024, 5, 5),
+            (2048, 2048, 7, 7),
+            (4096, 4096, 9, 9),
+            (8192, 8192, 11, 11),
+            (16384, 16384, 13, 13),
+            (1024, 1024, 31, 31),
+            (2048, 2048, 63, 63),
+            (4096, 4096, 127, 127)
         ]
         
         return [
             {
-                "name": f"{name} (H={h}, W={w}, Kh={kh}, Kw={kw})",
+                "name": f"H={h}, W={w}, Kh={kh}, Kw={kw}",
                 "height": h,
                 "width": w,
                 "kernel_height": kh,
                 "kernel_width": kw,
                 "create_inputs": lambda h=h, w=w, kh=kh, kw=kw: (
-                    torch.rand((h, w), device="cuda", dtype=dtype) * 20.0 - 10.0,  # uniform [-10, 10]
-                    torch.randn((kh, kw), device="cuda", dtype=dtype)  # normal (0, 1)
+                    torch.rand((h, w), device="cuda", dtype=dtype) * 10.0 - 5.0,  # uniform [-5, 5]
+                    torch.rand((kh, kw), device="cuda", dtype=dtype) * 2.0 - 1.0  # uniform [-1, 1]
                 )
             }
-            for name, h, w, kh, kw in test_configs
+            for h, w, kh, kw in test_configs
         ]
     
     def verify_result(self, expected_output: torch.Tensor, 

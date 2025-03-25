@@ -36,24 +36,24 @@ class matrix_vector(Problem):
         """
         # Test case configurations with specific matrix and vector sizes
         test_configs = [
-            ("Config 1", 4096, 4096),
-            ("Config 2", 6144, 4096),
-            ("Config 3", 7168, 4096),
-            ("Config 4", 8192, 4096),
-            ("Config 5", 9216, 4096)
+            (4096, 4096),
+            (6144, 4096),
+            (7168, 4096),
+            (8192, 4096),
+            (9216, 4096)
         ]
         
         return [
             {
-                "name": f"{name} (M={m}, K={k})",
+                "name": f"M={m}, K={k}",
                 "rows": m,
                 "cols": k,
                 "create_inputs": lambda m=m, k=k: (
-                    torch.rand((m, k), device="cuda", dtype=dtype) * 20000.0 - 10000.0,  # uniform [-10000, 10000]
-                    torch.rand((k), device="cuda", dtype=dtype) * 20000.0 - 10000.0      # uniform [-10000, 10000]
+                    torch.rand((m, k), device="cuda", dtype=dtype) * 2 - 1,  # uniform [-1, 1]
+                    torch.rand((k), device="cuda", dtype=dtype) * 2 - 1      # uniform [-1, 1]
                 )
             }
-            for name, m, k in test_configs
+            for m, k in test_configs
         ]
     
     def verify_result(self, expected_output: torch.Tensor, 

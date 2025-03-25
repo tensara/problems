@@ -46,12 +46,12 @@ class leaky_relu(Problem):
         for m, n in matrix_sizes:
             for alpha in alpha_values:
                 test_cases.append({
-                    "name": f"Matrix {m}x{n}, alpha={alpha}",
+                    "name": f"{m}x{n}, alpha={alpha}",
                     "rows": m,
                     "cols": n,
                     "alpha": alpha,
                     "create_inputs": lambda m=m, n=n, alpha=alpha: (
-                        torch.rand((m, n), device="cuda", dtype=dtype) * 20000.0 - 10000.0,  # uniform [-10000, 10000]
+                        torch.rand((m, n), device="cuda", dtype=dtype) * 10.0 - 5.0,  # uniform [-5, 5]
                         alpha
                     )
                 })

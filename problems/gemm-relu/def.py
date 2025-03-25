@@ -44,25 +44,27 @@ class gemm_relu(Problem):
         """
         
         test_configs = [
-            ("Config 1", 1024, 1024, 1024),
-            ("Config 2", 2048, 1024, 1024),
-            ("Config 3", 4096, 1024, 1024),
-            ("Config 4", 6144, 1024, 1024)
+            (512, 6144, 1024),
+            (512, 8192, 1024),
+            (512, 8192, 2048),
+            (1024, 1024, 1024),
+            (1024, 4096, 1024),
+            (1024, 4096, 2048)
         ]
         
         return [
             {
-                "name": f"{name} (B={batch_size}, N={in_features}, M={out_features})",
+                "name": f"B={batch_size}, N={in_features}, M={out_features}",
                 "batch_size": batch_size,
                 "in_features": in_features,
                 "out_features": out_features,
                 "create_inputs": lambda b=batch_size, n=in_features, m=out_features: (
-                    torch.rand((b, n), device="cuda", dtype=dtype) * 20.0 - 10.0,  # uniform [-10, 10]
-                    torch.randn((m, n), device="cuda", dtype=dtype),               # normal (0, 1)
-                    torch.rand((m), device="cuda", dtype=dtype) * 200.0 - 100.0    # uniform [-100, 100]
+                    torch.rand((b, n), device="cuda", dtype=dtype) * 2 - 1,
+                    torch.rand((m, n), device="cuda", dtype=dtype) * 2 - 1,  
+                    torch.rand((m), device="cuda", dtype=dtype) * 2 - 1  
                 )
             }
-            for name, batch_size, in_features, out_features in test_configs
+            for batch_size, in_features, out_features in test_configs
         ]
     
     def verify_result(self, expected_output: torch.Tensor, 

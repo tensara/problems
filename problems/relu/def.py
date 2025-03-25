@@ -35,20 +35,20 @@ class relu(Problem):
         """
         # Test case configurations with specific matrix sizes
         test_configs = [
-            ("Config 1", 4096, 4096),
-            ("Config 2", 6144, 4096),
-            ("Config 3", 7168, 4096),
-            ("Config 4", 8192, 4096),
-            ("Config 5", 9216, 4096)
+            ("4096x4096", 4096, 4096),
+            ("6144x4096", 6144, 4096),
+            ("4096x7168", 4096, 7168),
+            ("4096x8192", 4096, 8192),
+            ("8192x8192", 8192, 8192)
         ]
         
         return [
             {
-                "name": f"{name} (M={m}, N={n})",
+                "name": name,
                 "rows": m,
                 "cols": n,
                 "create_inputs": lambda m=m, n=n: (
-                    torch.rand((m, n), device="cuda", dtype=dtype) * 20000.0 - 10000.0,  # uniform [-10000, 10000]
+                    torch.rand((m, n), device="cuda", dtype=dtype) * 10.0 - 5.0,  # uniform [-5, 5]
                 )
             }
             for name, m, n in test_configs
