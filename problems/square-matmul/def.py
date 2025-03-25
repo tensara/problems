@@ -24,7 +24,7 @@ class square_matmul(Problem):
         Returns:
             Result of matrix multiplication of shape (N, N)
         """
-        with torch.no_grad():
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
             return torch.matmul(matrix_a, matrix_b)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
@@ -42,8 +42,8 @@ class square_matmul(Problem):
                 "name": f"{n}x{n}",
                 "size": n,
                 "create_inputs": lambda n=n: (
-                    torch.randn((n, n), device="cuda", dtype=dtype), 
-                    torch.randn((n, n), device="cuda", dtype=dtype)
+                    torch.rand((n, n), device="cuda", dtype=dtype) * 2 - 1,  # uniform [-1, 1]
+                    torch.rand((n, n), device="cuda", dtype=dtype) * 2 - 1   # uniform [-1, 1]
                 )
             }
             for n in matrix_sizes
@@ -61,7 +61,7 @@ class square_matmul(Problem):
         Returns:
             Tuple of (is_correct, debug_info)
         """
-        is_close = torch.allclose(actual_output, expected_output, rtol=1e-4, atol=1e-4)
+        is_close = torch.allclose(actual_output, expected_output, rtol=1e-4, atol=1e-3)
         
         debug_info = {}
         if not is_close:

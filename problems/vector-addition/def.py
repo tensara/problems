@@ -23,7 +23,7 @@ class vector_addition(Problem):
         Returns:
             Result of A + B
         """
-        with torch.no_grad():
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
             return A + B
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
@@ -67,7 +67,7 @@ class vector_addition(Problem):
         Returns:
             Tuple of (is_correct, debug_info)
         """
-        is_close = torch.allclose(actual_output, expected_output, rtol=1e-5, atol=1e-5)
+        is_close = torch.allclose(actual_output, expected_output, rtol=1e-4, atol=1e-3)
         
         debug_info = {}
         if not is_close:

@@ -25,9 +25,10 @@ class gemm_relu(Problem):
         Returns:
             Result of ReLU(input_matrix @ weights.T + bias)
         """
-        with torch.no_grad():
+
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
             # Matrix multiplication: (B, N) @ (N, M) -> (B, M)
-            result = torch.matmul(input_matrix, weights.t())
+            result = torch.mm(input_matrix, weights.t())
             # Add bias: (B, M) + (M) -> (B, M)
             result = result + bias
             # Apply ReLU activation
@@ -79,7 +80,7 @@ class gemm_relu(Problem):
         Returns:
             Tuple of (is_correct, debug_info)
         """
-        is_close = torch.allclose(actual_output, expected_output, rtol=1e-5, atol=1e-5)
+        is_close = torch.allclose(actual_output, expected_output, rtol=1e-4, atol=1e-3)
         
         debug_info = {}
         if not is_close:

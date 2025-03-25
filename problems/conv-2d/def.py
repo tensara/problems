@@ -24,7 +24,7 @@ class conv_2d(Problem):
         Returns:
             Result of convolution with zero padding
         """
-        with torch.no_grad():
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
             # Ensure kernel sizes are odd
             assert kernel.size(0) % 2 == 1, "Kernel height must be odd"
             assert kernel.size(1) % 2 == 1, "Kernel width must be odd"
