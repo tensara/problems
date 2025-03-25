@@ -38,3 +38,5 @@ Problems should be categorized by difficulty:
 
 ## Additional Guidelines
 - Mangla will fill this....
+
+TODO: move this to the main README.md

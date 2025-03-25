@@ -8,9 +8,7 @@ const prisma = new PrismaClient();
 // Path utility functions
 const getProblemsDir = () => path.join(process.cwd(), 'problems');
 const getProblemPath = (slug: string) => path.join(getProblemsDir(), slug, 'problem.md');
-const getStarterPath = (slug: string) => path.join(getProblemsDir(), slug, 'starter.cu');
-const getTestsPath = (slug: string) => path.join(getProblemsDir(), slug, 'tests.hpp');
-const getReferencePath = (slug: string) => path.join(getProblemsDir(), slug, 'reference.cu');
+const getDefinitionPath = (slug: string) => path.join(getProblemsDir(), slug, 'def.py');
 
 // Helper to safely read file contents
 const safeReadFile = (path: string): string | null => {
@@ -38,8 +36,7 @@ async function main() {
       throw new Error(`Problem ${slug} is missing required frontmatter: ${missingFields.join(', ')}`);
     }
 
-    const tests = safeReadFile(getTestsPath(slug));
-    const reference = safeReadFile(getReferencePath(slug));
+    const definition = safeReadFile(getDefinitionPath(slug));
 
     // Upsert problem in database
     const problem = await prisma.problem.upsert({
@@ -49,8 +46,7 @@ async function main() {
         description: content,
         difficulty: frontmatter.difficulty,
         author: frontmatter.author,
-        tests: tests,
-        reference: reference,
+        definition: definition,
         parameters: frontmatter.parameters,
       },
       create: {
@@ -59,8 +55,7 @@ async function main() {
         description: content,
         difficulty: frontmatter.difficulty,
         author: frontmatter.author,
-        tests: tests,
-        reference: reference,
+        definition: definition,
         parameters: frontmatter.parameters,
       }
     });
@@ -69,8 +64,7 @@ async function main() {
     console.log(`  - Title: ${frontmatter.title ? '✓' : '✗'}`);
     console.log(`  - Difficulty: ${frontmatter.difficulty ? '✓' : '✗'}`);
     console.log(`  - Parameters: ${frontmatter.parameters ? '✓' : '✗'}`);
-    console.log(`  - Tests: ${tests ? '✓' : '✗'}`);
-    console.log(`  - Reference: ${reference ? '✓' : '✗'}`);
+    console.log(`  - Definition: ${definition ? '✓' : '✗'}`);
   }
 }
 
