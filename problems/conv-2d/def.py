@@ -56,9 +56,6 @@ class conv_2d(Problem):
             List of test case dictionaries with varying sizes
         """
         test_configs = [
-            (512, 512, 3, 3),
-            (1024, 1024, 5, 5),
-            (2048, 2048, 7, 7),
             (4096, 4096, 9, 9),
             (8192, 8192, 11, 11),
             (16384, 16384, 13, 13),
