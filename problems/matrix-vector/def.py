@@ -81,7 +81,7 @@ class matrix_vector(Problem):
             
             sample_diffs = {}
             for i, idx in enumerate(top_indices):
-                sample_diffs[f"index_{i}_{idx.item()}"] = {
+                sample_diffs[f"{idx.item()}"] = {
                     "expected": expected_output[idx].item(),
                     "actual": actual_output[idx].item(),
                     "diff": diff[idx].item()

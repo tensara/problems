@@ -79,7 +79,7 @@ class square_matmul(Problem):
             for i, idx in enumerate(top_indices):
                 row = idx.item() // n
                 col = idx.item() % n
-                sample_diffs[f"pos_{i}_({row},{col})"] = {
+                sample_diffs[f"({row}, {col})"] = {
                     "expected": expected_output[row, col].item(),
                     "actual": actual_output[row, col].item(),
                     "diff": diff[row, col].item()

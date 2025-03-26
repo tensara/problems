@@ -98,7 +98,7 @@ class gemm_relu(Problem):
             for i, idx in enumerate(top_indices):
                 row = idx.item() // M
                 col = idx.item() % M
-                sample_diffs[f"pos_{i}_({row},{col})"] = {
+                sample_diffs[f"({row}, {col})"] = {
                     "expected": expected_output[row, col].item(),
                     "actual": actual_output[row, col].item(),
                     "diff": diff[row, col].item()
@@ -111,9 +111,8 @@ class gemm_relu(Problem):
             debug_info = {
                 "max_difference": max_diff,
                 "mean_difference": mean_diff,
-                "expected_zeros": expected_zeros,
-                "actual_zeros": actual_zeros,
-                "sample_differences": sample_diffs
+                "sample_differences": sample_diffs,
+                "message": f'Expected {expected_zeros} zeros, got {actual_zeros} zeros'
             }
         
         return is_close, debug_info

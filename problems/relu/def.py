@@ -84,7 +84,7 @@ class relu(Problem):
             for i, idx in enumerate(top_indices):
                 row = idx.item() // n
                 col = idx.item() % n
-                sample_diffs[f"pos_{i}_({row},{col})"] = {
+                sample_diffs[f"({row}, {col})"] = {
                     "expected": expected_output[row, col].item(),
                     "actual": actual_output[row, col].item(),
                     "diff": diff[row, col].item()
@@ -97,9 +97,8 @@ class relu(Problem):
             debug_info = {
                 "max_difference": max_diff,
                 "mean_difference": mean_diff,
-                "expected_nonzeros": expected_nonzeros,
-                "actual_nonzeros": actual_nonzeros,
-                "sample_differences": sample_diffs
+                "sample_differences": sample_diffs,
+                "message": f'Expected {expected_nonzeros} nonzeros, got {actual_nonzeros} nonzeros'
             }
         
         return is_close, debug_info

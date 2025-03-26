@@ -98,7 +98,7 @@ class conv_1d(Problem):
             _, top_indices = torch.topk(torch.abs(diff), min(5, diff.numel()))
             
             sample_diffs = {
-                f"index_{idx.item()}": {
+                f"{idx.item()}": {
                     "expected": expected_output[idx].item(),
                     "actual": actual_output[idx].item(),
                     "diff": diff[idx].item()
