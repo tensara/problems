@@ -1,0 +1,74 @@
+name: Sync Problems Folder to Deploy Branch
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'problems/**'  # Only trigger when files in problems folder change
+
+jobs:
+  sync-folder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # We need the full history for branch operations
+      
+      - name: Set up Git user
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+      
+      - name: Sync folder to target branch
+        run: |
+          # Store the current branch commit SHA
+          CURRENT_SHA=$(git rev-parse HEAD)
+          
+          # Get the target branch
+          TARGET_BRANCH="deploy"
+          
+          # Check if target branch exists locally, if not, create tracking branch
+          if ! git show-ref --verify --quiet refs/heads/$TARGET_BRANCH; then
+            git checkout -b $TARGET_BRANCH origin/$TARGET_BRANCH
+          else
+            git checkout $TARGET_BRANCH
+          fi
+          
+          # Get back to the source branch to copy files
+          git checkout $CURRENT_SHA
+          
+          # Create a temporary directory for each subdirectory in problems
+          mkdir -p /tmp/problems-sync
+          
+          # List all subdirectories in the problems folder
+          SUBDIRS=$(find problems -maxdepth 1 -type d -not -path "problems")
+          
+          # Copy each subdirectory to the temp location
+          for dir in $SUBDIRS; do
+            subdir=$(basename "$dir")
+            echo "Copying subdirectory: $subdir"
+            cp -r "problems/$subdir" /tmp/problems-sync/
+          done
+          
+          # Switch to target branch
+          git checkout $TARGET_BRANCH
+          
+          # Copy each subdirectory from temp to the root of the deploy branch
+          for dir in $(ls /tmp/problems-sync); do
+            echo "Syncing subdirectory: $dir"
+            rm -rf "$dir"  # Remove existing dir to handle deletions
+            cp -r "/tmp/problems-sync/$dir" "./"
+          done
+          
+          # Check if there are changes
+          if git diff --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
+          # Commit and push changes
+          git add .
+          git commit -m "Sync problem subdirectories from main branch"
+          git push origin $TARGET_BRANCH
