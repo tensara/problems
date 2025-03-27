@@ -9,6 +9,11 @@ parameters:
     type: "[VAR]"
     pointer: "true"
     const: "true"
+  
+  - name: "alpha"
+    type: "[VAR]"
+    pointer: "false"
+    constant: "false"
 
   - name: "output" 
     type: "[VAR]"
@@ -24,11 +29,7 @@ parameters:
     type: "size_t"
     pointer: "false"
     constant: "false"
-    
-  - name: "alpha"
-    type: "[VAR]"
-    pointer: "false"
-    constant: "false"
+
 ---
 
 Perform the Leaky ReLU (Leaky Rectified Linear Unit) activation function on an input matrix:

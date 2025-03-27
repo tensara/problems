@@ -158,5 +158,4 @@ class leaky_relu(Problem):
         """
         M = test_case["rows"]
         N = test_case["cols"]
-        alpha = test_case["alpha"]
-        return [M, N, alpha]
+        return [M, N]
