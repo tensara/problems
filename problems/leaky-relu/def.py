@@ -88,21 +88,15 @@ class leaky_relu(Problem):
             for i, idx in enumerate(top_indices):
                 row = idx.item() // n
                 col = idx.item() % n
-                sample_diffs[f"pos_{i}_({row},{col})"] = {
+                sample_diffs[f"({row}, {col})"] = {
                     "expected": expected_output[row, col].item(),
                     "actual": actual_output[row, col].item(),
                     "diff": diff[row, col].item()
                 }
-            
-            # Check for differences in activation pattern
-            expected_positives = (expected_output > 0).sum().item()
-            actual_positives = (actual_output > 0).sum().item()
-            
+                        
             debug_info = {
                 "max_difference": max_diff,
                 "mean_difference": mean_diff,
-                "expected_positives": expected_positives,
-                "actual_positives": actual_positives,
                 "sample_differences": sample_diffs
             }
         
