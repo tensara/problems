@@ -22,4 +22,4 @@ jobs:
     - name: Sync Problems
       run: pnpm install && pnpm prisma generate && pnpm sync-problems
       env:
-        DATABASE_URL: ${{ env.DATABASE_URL }}
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
