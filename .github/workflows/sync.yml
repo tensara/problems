@@ -11,11 +11,15 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '>=22'
+
     - uses: pnpm/action-setup@v2
       with:
         version: 8
-    
-    - name: Sync problems with the database
-      run: pnpm sync-problems
+      
+    - name: Sync Problems
+      run: pnpm install && pnpm prisma generate && pnpm sync-problems
       env:
-        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        DATABASE_URL: ${{ env.DATABASE_URL }}
