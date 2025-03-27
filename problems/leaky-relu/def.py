@@ -112,10 +112,10 @@ class leaky_relu(Problem):
         return {
             "argtypes": [
                 ctypes.POINTER(ctypes.c_float),  # input_matrix
+                ctypes.c_float,                  # alpha
                 ctypes.POINTER(ctypes.c_float),  # output_matrix
                 ctypes.c_size_t,                 # rows (M)
-                ctypes.c_size_t,                 # columns (N)
-                ctypes.c_float                   # alpha
+                ctypes.c_size_t                  # columns (N)
             ],
             "restype": None
         }
