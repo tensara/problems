@@ -37,3 +37,4 @@ The cumulative product at each position is the product of all elements up to and
 ## Notes:
 - The first element of the output is equal to the first element of the input
 - Be careful about numerical stability with very large or very small numbers
+- This problem is adapted from [KernelBench](https://github.com/ScalingIntelligence/KernelBench/blob/main/KernelBench/level1/90_cumprod.py).

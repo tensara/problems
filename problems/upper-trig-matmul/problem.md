@@ -46,3 +46,4 @@ The result C will also be an upper triangular matrix.
 ## Notes:
 - All matrices $\text{A}$, $\text{B}$, and $\text{C}$ are stored in row-major order.
 - A matrix $L$ is upper triangular if $L_{ij} = 0$ for all $i > j$.
+- This problem is adapted from [KernelBench](https://github.com/ScalingIntelligence/KernelBench/blob/main/KernelBench/level1/14_Matmul_for_upper_triangular_matrices.py).

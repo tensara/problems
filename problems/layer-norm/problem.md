@@ -69,3 +69,4 @@ where the mean $\mathrm{E}[x]$ and variance $\mathrm{Var}[x]$ are computed over 
 - Compute the mean and variance across the last three dimensions $(\text{F}, \text{D1}, \text{D2})$ independently for each sample in the batch $\text{B}$.
 - Apply the normalization using the computed mean/variance and the provided $\gamma$ and $\beta$.
 - Use $\epsilon = 10^{-5}$
+- This problem is adapted from [KernelBench](https://github.com/ScalingIntelligence/KernelBench/blob/main/KernelBench/level1/40_LayerNorm.py).

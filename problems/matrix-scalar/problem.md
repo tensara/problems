@@ -42,3 +42,4 @@ where $s$ is the scalar value.
 
 ## Notes:
 - Matrix $\text{A}$ is stored in row-major order
+- This problem is adapted from [KernelBench](https://github.com/ScalingIntelligence/KernelBench/blob/main/KernelBench/level1/5_Matrix_scalar_multiplication.py).

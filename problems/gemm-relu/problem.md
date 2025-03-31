@@ -65,3 +65,4 @@ $$
 
 ## Notes:
 - All matrices $\text{A}$, $\text{W}$, and $\text{C}$ are stored in row-major order
+- This problem is adapted from [KernelBench](https://github.com/ScalingIntelligence/KernelBench/blob/main/KernelBench/level2/76_Gemm_Add_ReLU.py).

@@ -36,3 +36,4 @@ The cumulative sum at each position is the sum of all elements up to and includi
 
 ## Notes:
 - The first element of the output is equal to the first element of the input
+- This problem is adapted from [KernelBench](https://github.com/ScalingIntelligence/KernelBench/blob/main/KernelBench/level1/89_cumsum.py).
