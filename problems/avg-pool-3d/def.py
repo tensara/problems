@@ -154,9 +154,11 @@ class avg_pool_3d(Problem):
         """
         H = test_case["height"]
         W = test_case["width"]
+        D = test_case["depth"]
         K = test_case["kernel_size"]
         S = test_case["stride"]
         P = test_case["padding"]
+
         
         # Calculate output dimensions
         H_out = ((H + 2 * P - K) // S) + 1
