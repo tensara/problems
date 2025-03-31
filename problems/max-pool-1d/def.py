@@ -49,29 +49,31 @@ class max_pool_1d(Problem):
             List of test case dictionaries with varying sizes
         """
         test_configs = [
-            (2**21, 7, 4, 3),  # H=2^21, k=7, S=4, P=3
-            (2**22, 2, 1, 0),  # H=2^22, k=2, S=1, P=0
-            (2**23, 3, 2, 1),  # H=2^23, k=3, S=2, P=1
-            (2**24, 4, 2, 1),  # H=2^24, k=4, S=2, P=1
-            (2**25, 3, 1, 1),  # H=2^25, k=3, S=1, P=1
-            (2**26, 5, 3, 2),  # H=2^26, k=5, S=3, P=2
+            (2**21, 7, 4, 3, 1),  # H=2^21, k=7, S=4, P=3, d=3
+            (2**22, 2, 1, 0, 1),  # H=2^22, k=2, S=1, P=0, d=2
+            (2**23, 3, 2, 1, 1),  # H=2^23, k=3, S=2, P=1, d=1
+            (2**24, 4, 2, 1, 1),  # H=2^24, k=4, S=2, P=1, d=2
+            (2**25, 3, 1, 1, 1),  # H=2^25, k=3, S=1, P=1, d=1
+            (2**26, 5, 3, 2, 1),  # H=2^26, k=5, S=3, P=2, d=1
         ]
 
         return [
             {
-                "name": f"H={h}, K={k}, S={s}, P={p}",
+                "name": f"H={h}, K={k}, S={s}, P={p}, d={d}",
                 "size": h,
                 "kernel_size": k,
                 "stride": s,
                 "padding": p,
-                "create_inputs": lambda size=h, kernel_size=k, stride=s, padding=p: (
+                "dilation": d,
+                "create_inputs": lambda size=h, kernel_size=k, stride=s, padding=p, dilation=d: (
                     torch.rand((size), device="cuda", dtype=dtype) * 10.0 - 5.0,  # uniform [-5, 5]
                     kernel_size, 
                     stride, 
-                    padding
+                    padding,
+                    dilation
                 )
             }
-            for h, k, s, p in test_configs
+            for h, k, s, p, d in test_configs
         ]
     
     def verify_result(self, expected_output: torch.Tensor, 
