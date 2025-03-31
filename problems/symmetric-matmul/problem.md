@@ -1,7 +1,7 @@
 ---
 slug: "symmetric-matmul"
 title: "Symmetric Matrix Multiplication"
-difficulty: "EASY"
+difficulty: "MEDIUM"
 author: "sarthak"
 tags: ["cuda-basics", "parallel-computing"]
 parameters:

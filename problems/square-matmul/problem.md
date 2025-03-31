@@ -1,7 +1,7 @@
 ---
 slug: "square-matmul"
 title: "Square Matrix Multiplication"
-difficulty: "EASY"
+difficulty: "MEDIUM"
 author: "sarthak"
 tags: ["cuda-basics", "parallel-computing"]
 parameters:

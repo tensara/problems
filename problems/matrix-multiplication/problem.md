@@ -1,7 +1,7 @@
 ---
 slug: "matrix-multiplication"
 title: "Matrix Multiplication"
-difficulty: "EASY"
+difficulty: "MEDIUM"
 author: "sarthak"
 tags: ["cuda-basics", "parallel-computing"]
 parameters:
