@@ -43,16 +43,16 @@ class lower_trig_matmul(Problem):
         # Matrix dimensions: (N, N) × (N, N) = (N, N)
         test_matrices = [
             {
-                "name": "1024x1024",
-                "dims": (1024,), # Just N
-            },
-            {
                 "name": "2048x2048",
                 "dims": (2048,),
             },
             {
                 "name": "4096x4096",
                 "dims": (4096,),
+            },
+            {
+                "name": "6144x6144",
+                "dims": (6144,),
             },
              {
                 "name": "8192x8192",
