@@ -35,7 +35,7 @@ class cumsum(Problem):
         """
         
         test_configs = [
-            16384,
+            65536,
             131072,
             262144,
             524288,
