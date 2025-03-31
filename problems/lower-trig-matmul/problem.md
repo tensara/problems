@@ -1,7 +1,7 @@
 ---
 slug: "lower-trig-matmul"
 title: "Lower Triangular Matrix Multiplication"
-difficulty: "EASY"
+difficulty: "MEDIUM"
 author: "sarthak" # Assuming the same author, let me know if this should change
 tags: ["cuda-basics", "linear-algebra"] # Adjusted tags slightly
 parameters:

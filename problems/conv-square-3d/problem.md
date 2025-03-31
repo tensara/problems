@@ -1,7 +1,7 @@
 ---
 slug: "conv-square-3d"
 title: "3D Square Convolution"
-difficulty: "MEDIUM" 
+difficulty: "HARD" 
 author: "sarthak"
 tags: ["cuda-basics", "parallel-computing", "volume-processing"]
 parameters:
