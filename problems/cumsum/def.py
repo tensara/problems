@@ -42,7 +42,6 @@ class cumsum(Problem):
             4194304,
             8388608,
             16777216,
-            33554432,
         ]
         
         return [
