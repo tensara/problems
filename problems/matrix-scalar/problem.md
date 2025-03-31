@@ -11,7 +11,7 @@ parameters:
     const: "true"
   
   - name: "scalar"
-    type: "VAR"
+    type: "[VAR]"
     pointer: "false"
     const: "true"
 
