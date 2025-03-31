@@ -1,9 +1,7 @@
 import torch
 import ctypes
 from typing import List, Dict, Tuple, Any
-
 from problem import Problem
-
 
 class max_pool_1d(Problem):
     """1D max pooling problem."""
@@ -23,7 +21,7 @@ class max_pool_1d(Problem):
             kernel_size: Size of the pooling window
             stride: Stride of the pooling window
             padding: Padding to be applied before pooling
-            dilation: Spacing between kernel elements
+            dilation: Spacing between kernel elements (controls the gap between elements in the kernel)
             
         Returns:
             Result of max pooling
@@ -49,14 +47,13 @@ class max_pool_1d(Problem):
             List of test case dictionaries with varying sizes
         """
         test_configs = [
-            (2**21, 7, 4, 3, 1),  # H=2^21, k=7, S=4, P=3, d=3
-            (2**22, 2, 1, 0, 1),  # H=2^22, k=2, S=1, P=0, d=2
+            (2**21, 7, 4, 3, 1),  # H=2^21, k=7, S=4, P=3, d=1
+            (2**22, 2, 1, 0, 1),  # H=2^22, k=2, S=1, P=0, d=1
             (2**23, 3, 2, 1, 1),  # H=2^23, k=3, S=2, P=1, d=1
-            (2**24, 4, 2, 1, 1),  # H=2^24, k=4, S=2, P=1, d=2
+            (2**24, 4, 2, 1, 2),  # H=2^24, k=4, S=2, P=1, d=2
             (2**25, 3, 1, 1, 1),  # H=2^25, k=3, S=1, P=1, d=1
             (2**26, 5, 3, 2, 1),  # H=2^26, k=5, S=3, P=2, d=1
         ]
-
         return [
             {
                 "name": f"H={h}, K={k}, S={s}, P={p}, d={d}",
@@ -101,7 +98,6 @@ class max_pool_1d(Problem):
             _, top_indices = torch.topk(torch.abs(flat_diff), min(5, flat_diff.numel()))
             
             # Convert flat indices back to 1D coordinates
-            h = expected_output.shape
             sample_diffs = {}
             for i, idx in enumerate(top_indices):
                 sample_diffs[f"({idx})"] = {
@@ -120,7 +116,7 @@ class max_pool_1d(Problem):
     
     def get_function_signature(self) -> Dict[str, Any]:
         """
-        Get the function signature for the 2D max pooling solution.
+        Get the function signature for the 1D max pooling solution.
         
         Returns:
             Dictionary with argtypes and restype for ctypes
@@ -131,6 +127,7 @@ class max_pool_1d(Problem):
                 ctypes.c_size_t,                 # kernel_size
                 ctypes.c_size_t,                 # stride
                 ctypes.c_size_t,                 # padding
+                ctypes.c_size_t,                 # dilation
                 ctypes.POINTER(ctypes.c_float),  # output
                 ctypes.c_size_t,                 # size (H)
             ],
@@ -145,7 +142,7 @@ class max_pool_1d(Problem):
             test_case: The test case dictionary
             
         IMPORTANT: For max pooling, we count comparisons as FLOPs.
-        Each output element requires (kernel_size * kernel_size * kernel_size - 1) comparisons.
+        Each output element requires (kernel_size - 1) comparisons.
         
         Returns:
             Number of floating point operations
@@ -154,9 +151,10 @@ class max_pool_1d(Problem):
         K = test_case["kernel_size"]
         S = test_case["stride"]
         P = test_case["padding"]
+        D = test_case["dilation"]
         
         # Calculate output dimensions
-        H_out = ((H + 2 * P - K) // S) + 1
+        H_out = ((H + 2 * P - D * (K - 1) - 1) // S) + 1
         # Each output element requires K-1 comparisons
         comparisons_per_output = K - 1
         
