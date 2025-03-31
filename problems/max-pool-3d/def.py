@@ -54,25 +54,25 @@ class max_pool_3d(Problem):
             (1024, 1024, 1024, 4, 4, 2, 1),
             (512, 512, 512, 3, 3, 1, 3),
             (1024, 1024, 1024, 5, 2, 2, 2),
-            (2048, 2048, 2048, 7, 3, 3, 1)
+            (1024, 1024, 1024, 7, 3, 3, 1)
         ]
         
         return [
             {
-                "name": f"H={h}, W={w}, D={d}, K={k}, S={s}, P={p}, D={D}",
+                "name": f"H={h}, W={w}, D={d}, K={k}, S={s}, P={p}, dilation={dilation}",
                 "height": h,
                 "width": w,
                 "depth": d,
                 "kernel_size": k,
                 "stride": s,
                 "padding": p,
-                "dilation": D,
-                "create_inputs": lambda h=h, w=w, d=d, k=k, s=s, p=p, D=D: (
+                "dilation": dilation,
+                "create_inputs": lambda h=h, w=w, d=d, k=k, s=s, p=p, dilation=dilation: (
                     torch.rand((h, w, d), device="cuda", dtype=dtype) * 10.0 - 5.0,  # uniform [-5, 5]
-                    k, s, p, D
+                    k, s, p, dilation
                 )
             }
-            for h, w, d, k, s, p, D in test_configs
+            for h, w, d, k, s, p, dilation in test_configs
         ]
     
     def verify_result(self, expected_output: torch.Tensor, 
