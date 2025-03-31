@@ -96,10 +96,8 @@ class avg_pool_1d(Problem):
             flat_diff = diff.flatten()
             _, top_indices = torch.topk(torch.abs(flat_diff), min(5, flat_diff.numel()))
             
-            # Convert flat indices back to 2D coordinates
-            h, w = expected_output.shape
             sample_diffs = {}
-            for i, idx in enumerate(top_indices):
+            for _, idx in enumerate(top_indices):
                 sample_diffs[f"({idx})"] = {
                     "expected": expected_output[idx].item(),
                     "actual": actual_output[idx].item(),
