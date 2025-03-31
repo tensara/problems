@@ -66,13 +66,12 @@ class max_pool_3d(Problem):
                 "kernel_size": k,
                 "stride": s,
                 "padding": p,
-                "dilation": d,
-                "create_inputs": lambda h=h, w=w, d=d, k=k, s=s, p=p, d=d: (
+                "create_inputs": lambda h=h, w=w, d=d, k=k, s=s, p=p: (
                     torch.rand((h, w, d), device="cuda", dtype=dtype) * 10.0 - 5.0,  # uniform [-5, 5]
-                    k, s, p, d
+                    k, s, p
                 )
             }
-            for h, w, d, k, s, p, d in test_configs
+            for h, w, d, k, s, p in test_configs
         ]
     
     def verify_result(self, expected_output: torch.Tensor, 
