@@ -20,15 +20,11 @@ parameters:
     pointer: "true"
     const: "false"
 
-  - name: "rows" 
+  - name: "n" 
     type: "size_t"
     pointer: "false"
     constant: "false"
     
-  - name: "cols"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
 ---
 
 Perform multiplication of a matrix with a scalar value:
@@ -38,11 +34,11 @@ $$
 where $s$ is the scalar value.
 
 ## Input:
-- Matrix $A$ of size $\text{rows} \times \text{cols}$
+- Matrix $A$ of size $\text{n} \times \text{n}$
 - Scalar value $s$
 
 ## Output:
-- Matrix $C = s \cdot A$ of size $\text{rows} \times \text{cols}$
+- Matrix $C = s \cdot A$ of size $\text{n} \times \text{n}$
 
 ## Notes:
 - Matrix $\text{A}$ is stored in row-major order
