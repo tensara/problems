@@ -46,4 +46,4 @@ $$
 ## Notes:
 - The diagonal matrix is represented by a 1D tensor $A$
 - All matrices $\text{B}$ and $\text{C}$ are stored in row-major order
-- This problem is adapted from [KernelBench](https://github.com/ScalingIntelligence/KernelBench/blob/main/KernelBench/level1/12_Matmul_with_diagonal_matrices_.py).
+- This problem is adapted from [KernelBench](https://github.com/ScalingIntelligence/KernelBench/blob/main/KernelBench/level1/12_Matmul_with_diagonal_matrices_.py)

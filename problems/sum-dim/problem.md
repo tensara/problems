@@ -34,7 +34,7 @@ parameters:
 
 Perform sum reduction over a specified dimension of an input tensor:
 $$
-\text{output}[i_1,\ldots,i_{d-1},i_{d+1},\ldots,i_n] = \sum_{i_d=0}^{S_d-1} \text{input}[i_1,\ldots,i_d,\ldots,i_n]
+\text{output}[i_1,\ldots,i_{d-1},1,i_{d+1},\ldots,i_n] = \sum_{i_d=0}^{S_d-1} \text{input}[i_1,\ldots,i_d,\ldots,i_n]
 $$
 
 where $d$ is the dimension to reduce over, $n$ is the number of dimensions, and $S_d$ is the size of dimension $d$.

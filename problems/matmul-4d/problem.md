@@ -61,4 +61,4 @@ $$
 
 ## Notes:
 - All tensors $\text{A}$, $\text{B}$, and $\text{C}$ are stored in row-major order
-- This problem is adapted from [KernelBench](https://github.com/ScalingIntelligence/KernelBench/blob/main/KernelBench/level1/11_4D_tensor_matrix_multiplication.py).
+- This problem is adapted from [KernelBench](https://github.com/ScalingIntelligence/KernelBench/blob/main/KernelBench/level1/11_4D_tensor_matrix_multiplication.py)

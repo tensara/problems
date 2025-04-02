@@ -46,4 +46,4 @@ The result C will also be a lower triangular matrix.
 ## Notes:
 - All matrices $\text{A}$, $\text{B}$, and $\text{C}$ are stored in row-major order.
 - A matrix $L$ is lower triangular if $L_{ij} = 0$ for all $i < j$.
-- This problem is adapted from [KernelBench](https://github.com/ScalingIntelligence/KernelBench/blob/main/KernelBench/level1/15_Matmul_for_lower_triangular_matrices.py).
+- This problem is adapted from [KernelBench](https://github.com/ScalingIntelligence/KernelBench/blob/main/KernelBench/level1/15_Matmul_for_lower_triangular_matrices.py)

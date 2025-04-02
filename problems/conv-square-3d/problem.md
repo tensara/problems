@@ -50,4 +50,4 @@ The convolution operation slides the 3D kernel over the input volume, computing 
 - All volumes $\text{A}$, $\text{B}$, and $\text{C}$ are stored in row-major order
 - Use zero padding at the boundaries where the kernel extends beyond the input volume
 - The kernel is centered at each position, with $(K-1)/2$ elements on each side in all dimensions
-- This problem is adapted from [KernelBench](https://github.com/ScalingIntelligence/KernelBench/blob/main/KernelBench/level1/54_conv_standard_3D__square_input__square_kernel.py).
+- This problem is adapted from [KernelBench](https://github.com/ScalingIntelligence/KernelBench/blob/main/KernelBench/level1/54_conv_standard_3D__square_input__square_kernel.py)

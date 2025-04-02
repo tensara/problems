@@ -50,4 +50,4 @@ The convolution operation slides the kernel over the input signal, computing the
 - $\text{K}$ is odd and smaller than $\text{N}$
 - Use zero padding at the boundaries where the kernel extends beyond the input signal
 - The kernel is centered at each position, with $(K-1)/2$ elements on each side
-- This problem is adapted from [KernelBench](https://github.com/ScalingIntelligence/KernelBench/blob/main/KernelBench/level1/67_conv_standard_1D.py).
+- This problem is adapted from [KernelBench](https://github.com/ScalingIntelligence/KernelBench/blob/main/KernelBench/level1/67_conv_standard_1D.py)

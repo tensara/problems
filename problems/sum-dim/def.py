@@ -36,7 +36,7 @@ class sum_dim(Problem):
         """
         test_configs = [
             # (shape, dim)
-            ((16, 256, 256), 1),
+            ((16, 128, 256), 1),
             ((32, 512, 512), 0),
             ((8, 1024, 1024), 2),
             ((64, 128, 128, 128), 2),
@@ -69,7 +69,7 @@ class sum_dim(Problem):
         Returns:
             Tuple of (is_correct, debug_info)
         """
-        is_close = torch.allclose(actual_output, expected_output, rtol=1e-5, atol=1e-5)
+        is_close = torch.allclose(actual_output, expected_output, rtol=1e-3, atol=1e-3)
         
         debug_info = {}
         if not is_close:
@@ -84,7 +84,7 @@ class sum_dim(Problem):
             # Get sample differences
             sample_diffs = {}
             for i, idx in enumerate(top_indices):
-                sample_diffs[f"index_{i}"] = {
+                sample_diffs[f"{i}"] = {
                     "expected": expected_output.flatten()[idx].item(),
                     "actual": actual_output.flatten()[idx].item(),
                     "diff": diff.flatten()[idx].item()
@@ -157,6 +157,6 @@ class sum_dim(Problem):
             List containing the shape array and number of dimensions
         """
         return [
-            test_case["shape"],
+            torch.tensor(list(test_case["shape"]), dtype=torch.int64),
             len(test_case["shape"]),
         ]

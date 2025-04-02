@@ -47,4 +47,4 @@ $$
 
 ## Notes:
 - Both matrices $\text{A}$ and $\text{C}$ are stored in row-major order
-- This problem is adapted from [KernelBench](https://github.com/ScalingIntelligence/KernelBench/blob/main/KernelBench/level1/19_ReLU.py).
+- This problem is adapted from [KernelBench](https://github.com/ScalingIntelligence/KernelBench/blob/main/KernelBench/level1/19_ReLU.py)
