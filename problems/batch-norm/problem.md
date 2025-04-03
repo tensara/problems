@@ -57,3 +57,4 @@ where the mean $\mathrm{E}[x]$ and variance $\mathrm{Var}[x]$ are computed over 
 - The statistics (mean and variance) are computed independently for each spatial location $(D1, D2)$ in each feature channel.
 - Use $\epsilon = 10^{-5}$
 - For simplicity, this implementation focuses on the core normalization without learnable parameters (gamma and beta) and without tracking running statistics.
+- This problem is adapted from [KernelBench](https://github.com/ScalingIntelligence/KernelBench/blob/main/KernelBench/level1/33_BatchNorm.py)

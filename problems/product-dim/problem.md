@@ -1,6 +1,6 @@
 ---
-slug: "sum-dim"
-title: "Sum Over Dimension"
+slug: "product-dim"
+title: "Product Over Dimension"
 difficulty: "EASY" 
 author: "sarthak"
 tags: ["cuda-basics", "parallel-computing", "tensor-operations"]
@@ -32,9 +32,9 @@ parameters:
     constant: "false"
 ---
 
-Perform sum reduction over a specified dimension of an input tensor:
+Perform product reduction over a specified dimension of an input tensor:
 $$
-\text{output}[i_1,\ldots,i_{d-1},1,i_{d+1},\ldots,i_n] = \sum_{i_d=0}^{S_d-1} \text{input}[i_1,\ldots,i_d,\ldots,i_n]
+\text{output}[i_1,\ldots,i_{d-1},1,i_{d+1},\ldots,i_n] = \prod_{i_d=0}^{S_d-1} \text{input}[i_1,\ldots,i_d,\ldots,i_n]
 $$
 
 where $d$ is the dimension to reduce over, $n$ is the number of dimensions, and $S_d$ is the size of dimension $d$.
@@ -53,4 +53,4 @@ where $d$ is the dimension to reduce over, $n$ is the number of dimensions, and 
 - The input tensor is stored in row-major order
 - The reduction should maintain numerical stability by using appropriate accumulation techniques
 - The output tensor preserves the dimensionality of the input tensor with the reduced dimension having size 1
-- This problem is adapted from [KernelBench](https://github.com/ScalingIntelligence/KernelBench/blob/main/KernelBench/level1/47_Sum_reduction_over_a_dimension.py)
+- This problem is adapted from [KernelBench](https://github.com/ScalingIntelligence/KernelBench/blob/main/KernelBench/level1/50_Product_reduction_over_a_dimension.py)

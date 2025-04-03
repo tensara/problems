@@ -55,4 +55,5 @@ $$
 ## Notes:
 - All tensors are flat 1D arrays (or treated as such) and stored contiguously in memory
 - Target values must be either -1 or 1
-- The loss is non-negative and equals 0 only when the prediction has the correct sign and magnitude ≥ 1
+- The loss is non-negative and equals 0 only when the prediction has the correct sign and magnitude $\geq$ 1
+- This problem is adapted from [KernelBench](https://github.com/ScalingIntelligence/KernelBench/blob/main/KernelBench/level1/100_HingeLoss.py)
