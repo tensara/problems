@@ -1,7 +1,7 @@
 ---
 slug: "softmax"
 title: "Softmax"
-difficulty: "EASY" 
+difficulty: "MEDIUM" 
 author: "sarthak"
 tags: ["cuda-basics", "parallel-computing", "tensor-operations", "neural-networks"]
 parameters:
