@@ -3,7 +3,7 @@ slug: "avg-pool-1d"
 title: "1D Average Pooling"
 difficulty: "EASY" 
 author: "sarthak"
-tags: ["cuda-basics", "parallel-computing", "image-processing"]
+tags: ["pooling"]
 parameters:
   - name: "input"
     type: "[VAR]"

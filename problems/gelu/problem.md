@@ -3,7 +3,7 @@ slug: "gelu"
 title: "GELU"
 difficulty: "EASY"
 author: "harmya"
-tags: ["cuda-basics", "parallel-computing", "neural-networks"]
+tags: ["activation-function"]
 parameters:
   - name: "input"
     type: "[VAR]"

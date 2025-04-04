@@ -3,7 +3,7 @@ slug: "cumsum"
 title: "Cumulative Sum"
 difficulty: "MEDIUM"
 author: "sarthak"
-tags: ["cuda-basics", "parallel-computing", "scan", "prefix-sum"]
+tags: ["scan"]
 parameters:
   - name: "input"
     type: "[VAR]"

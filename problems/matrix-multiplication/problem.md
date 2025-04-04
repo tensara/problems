@@ -3,7 +3,7 @@ slug: "matrix-multiplication"
 title: "Matrix Multiplication"
 difficulty: "MEDIUM"
 author: "sarthak"
-tags: ["cuda-basics", "parallel-computing"]
+tags: ["matmul"]
 parameters:
   - name: "input_a"
     type: "[VAR]"

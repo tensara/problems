@@ -3,7 +3,7 @@ slug: "cumprod"
 title: "Cumulative Product"
 difficulty: "MEDIUM"
 author: "sarthak"
-tags: ["cuda-basics", "parallel-computing", "scan", "prefix-product"]
+tags: ["scan"]
 parameters:
   - name: "input"
     type: "[VAR]"

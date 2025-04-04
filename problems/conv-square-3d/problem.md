@@ -3,7 +3,7 @@ slug: "conv-square-3d"
 title: "3D Square Convolution"
 difficulty: "HARD" 
 author: "sarthak"
-tags: ["cuda-basics", "parallel-computing", "volume-processing"]
+tags: ["convolution"]
 parameters:
   - name: "A"
     type: "[VAR]"

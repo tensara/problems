@@ -3,7 +3,7 @@ slug: "conv-2d"
 title: "2D Convolution"
 difficulty: "MEDIUM" 
 author: "sarthak"
-tags: ["cuda-basics", "parallel-computing", "image-processing"]
+tags: ["convolution"]
 parameters:
   - name: "A"
     type: "[VAR]"

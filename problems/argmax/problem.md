@@ -3,7 +3,7 @@ slug: "argmax"
 title: "Argmax Over Dimension"
 difficulty: "EASY" 
 author: "sarthak"
-tags: ["cuda-basics", "parallel-computing", "tensor-operations"]
+tags: ["reduction"]
 parameters:
   - name: "input"
     type: "[VAR]"

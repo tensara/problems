@@ -2,8 +2,8 @@
 slug: "lower-trig-matmul"
 title: "Lower Triangular Matrix Multiplication"
 difficulty: "MEDIUM"
-author: "sarthak" # Assuming the same author, let me know if this should change
-tags: ["cuda-basics", "linear-algebra"] # Adjusted tags slightly
+author: "sarthak" 
+tags: ["matmul"]
 parameters:
   - name: "input_a"
     type: "[VAR]"

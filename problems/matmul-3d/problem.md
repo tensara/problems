@@ -3,7 +3,7 @@ slug: "matmul-3d"
 title: "3D Tensor-Matrix Multiplication"
 difficulty: "HARD"
 author: "sarthak"
-tags: ["cuda-basics", "parallel-computing"]
+tags: ["matmul"]
 parameters:
   - name: "A"
     type: "[VAR]"

@@ -3,7 +3,7 @@ slug: "huber-loss"
 title: "Huber Loss"
 difficulty: "EASY"
 author: "sarthak"
-tags: ["cuda-basics", "loss-functions", "regression", "machine-learning"]
+tags: ["loss-function"]
 parameters:
   - name: "predictions"
     type: "[VAR]"

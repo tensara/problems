@@ -3,7 +3,7 @@ slug: "gemm-relu"
 title: "GEMM with Bias and ReLU"
 difficulty: "MEDIUM"
 author: "sarthak"
-tags: ["cuda-basics", "parallel-computing", "neural-networks"]
+tags: ["matmul", "activation-function", "fused"]
 parameters:
   - name: "A"
     type: "[VAR]"

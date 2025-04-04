@@ -3,7 +3,7 @@ slug: "conv-1d"
 title: "1D Convolution"
 difficulty: "EASY"
 author: "sarthak"
-tags: ["cuda-basics", "parallel-computing", "signal-processing"]
+tags: ["convolution"]
 parameters:
   - name: "A"
     type: "[VAR]"

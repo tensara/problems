@@ -3,7 +3,7 @@ slug: "diagonal-matmul"
 title: "Diagonal Matrix Multiplication"
 difficulty: "EASY"
 author: "sarthak"
-tags: ["cuda-basics", "parallel-computing"]
+tags: ["matmul"]
 parameters:
   - name: "diagonal_a"
     type: "[VAR]"

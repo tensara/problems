@@ -3,7 +3,7 @@ slug: "tanh"
 title: "Tanh"
 difficulty: "EASY"
 author: "sarthak"
-tags: ["cuda-basics", "parallel-computing", "neural-networks"]
+tags: ["activation-function"]
 parameters:
   - name: "input"
     type: "[VAR]"

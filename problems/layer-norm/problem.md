@@ -3,7 +3,7 @@ slug: "layer-norm"
 title: "Layer Normalization"
 difficulty: "MEDIUM"
 author: "generated"
-tags: ["cuda-basics", "deep-learning", "normalization"]
+tags: ["normalization"]
 parameters:
   - name: "X"
     type: "[VAR]"

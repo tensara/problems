@@ -3,7 +3,7 @@ slug: "matmul-swish"
 title: "Matrix Multiplication with Swish Activation"
 difficulty: "MEDIUM" 
 author: "sarthak"
-tags: ["cuda-basics", "parallel-computing", "neural-networks"]
+tags: ["matmul", "activation-function", "fused"]
 parameters:
   - name: "input_matrix"
     type: "[VAR]"

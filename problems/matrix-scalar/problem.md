@@ -3,7 +3,7 @@ slug: "matrix-scalar"
 title: "Matrix Scalar Multiplication"
 difficulty: "EASY"
 author: "sarthak"
-tags: ["cuda-basics", "parallel-computing"]
+tags: ["matmul", "scalar"]
 parameters:
   - name: "input_matrix"
     type: "[VAR]"

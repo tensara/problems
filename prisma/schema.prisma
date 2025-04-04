@@ -18,6 +18,10 @@ model User {
   updatedAt     DateTime  @updatedAt
   refreshToken  String?   @unique
   lastLogin     DateTime?
+  lastLimitReset DateTime?
+  currentLimit   Int?
+  rating         Int?
+  rank           Int?
 
   accounts     Account[]
   problems     Problem[]
@@ -90,6 +94,7 @@ model Problem {
   difficulty  Difficulty
   author      String
   parameters      Json  @default("[]")
+  tags        String[]
 
   definition  String? @db.Text
 

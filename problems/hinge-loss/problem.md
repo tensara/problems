@@ -3,7 +3,7 @@ slug: "hinge-loss"
 title: "Hinge Loss"
 difficulty: "EASY"
 author: "sarthak"
-tags: ["cuda-basics", "loss-functions", "classification", "machine-learning"]
+tags: ["loss-function"]
 parameters:
   - name: "predictions"
     type: "[VAR]"
