@@ -3,7 +3,7 @@ slug: "batch-norm"
 title: "Batch Normalization"
 difficulty: "MEDIUM"
 author: "generated"
-tags: ["cuda-basics", "deep-learning", "normalization"]
+tags: ["normalization"]
 parameters:
   - name: "X"
     type: "[VAR]"

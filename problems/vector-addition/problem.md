@@ -3,7 +3,7 @@ slug: "vector-addition"
 title: "Vector Addition"
 difficulty: "EASY"
 author: "someshkar"
-tags: ["cuda-basics", "parallel-computing"]
+tags: ["vector"]
 parameters:
   - name: "d_input1"
     type: "[VAR]"

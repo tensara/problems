@@ -3,7 +3,7 @@ slug: "matrix-vector"
 title: "Matrix Vector Multiplication"
 difficulty: "EASY"
 author: "sarthak"
-tags: ["cuda-basics", "parallel-computing"]
+tags: ["matmul", "vector"]
 parameters:
   - name: "input_a"
     type: "[VAR]"

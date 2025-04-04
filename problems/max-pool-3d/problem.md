@@ -3,7 +3,7 @@ slug: "max-pool-3d"
 title: "3D Max Pooling"
 difficulty: "HARD" 
 author: "sarthak"
-tags: ["cuda-basics", "parallel-computing", "image-processing"]
+tags: ["pooling"]
 parameters:
   - name: "input"
     type: "[VAR]"
