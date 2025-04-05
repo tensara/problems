@@ -57,8 +57,8 @@ The average pooling operation slides a window of size $k \times k$ over the inpu
 
 ## Output:
 - Matrix `output` of size $\text{H}_{\text{out}} \times \text{W}_{\text{out}}$ where:
-  $$\text{H}_{\text{out}} = \left\lfloor\frac{\text{H} + 2P - k + 1}{S}\right\rfloor$$
-  $$\text{W}_{\text{out}} = \left\lfloor\frac{\text{W} + 2P - k + 1}{S}\right\rfloor$$
+  $$\text{H}_{\text{out}} = \left\lfloor\frac{\text{H} + 2P - k}{S} + 1\right\rfloor$$
+  $$\text{W}_{\text{out}} = \left\lfloor\frac{\text{W} + 2P - k}{S} + 1\right\rfloor$$
 
 ## Notes:
 - All matrices are stored in row-major order

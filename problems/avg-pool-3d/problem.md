@@ -62,9 +62,9 @@ The average pooling operation slides a window of size $k \times k \times k$ over
 
 ## Output:
 - Matrix `output` of size $\text{H}_{\text{out}} \times \text{W}_{\text{out}} \times \text{D}_{\text{out}}$ where:
-  $$\text{H}_{\text{out}} = \left\lfloor\frac{\text{H} + 2P - k + 1}{S}\right\rfloor$$
-  $$\text{W}_{\text{out}} = \left\lfloor\frac{\text{W} + 2P - k + 1}{S}\right\rfloor$$
-  $$\text{D}_{\text{out}} = \left\lfloor\frac{\text{D} + 2P - k + 1}{S}\right\rfloor$$
+  $$\text{H}_{\text{out}} = \left\lfloor\frac{\text{H} + 2P - k}{S} + 1\right\rfloor$$
+  $$\text{W}_{\text{out}} = \left\lfloor\frac{\text{W} + 2P - k}{S} + 1\right\rfloor$$
+  $$\text{D}_{\text{out}} = \left\lfloor\frac{\text{D} + 2P - k}{S} + 1\right\rfloor$$
 
 ## Notes:
 - All tensors are stored in row-major order
