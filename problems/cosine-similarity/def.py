@@ -5,51 +5,54 @@ from typing import List, Dict, Tuple, Any
 from problem import Problem
 
 
-class huber_loss(Problem):
-    """Huber Loss (Smooth L1 Loss) problem."""
+class cosine_similarity(Problem):
+    """Cosine Similarity problem."""
     
     def __init__(self):
         super().__init__(
-            name="huber-loss"
+            name="cosine-similarity"
         )
     
     def reference_solution(self, predictions: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         """
-        PyTorch implementation of element-wise Huber Loss (Smooth L1 Loss).
+        PyTorch implementation of element-wise Cosine Similarity.
         
         Args:
-            predictions: Predictions tensor of shape (N,)
-            targets: Targets tensor of shape (N,)
+            predictions: Predictions tensor of shape (N, D)
+            targets: Targets tensor of shape (N, D)
             
         Returns:
-            Element-wise Huber loss tensor of shape (N,)
+            Negative cosine similarity tensor of shape (N,)
         """
-        with torch.no_grad():
-            # Use reduction='none' to get element-wise loss
-            return torch.nn.functional.smooth_l1_loss(predictions, targets, reduction='none', beta=1.0)
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+            return 1 - torch.nn.functional.cosine_similarity(predictions, targets, dim=1)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """
-        Generate test cases for Huber Loss.
+        Generate test cases for Cosine Similarity.
         
         Returns:
             List of test case dictionaries with varying sizes.
         """
+        batch_size = 128
+        input_shape = (4096, )
+        
         tensor_sizes = [
-            1048576,      # 1M elements
-            4194304,      # 4M elements
-            16777216,     # 16M elements
-            67108864,     # 64M elements
+            4096,         # 4K vectors
+            8192,         # 8K vectors
+            10240,        # 10K vectors
+            16384,        # 16K vectors
         ]
         
         test_cases = []
         for n in tensor_sizes:
             test_cases.append({
-                "name": f"N={n}",
+                "name": f"N={n}, D={input_shape[0]}",
                 "n": n,
+                "d": input_shape[0],
                 "create_inputs": lambda n=n: (
-                    torch.randn(n, device="cuda", dtype=dtype), # predictions
-                    torch.randn(n, device="cuda", dtype=dtype)  # targets
+                    torch.randn(n, *input_shape, device="cuda", dtype=dtype),  # predictions
+                    torch.randn(n, *input_shape, device="cuda", dtype=dtype)   # targets
                 )
             })
         
@@ -58,7 +61,7 @@ class huber_loss(Problem):
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """
-        Verify if the Huber Loss result is correct.
+        Verify if the Cosine Similarity result is correct.
         
         Args:
             expected_output: Output from reference solution
@@ -88,7 +91,7 @@ class huber_loss(Problem):
             n = expected_output.numel()
             sample_diffs = {}
             for i, idx in enumerate(top_indices):
-                sample_diffs[f"index {idx.item()}"] = {
+                sample_diffs[f"{idx.item()}"] = {
                     "expected": expected_output.flatten()[idx].item(),
                     "actual": actual_output.flatten()[idx].item(),
                     "diff": diff.flatten()[idx].item()
@@ -104,7 +107,7 @@ class huber_loss(Problem):
     
     def get_function_signature(self) -> Dict[str, Any]:
         """
-        Get the function signature for the Huber Loss solution.
+        Get the function signature for the Cosine Similarity solution.
         
         Returns:
             Dictionary with argtypes and restype for ctypes
@@ -115,7 +118,8 @@ class huber_loss(Problem):
                 ctypes.POINTER(ctypes.c_float),  # predictions
                 ctypes.POINTER(ctypes.c_float),  # targets
                 ctypes.POINTER(ctypes.c_float),  # output
-                ctypes.c_size_t                  # n (number of elements)
+                ctypes.c_size_t,                 # n (number of vectors)
+                ctypes.c_size_t                  # d (dimension of each vector)
             ],
             "restype": None
         }
@@ -133,16 +137,20 @@ class huber_loss(Problem):
             Number of floating point operations
         """
         N = test_case["n"]
+        D = test_case["d"]  # Dimension of each vector
         
-        # N * ~5 FLOPs: For each element:
-        # 1. diff = predictions[i] - targets[i] (1 FLOP)
-        # 2. abs_diff = abs(diff)             (1 FLOP, approximate)
-        # 3. Check condition: abs_diff < 1.0  (1 FLOP, comparison)
-        # 4. Calculate result:
-        #    - if true: 0.5 * diff * diff      (2 FLOPs: mult, mult)
-        #    - if false: abs_diff - 0.5      (1 FLOP: sub)
-        # Conservatively estimate as 5 FLOPs per element.
-        return N * 5 
+        # For each of the N vector pairs:
+        # 1. Dot product: predictions[i] · targets[i]  (2*D FLOPs: D mults, D-1 adds)
+        # 2. Norm of predictions[i]:
+        #    - Square each element (D FLOPs)
+        #    - Sum squares (D-1 FLOPs)
+        #    - Square root (1 FLOP)
+        # 3. Norm of targets[i]: same as above (2*D FLOPs)
+        # 4. Division: dot_product / (norm_pred * norm_targ) (2 FLOPs: mult, div)
+        # 5. Subtraction: 1 - result (1 FLOP)
+        
+        # Total per vector pair: approximately 5*D + 3 FLOPs
+        return N * (5 * D + 3)
     
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
@@ -152,7 +160,8 @@ class huber_loss(Problem):
             test_case: The test case dictionary
             
         Returns:
-            List containing the number of elements N.
+            List containing the number of vectors N.
         """
         N = test_case["n"]
-        return [N]
+        D = test_case["d"]
+        return [N, D]

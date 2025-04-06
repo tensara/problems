@@ -5,51 +5,51 @@ from typing import List, Dict, Tuple, Any
 from problem import Problem
 
 
-class huber_loss(Problem):
-    """Huber Loss (Smooth L1 Loss) problem."""
+class cross_entropy(Problem):
+    """Cross Entropy problem."""
     
     def __init__(self):
         super().__init__(
-            name="huber-loss"
+            name="cross-entropy"
         )
     
     def reference_solution(self, predictions: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         """
-        PyTorch implementation of element-wise Huber Loss (Smooth L1 Loss).
+        PyTorch implementation of Cross Entropy Loss.
         
         Args:
-            predictions: Predictions tensor of shape (N,)
-            targets: Targets tensor of shape (N,)
+            predictions: Predictions tensor of shape (N, C) where C is the number of classes
+            targets: Targets tensor of shape (N,) containing class indices
             
         Returns:
-            Element-wise Huber loss tensor of shape (N,)
+            Cross entropy loss tensor of shape (N,)
         """
-        with torch.no_grad():
-            # Use reduction='none' to get element-wise loss
-            return torch.nn.functional.smooth_l1_loss(predictions, targets, reduction='none', beta=1.0)
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+            return torch.nn.functional.cross_entropy(predictions, targets, reduction='none')
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """
-        Generate test cases for Huber Loss.
+        Generate test cases for Cross Entropy.
         
         Returns:
             List of test case dictionaries with varying sizes.
         """
-        tensor_sizes = [
-            1048576,      # 1M elements
-            4194304,      # 4M elements
-            16777216,     # 16M elements
-            67108864,     # 64M elements
+        test_configs = [
+            (1024, 10),      # 1K samples, 10 classes
+            (4096, 100),     # 4K samples, 100 classes  
+            (16384, 50),     # 16K samples, 50 classes
+            (65536, 25),     # 64K samples, 25 classes
         ]
         
         test_cases = []
-        for n in tensor_sizes:
+        for n, num_classes in test_configs:
             test_cases.append({
-                "name": f"N={n}",
+                "name": f"N={n}, C={num_classes}",
                 "n": n,
-                "create_inputs": lambda n=n: (
-                    torch.randn(n, device="cuda", dtype=dtype), # predictions
-                    torch.randn(n, device="cuda", dtype=dtype)  # targets
+                "num_classes": num_classes,
+                "create_inputs": lambda n=n, c=num_classes: (
+                    torch.randn(n, c, device="cuda", dtype=dtype),  # predictions
+                    torch.randint(0, c, (n,), device="cuda")        # targets
                 )
             })
         
@@ -58,7 +58,7 @@ class huber_loss(Problem):
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """
-        Verify if the Huber Loss result is correct.
+        Verify if the Cross Entropy result is correct.
         
         Args:
             expected_output: Output from reference solution
@@ -88,7 +88,7 @@ class huber_loss(Problem):
             n = expected_output.numel()
             sample_diffs = {}
             for i, idx in enumerate(top_indices):
-                sample_diffs[f"index {idx.item()}"] = {
+                sample_diffs[f"{idx.item()}"] = {
                     "expected": expected_output.flatten()[idx].item(),
                     "actual": actual_output.flatten()[idx].item(),
                     "diff": diff.flatten()[idx].item()
@@ -104,7 +104,7 @@ class huber_loss(Problem):
     
     def get_function_signature(self) -> Dict[str, Any]:
         """
-        Get the function signature for the Huber Loss solution.
+        Get the function signature for the Cross Entropy solution.
         
         Returns:
             Dictionary with argtypes and restype for ctypes
@@ -113,9 +113,10 @@ class huber_loss(Problem):
         return {
             "argtypes": [
                 ctypes.POINTER(ctypes.c_float),  # predictions
-                ctypes.POINTER(ctypes.c_float),  # targets
+                ctypes.POINTER(ctypes.c_int),    # targets (integer class indices)
                 ctypes.POINTER(ctypes.c_float),  # output
-                ctypes.c_size_t                  # n (number of elements)
+                ctypes.c_size_t,                 # n (number of samples)
+                ctypes.c_size_t                  # c (number of classes)
             ],
             "restype": None
         }
@@ -133,16 +134,19 @@ class huber_loss(Problem):
             Number of floating point operations
         """
         N = test_case["n"]
+        C = test_case["num_classes"]  # Number of classes varies per test case
         
-        # N * ~5 FLOPs: For each element:
-        # 1. diff = predictions[i] - targets[i] (1 FLOP)
-        # 2. abs_diff = abs(diff)             (1 FLOP, approximate)
-        # 3. Check condition: abs_diff < 1.0  (1 FLOP, comparison)
-        # 4. Calculate result:
-        #    - if true: 0.5 * diff * diff      (2 FLOPs: mult, mult)
-        #    - if false: abs_diff - 0.5      (1 FLOP: sub)
-        # Conservatively estimate as 5 FLOPs per element.
-        return N * 5 
+        # For each of the N samples:
+        # 1. Compute max for numerical stability (C FLOPs)
+        # 2. Subtract max from each logit (C FLOPs)
+        # 3. Compute exp for each class (C FLOPs)
+        # 4. Sum of exps (C-1 FLOPs)
+        # 5. Log of sum (1 FLOP)
+        # 6. Compute log probability of the correct class (2 FLOPs)
+        # 7. Negate the result (1 FLOP)
+        
+        # Total per sample: approximately 4*C + 2 FLOPs
+        return N * (4 * C + 2)
     
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
@@ -152,7 +156,8 @@ class huber_loss(Problem):
             test_case: The test case dictionary
             
         Returns:
-            List containing the number of elements N.
+            List containing the number of samples N.
         """
         N = test_case["n"]
-        return [N]
+        C = test_case["num_classes"]
+        return [N, C]

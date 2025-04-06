@@ -20,7 +20,6 @@ parameters:
     pointer: "true"
     const: "false"
 
-  # Assuming square matrices for upper triangular
   - name: "n"
     type: "size_t"
     pointer: "false"

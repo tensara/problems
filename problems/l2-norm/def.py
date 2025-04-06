@@ -5,77 +5,66 @@ from typing import List, Dict, Tuple, Any
 
 from problem import Problem 
 
-class layer_norm(Problem):
-    """Layer Normalization problem."""
+class l2_norm(Problem):
+    """L2 Normalization problem."""
 
     def __init__(self):
         super().__init__(
-            name="layer-norm"
+            name="l2-norm"
         )
-        self.epsilon = 1e-5 # Standard epsilon for LayerNorm
+        self.epsilon = 1e-10  # Small epsilon for numerical stability
 
-    def reference_solution(self, x: torch.Tensor, gamma: torch.Tensor, beta: torch.Tensor) -> torch.Tensor:
+    def reference_solution(self, x: torch.Tensor) -> torch.Tensor:
         """
-        PyTorch implementation of Layer Normalization.
+        PyTorch implementation of L2 Normalization.
 
         Args:
-            x (torch.Tensor): Input tensor of shape (B, F, D1, D2)
-            gamma (torch.Tensor): Scale tensor of shape (F, D1, D2)
-            beta (torch.Tensor): Shift tensor of shape (F, D1, D2)
+            x (torch.Tensor): Input tensor of shape (B, D)
 
         Returns:
-            torch.Tensor: Output tensor with Layer Normalization applied, same shape as input.
+            torch.Tensor: Output tensor with L2 Normalization applied, same shape as input.
         """
         with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            # Normalize over the last 3 dimensions (F, D1, D2)
-            normalized_shape = x.shape[1:] 
+            l2_norm = torch.norm(x, p=2, dim=1, keepdim=True)
             
-            # Use torch.nn.functional.layer_norm
-            output = torch.nn.functional.layer_norm(
-                x, 
-                normalized_shape, 
-                weight=gamma, 
-                bias=beta, 
-                eps=self.epsilon
-            )
+            l2_norm = l2_norm + self.epsilon
+            
+            output = x / l2_norm
+            
             return output
 
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """
-        Generate test cases for Layer Normalization.
+        Generate test cases for L2 Normalization.
 
         Returns:
             List of test case dictionaries with varying sizes
         """
         
-        # Define shapes: (B, F, D1, D2)
         test_configs = [
-            (16, 64, 32, 32),   # Smaller example
-            (32, 128, 64, 64),  # Medium example
-            (8, 256, 128, 128), # Larger example
-            (4, 512, 32, 32),   # Different aspect ratio
+            (128, 4096),     # Medium example
+            (256, 4096),     # Medium example
+            (128, 8192),     # Larger example
+            (256, 8192),    # Larger example
+            (128, 16384),   # Very large example
         ]
 
         return [
             {
-                "name": f"B={B}, F={F}, D1={D1}, D2={D2}",
+                "name": f"B={B}, D={D}",
                 "B": B,
-                "F": F,
-                "D1": D1,
-                "D2": D2,
-                "create_inputs": lambda B=B, F=F, D1=D1, D2=D2: (
-                    torch.randn(B, F, D1, D2, device="cuda", dtype=dtype), # Input X
-                    torch.randn(F, D1, D2, device="cuda", dtype=dtype),      # Gamma (scale)
-                    torch.randn(F, D1, D2, device="cuda", dtype=dtype)       # Beta (shift)
+                "D": D,
+                "create_inputs": lambda B=B, D=D: (
+                    torch.randn(B, D, device="cuda", dtype=dtype), # Input X
                 )
             }
-            for B, F, D1, D2 in test_configs
+            for B, D in test_configs
         ]
 
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """
-        Verify if the Layer Normalization result is correct.
+        Verify if the L2 Normalization result is correct.
 
         Args:
             expected_output: Output from reference solution
@@ -84,7 +73,7 @@ class layer_norm(Problem):
         Returns:
             Tuple of (is_correct, debug_info)
         """
-        # Use a slightly higher tolerance for LayerNorm due to potential precision differences
+        # Use appropriate tolerance based on dtype
         rtol = 1e-3 if dtype == torch.float16 else 1e-4
         atol = 1e-3 if dtype == torch.float16 else 1e-5
         
@@ -130,7 +119,7 @@ class layer_norm(Problem):
 
     def get_function_signature(self) -> Dict[str, Any]:
         """
-        Get the function signature for the Layer Normalization solution.
+        Get the function signature for the L2 Normalization solution.
 
         Returns:
             Dictionary with argtypes and restype for ctypes
@@ -139,21 +128,16 @@ class layer_norm(Problem):
             # Corresponds to parameters in problem.md
             "argtypes": [
                 ctypes.POINTER(ctypes.c_float),  # X (input)
-                ctypes.POINTER(ctypes.c_float),  # gamma (scale)
-                ctypes.POINTER(ctypes.c_float),  # beta (shift)
                 ctypes.POINTER(ctypes.c_float),  # Y (output)
                 ctypes.c_size_t,                 # B (batch size)
-                ctypes.c_size_t,                 # F (features)
-                ctypes.c_size_t,                 # D1 (dim1)
-                ctypes.c_size_t                  # D2 (dim2)
-                # Epsilon is handled internally or passed differently if needed by CUDA kernel
+                ctypes.c_size_t,                 # D (dimension)
             ],
             "restype": None
         }
 
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """
-        Get the approximate number of floating point operations for Layer Normalization.
+        Get the approximate number of floating point operations for L2 Normalization.
 
         Args:
             test_case: The test case dictionary
@@ -164,19 +148,17 @@ class layer_norm(Problem):
             Number of floating point operations
         """
         B = test_case["B"]
-        F = test_case["F"]
-        D1 = test_case["D1"]
-        D2 = test_case["D2"]
-        N = F * D1 * D2 # Number of elements to normalize per batch item
+        D = test_case["D"]
 
         # FLOPs calculation per batch item:
-        # 1. Calculate mean: Sum N elements (N-1 adds), 1 division. ~N FLOPs.
-        # 2. Calculate variance: (x - mean)^2 (N subtractions, N squares/multiplications), sum N squares (N-1 adds), 1 division. ~3N FLOPs.
-        # 3. Normalize: x - mean (N subtractions), sqrt(var + eps) (N additions, N sqrt ops), division (N divisions). ~3N + N*sqrt_cost FLOPs. Let's approx sqrt cost as ~5 FLOPs. ~8N FLOPs.
-        # 4. Scale and shift: y * gamma (N multiplications), + beta (N additions). ~2N FLOPs.
+        # 1. Calculate squares: D multiplications. ~D FLOPs.
+        # 2. Calculate sum: (D-1) adds. ~D FLOPs.
+        # 3. Calculate square root: 1 sqrt operation. ~1 FLOPs.
+        # 4. Add epsilon: 1 addition. ~1 FLOPs.
+        # 5. Division: D divisions. ~D FLOPs.
         
-        # Total FLOPs per batch item ≈ N + 3N + 8N + 2N = 14N
-        flops_per_batch_item = 14 * N
+        # Total FLOPs per batch item ≈ D + D + 1 + 1 + D = 3D + 2
+        flops_per_batch_item = 3 * D + 2
         
         # Total FLOPs for the batch
         total_flops = B * flops_per_batch_item
@@ -191,10 +173,8 @@ class layer_norm(Problem):
             test_case: The test case dictionary
 
         Returns:
-            List containing B, F, D1, D2
+            List containing B, D
         """
         B = test_case["B"]
-        F = test_case["F"]
-        D1 = test_case["D1"]
-        D2 = test_case["D2"]
-        return [B, F, D1, D2]
+        D = test_case["D"]
+        return [B, D]

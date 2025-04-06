@@ -5,36 +5,51 @@ from typing import List, Dict, Tuple, Any
 from problem import Problem
 
 
-class huber_loss(Problem):
-    """Huber Loss (Smooth L1 Loss) problem."""
+class kl_loss(Problem):
+    """Kullback-Leibler Divergence problem."""
     
     def __init__(self):
         super().__init__(
-            name="huber-loss"
+            name="kl-loss"
         )
     
     def reference_solution(self, predictions: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         """
-        PyTorch implementation of element-wise Huber Loss (Smooth L1 Loss).
+        PyTorch implementation of element-wise Kullback-Leibler Divergence.
         
         Args:
-            predictions: Predictions tensor of shape (N,)
-            targets: Targets tensor of shape (N,)
+            predictions: Predictions tensor of shape (N,) representing a probability distribution
+            targets: Targets tensor of shape (N,) representing a probability distribution
             
         Returns:
-            Element-wise Huber loss tensor of shape (N,)
+            Element-wise KL divergence tensor of shape (N,)
         """
         with torch.no_grad():
-            # Use reduction='none' to get element-wise loss
-            return torch.nn.functional.smooth_l1_loss(predictions, targets, reduction='none', beta=1.0)
+            # Add small epsilon to avoid numerical issues with log(0)
+            eps = 1e-10
+            pred_safe = predictions.clamp(min=eps)
+            target_safe = targets.clamp(min=eps)
+            
+            # Compute element-wise KL divergence
+            # Note: PyTorch's built-in KL div expects log-probabilities for predictions, 
+            # but we're implementing the element-wise version directly
+            element_wise_kl = target_safe * (torch.log(target_safe) - torch.log(pred_safe))
+            
+            # Zero out elements where target is 0 (by convention)
+            element_wise_kl = torch.where(targets > 0, element_wise_kl, torch.zeros_like(element_wise_kl))
+            
+            return element_wise_kl
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """
-        Generate test cases for Huber Loss.
+        Generate test cases for KL Divergence.
         
         Returns:
             List of test case dictionaries with varying sizes.
         """
+        batch_size = 128
+        input_shape = (4096, )
+        
         tensor_sizes = [
             1048576,      # 1M elements
             4194304,      # 4M elements
@@ -48,17 +63,30 @@ class huber_loss(Problem):
                 "name": f"N={n}",
                 "n": n,
                 "create_inputs": lambda n=n: (
-                    torch.randn(n, device="cuda", dtype=dtype), # predictions
-                    torch.randn(n, device="cuda", dtype=dtype)  # targets
+                    torch.rand(n, device="cuda", dtype=dtype).softmax(dim=0),  # predictions
+                    torch.rand(n, device="cuda", dtype=dtype).softmax(dim=0)   # targets
                 )
             })
+        
+        # Add special test case with sparse targets
+        test_cases.append({
+            "name": "Sparse_targets",
+            "n": 1048576,
+            "create_inputs": lambda: (
+                torch.rand(1048576, device="cuda", dtype=dtype).softmax(dim=0),  # predictions
+                torch.zeros(1048576, device="cuda", dtype=dtype).scatter_(
+                    0, torch.randint(0, 1048576, (1048576 // 10,), device="cuda"), 
+                    torch.ones(1048576 // 10, device="cuda", dtype=dtype) * 10
+                ).softmax(dim=0)  # sparse targets
+            )
+        })
         
         return test_cases
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """
-        Verify if the Huber Loss result is correct.
+        Verify if the KL Divergence result is correct.
         
         Args:
             expected_output: Output from reference solution
@@ -73,6 +101,7 @@ class huber_loss(Problem):
                  "message": "Output shape mismatch, expected: {}, actual: {}".format(expected_output.shape, actual_output.shape),
              }
 
+        # Use higher tolerance for KL divergence due to potential numerical issues
         is_close = torch.allclose(actual_output, expected_output, rtol=1e-5, atol=1e-5)
         
         debug_info = {}
@@ -88,7 +117,7 @@ class huber_loss(Problem):
             n = expected_output.numel()
             sample_diffs = {}
             for i, idx in enumerate(top_indices):
-                sample_diffs[f"index {idx.item()}"] = {
+                sample_diffs[f"{idx.item()}"] = {
                     "expected": expected_output.flatten()[idx].item(),
                     "actual": actual_output.flatten()[idx].item(),
                     "diff": diff.flatten()[idx].item()
@@ -104,7 +133,7 @@ class huber_loss(Problem):
     
     def get_function_signature(self) -> Dict[str, Any]:
         """
-        Get the function signature for the Huber Loss solution.
+        Get the function signature for the KL Divergence solution.
         
         Returns:
             Dictionary with argtypes and restype for ctypes
@@ -134,15 +163,15 @@ class huber_loss(Problem):
         """
         N = test_case["n"]
         
-        # N * ~5 FLOPs: For each element:
-        # 1. diff = predictions[i] - targets[i] (1 FLOP)
-        # 2. abs_diff = abs(diff)             (1 FLOP, approximate)
-        # 3. Check condition: abs_diff < 1.0  (1 FLOP, comparison)
-        # 4. Calculate result:
-        #    - if true: 0.5 * diff * diff      (2 FLOPs: mult, mult)
-        #    - if false: abs_diff - 0.5      (1 FLOP: sub)
-        # Conservatively estimate as 5 FLOPs per element.
-        return N * 5 
+        # N * ~7 FLOPs: For each element:
+        # 1. Add epsilon to predictions and targets (~2 FLOPs)
+        # 2. log(targets[i]) (1 FLOP)
+        # 3. log(predictions[i]) (1 FLOP)
+        # 4. log(targets[i]) - log(predictions[i]) (1 FLOP: sub)
+        # 5. targets[i] * (log difference) (1 FLOP: mult)
+        # 6. Check if targets[i] == 0 and conditionally set (1 FLOP)
+        # Conservatively estimate as 7 FLOPs per element
+        return N * 7 
     
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """

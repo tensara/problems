@@ -61,14 +61,13 @@ async function main() {
         tags: frontmatter.tags,
       }
     });
-    console.log(frontmatter.tags);
 
-    // console.log(`Synced problem: ${slug}`);
-    // console.log(`  - Title: ${frontmatter.title ? '✓' : '✗'}`);
-    // console.log(`  - Difficulty: ${frontmatter.difficulty ? '✓' : '✗'}`);
-    // console.log(`  - Parameters: ${frontmatter.parameters ? '✓' : '✗'}`);
-    // console.log(`  - Definition: ${definition ? '✓' : '✗'}`);
-    // console.log(`  - Tags: ${frontmatter.tags ? '✓' : '✗'}`);
+    console.log(`Synced problem: ${slug}`);
+    console.log(`  - Title: ${frontmatter.title ? '✓' : '✗'}`);
+    console.log(`  - Difficulty: ${frontmatter.difficulty ? '✓' : '✗'}`);
+    console.log(`  - Parameters: ${frontmatter.parameters ? '✓' : '✗'}`);
+    console.log(`  - Definition: ${definition ? '✓' : '✗'}`);
+    console.log(`  - Tags: ${frontmatter.tags ? '✓' : '✗'}`);
   }
 }
 

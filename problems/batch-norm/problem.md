@@ -2,7 +2,7 @@
 slug: "batch-norm"
 title: "Batch Normalization"
 difficulty: "MEDIUM"
-author: "generated"
+author: "sarthak"
 tags: ["normalization"]
 parameters:
   - name: "X"
