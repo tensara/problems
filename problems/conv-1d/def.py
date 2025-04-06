@@ -4,7 +4,6 @@ from typing import List, Dict, Tuple, Any
 
 from problem import Problem
 
-
 class conv_1d(Problem):
     """1D convolution problem."""
     

@@ -4,7 +4,6 @@ from typing import List, Dict, Tuple, Any
 
 from problem import Problem
 
-
 class cumprod(Problem):
     """Cumulative product (prefix product) problem."""
     

@@ -4,7 +4,6 @@ from typing import List, Dict, Tuple, Any
 
 from problem import Problem
 
-
 class conv_square_3d(Problem):
     """3D convolution problem with square input and square kernel."""
     

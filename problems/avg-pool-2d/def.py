@@ -4,7 +4,6 @@ from typing import List, Dict, Tuple, Any
 
 from problem import Problem
 
-
 class avg_pool_2d(Problem):
     """2D average pooling problem."""
     

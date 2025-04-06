@@ -4,32 +4,30 @@ from typing import List, Dict, Tuple, Any
 
 from problem import Problem
 
-
-class elu(Problem):
-    """ELU (Exponential Linear Unit) activation function problem."""
+class hard_sigmoid(Problem):
+    """Hard Sigmoid activation function problem."""
     
     def __init__(self):
         super().__init__(
-            name="elu"
+            name="hard_sigmoid"
         )
-        self.alpha = 1.0  # Default alpha value for ELU
     
     def reference_solution(self, input_matrix: torch.Tensor) -> torch.Tensor:
         """
-        PyTorch implementation of ELU.
+        PyTorch implementation of Hard Sigmoid.
         
         Args:
             input_matrix: Input matrix of shape (M, N)
             
         Returns:
-            Result of ELU activation
+            Result of Hard Sigmoid activation
         """
         with torch.no_grad():
-            return torch.nn.functional.elu(input_matrix, alpha=self.alpha)
+            return torch.nn.functional.hardsigmoid(input_matrix)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """
-        Generate test cases for ELU.
+        Generate test cases for Hard Sigmoid.
         
         Returns:
             List of test case dictionaries with varying sizes
@@ -58,7 +56,7 @@ class elu(Problem):
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """
-        Verify if the ELU result is correct.
+        Verify if the Hard Sigmoid result is correct.
         
         Args:
             expected_output: Output from reference solution
@@ -90,18 +88,18 @@ class elu(Problem):
                     "actual": actual_output[row, col].item(),
                     "diff": diff[row, col].item()
                 }
-            
+
             debug_info = {
                 "max_difference": max_diff,
                 "mean_difference": mean_diff,
-                "sample_differences": sample_diffs
+                "sample_differences": sample_diffs,
             }
         
         return is_close, debug_info
     
     def get_function_signature(self) -> Dict[str, Any]:
         """
-        Get the function signature for the ELU solution.
+        Get the function signature for the Hard Sigmoid solution.
         
         Returns:
             Dictionary with argtypes and restype for ctypes
@@ -111,8 +109,7 @@ class elu(Problem):
                 ctypes.POINTER(ctypes.c_float),  # input_matrix
                 ctypes.POINTER(ctypes.c_float),  # output_matrix
                 ctypes.c_size_t,                 # rows (M)
-                ctypes.c_size_t,                 # columns (N)
-                ctypes.c_float                   # alpha
+                ctypes.c_size_t                  # columns (N)
             ],
             "restype": None
         }
@@ -124,6 +121,8 @@ class elu(Problem):
         Args:
             test_case: The test case dictionary
             
+        IMPORTANT: Comments are required. Outline the FLOPs calculation.
+        
         Returns:
             Number of floating point operations
         """
@@ -132,10 +131,9 @@ class elu(Problem):
         N = test_case["cols"]
         
         # M*N FLOPs:
-        # - Each element requires 1 comparison operation
-        # - For negative values: 1 multiply (alpha), 1 exponentiation, 1 subtract (exp-1)
-        # - We approximate this as 3 FLOPs per element (worst case)
-        return 3 * M * N
+        # - Each element requires operations to clamp and scale the input
+        # - We count this as 1 FLOP per element as per the test case
+        return M * N
     
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
@@ -145,8 +143,8 @@ class elu(Problem):
             test_case: The test case dictionary
             
         Returns:
-            List containing the rows M, columns N, and alpha value
+            List containing the rows M and columns N
         """
         M = test_case["rows"]
         N = test_case["cols"]
-        return [M, N, self.alpha]
+        return [M, N]
