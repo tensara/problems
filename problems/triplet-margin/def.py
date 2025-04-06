@@ -48,11 +48,11 @@ class triplet_margin(Problem):
         
         # Define configurations: (batch_size, embedding_dim)
         test_configs = [
-            (16, 64),      # Small batch, medium embedding
-            (32, 128),     # Medium batch, larger embedding
-            (64, 256),     # Larger batch, large embedding
-            (128, 32),     # Large batch, small embedding
-            (8, 512)       # Small batch, large embedding
+            (128, 4096),      
+            (256, 8192),     
+            (256, 16384),    
+            (512, 8192),     
+            (1024, 1024)     
         ]
 
         return [
@@ -90,13 +90,10 @@ class triplet_margin(Problem):
         debug_info = {}
         if not is_close:
             diff = actual_output - expected_output
-            abs_diff = torch.abs(diff).item()
-            
+            max_diff = torch.max(torch.abs(diff)).item()
+
             debug_info = {
-                "expected": expected_output.item(),
-                "actual": actual_output.item(),
-                "difference": diff.item(),
-                "abs_difference": abs_diff
+                "max_difference": max_diff,
             }
         
         return is_close, debug_info

@@ -1,7 +1,7 @@
 ---
 slug: "rms-norm"
 title: "RMS Normalization"
-difficulty: "MEDIUM"
+difficulty: "EASY"
 author: "sarthak"
 tags: ["normalization"]
 parameters:
@@ -24,23 +24,11 @@ parameters:
     type: "size_t"
     pointer: "false"
     constant: "false"
-
-  - name: "total_size"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
-  - name: "dims_size"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
 ---
 
-Implement RMS (Root Mean Square) Normalization for a tensor of arbitrary shape.
+Implement RMS (Root Mean Square) Normalization for a 2D tensor.
 
-RMS Normalization is a technique often used in transformers and other deep learning models, particularly in language models. It normalizes the input by dividing each element by the root mean square of the features in each sample.
-
-The formula for RMS Normalization is:
+Normalize the input by dividing each element by the root mean square of the features in each sample. More formally, compute:
 
 $$
 \text{y} = \frac{x}{\sqrt{\text{mean}(x^2) + \epsilon}}
@@ -49,7 +37,7 @@ $$
 where the mean is computed along the feature dimension for each sample in the batch independently. $\epsilon$ is a small value added to the denominator for numerical stability.
 
 ## Input:
-- Tensor $\text{X}$ of shape $(\text{B}, \text{N}, *)$ (input data)
+- Tensor $\text{X}$ of shape $(\text{B}, \text{N})$ is the input data where $\text{B}$ = batch size and $\text{N}$ = number of features
 
 ## Output:
 - Tensor $\text{Y}$ with the same shape as input (normalized data)

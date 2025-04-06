@@ -3,7 +3,7 @@ slug: "triplet-margin"
 title: "Triplet Margin Loss"
 difficulty: "MEDIUM"
 author: "sarthak"
-tags: ["loss-functions"]
+tags: ["loss-function", "reduction"]
 parameters:
   - name: "anchor"
     type: "[VAR]"
@@ -44,7 +44,7 @@ parameters:
 Implement Triplet Margin Loss:
 
 $$
-\text{Loss}(a, p, n) = \max(0, d(a, p) - d(a, n) + \text{margin})
+\text{Loss}(a, p, n) = \frac{1}{B}\sum_{i=1}^B \max(0, d(a_i, p_i) - d(a_i, n_i) + \text{margin})
 $$
 
 where:
@@ -53,6 +53,7 @@ where:
 - $n$ is the negative embedding (dissimilar to anchor)
 - $d(x, y)$ is the distance function between embeddings $x$ and $y$ (typically L2 distance)
 - $\text{margin}$ is a parameter that enforces a minimum distance between the positive and negative pairs
+- $B$ is the batch size
 
 ## Input:
 - Anchor tensor of shape $(\text{B}, \text{E})$
@@ -61,7 +62,7 @@ where:
 - Margin value (float)
 
 ## Output:
-- Loss value (scalar)
+- Loss value (scalar) - the mean loss over the batch
 
 ## Notes:
 - Use Euclidean distance (L2 norm) as the distance function between embeddings.

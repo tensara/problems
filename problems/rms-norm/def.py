@@ -45,11 +45,10 @@ class rms_norm(Problem):
         
         # Define configurations: (batch_size, features, *dims)
         test_configs = [
-            (16, 64),                   # 2D tensor (batch, features)
-            (32, 128),                  # 2D tensor, larger size
-            (8, 32, 16, 16),            # 4D tensor (batch, features, height, width)
-            (4, 64, 32, 32),            # 4D tensor, larger size
-            (64, 768)                   # 2D tensor, typical for transformer models
+            (1024, 1024),                   # 2D tensor (batch, features)
+            (1024, 4096),                  # 2D tensor, larger size
+            (2048, 8192),                  # 2D tensor, typical for transformer models
+            (512, 16384)            
         ]
 
         return [
@@ -132,8 +131,6 @@ class rms_norm(Problem):
                 ctypes.POINTER(ctypes.c_float),  # Y (output)
                 ctypes.c_size_t,                 # batch_size
                 ctypes.c_size_t,                 # num_features
-                ctypes.c_size_t,                 # total_size (total number of elements)
-                ctypes.c_size_t,                 # dims_size (number of elements per feature)
             ],
             "restype": None
         }
@@ -152,29 +149,21 @@ class rms_norm(Problem):
         batch_size = shape[0]
         num_features = shape[1]
         
-        # Calculate number of elements per feature
-        dims_size = 1
-        for i in range(2, len(shape)):
-            dims_size *= shape[i]
-        
-        # Total elements per batch
-        elements_per_batch = num_features * dims_size
-        
         # FLOPs calculation:
-        # 1. Calculate the square of each element: elements_per_batch multiplications
-        # 2. Sum the squared values per feature: (elements_per_batch - dims_size) additions
-        # 3. Divide by dims_size for mean: dims_size divisions
-        # 4. Add epsilon: dims_size additions
-        # 5. Take the square root: dims_size sqrt operations (approx. 5 flops each)
-        # 6. Divide each element by the RMS: elements_per_batch divisions
+        # 1. Calculate the square of each element: num_features multiplications
+        # 2. Sum the squared values: (num_features - 1) additions
+        # 3. Divide by num_features for mean: 1 division
+        # 4. Add epsilon: 1 addition
+        # 5. Take the square root: 5 flops (approx)
+        # 6. Divide each element by the RMS: num_features divisions
         
         flops_per_batch = (
-            elements_per_batch +                 # Square each element
-            (num_features * (dims_size - 1)) +   # Sum squares per feature
-            num_features +                       # Divide by dims_size for mean
-            num_features +                       # Add epsilon
-            (5 * num_features) +                 # Square root (approx cost)
-            elements_per_batch                   # Divide by RMS
+            num_features +      # Square each element
+            (num_features - 1) + # Sum squares
+            1 +                 # Divide for mean
+            1 +                 # Add epsilon
+            5 +                 # Square root (approx cost)
+            num_features        # Divide by RMS
         )
         
         # Total operations across the batch
@@ -196,18 +185,4 @@ class rms_norm(Problem):
         batch_size = shape[0]
         num_features = shape[1]
         
-        # Calculate total size and dims_size
-        total_size = 1
-        for dim in shape:
-            total_size *= dim
-            
-        # Calculate size of dimensions after batch and features
-        dims_size = 1
-        for i in range(2, len(shape)):
-            dims_size *= shape[i]
-        
-        # If there are no extra dimensions (2D tensor), dims_size is 1
-        if len(shape) <= 2:
-            dims_size = 1
-            
-        return [batch_size, num_features, total_size, dims_size]
+        return [batch_size, num_features]
