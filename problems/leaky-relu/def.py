@@ -3,29 +3,16 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from .solution import LeakyReluSolutions
 
 
-class leaky_relu(Problem):
+class leaky_relu(Problem, LeakyReluSolutions):
     """Leaky ReLU activation function problem."""
     
     def __init__(self):
         super().__init__(
             name="leaky-relu"
         )
-    
-    def reference_solution(self, input_matrix: torch.Tensor, alpha: float) -> torch.Tensor:
-        """
-        PyTorch implementation of Leaky ReLU.
-        
-        Args:
-            input_matrix: Input matrix of shape (M, N)
-            alpha: Slope for negative values
-            
-        Returns:
-            Result of Leaky ReLU activation
-        """
-        with torch.no_grad():
-            return torch.nn.functional.leaky_relu(input_matrix, alpha)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

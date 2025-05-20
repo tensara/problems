@@ -3,27 +3,15 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from .solution import HardSigmoidSolutions
 
-class hard_sigmoid(Problem):
+class hard_sigmoid(Problem, HardSigmoidSolutions):
     """Hard Sigmoid activation function problem."""
     
     def __init__(self):
         super().__init__(
             name="hard_sigmoid"
         )
-    
-    def reference_solution(self, input_matrix: torch.Tensor) -> torch.Tensor:
-        """
-        PyTorch implementation of Hard Sigmoid.
-        
-        Args:
-            input_matrix: Input matrix of shape (M, N)
-            
-        Returns:
-            Result of Hard Sigmoid activation
-        """
-        with torch.no_grad():
-            return torch.nn.functional.hardsigmoid(input_matrix)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

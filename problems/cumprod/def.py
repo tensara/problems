@@ -3,27 +3,15 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from .solution import CumprodSolutions
 
-class cumprod(Problem):
+class cumprod(Problem, CumprodSolutions):
     """Cumulative product (prefix product) problem."""
     
     def __init__(self):
         super().__init__(
             name="cumprod"
         )
-    
-    def reference_solution(self, input_tensor: torch.Tensor) -> torch.Tensor:
-        """
-        PyTorch implementation of cumulative product.
-        
-        Args:
-            input_tensor: Input tensor of shape (N)
-            
-        Returns:
-            Cumulative product of the input tensor
-        """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            return torch.cumprod(input_tensor, dim=0)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

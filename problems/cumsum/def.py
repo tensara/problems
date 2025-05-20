@@ -3,27 +3,15 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from .solution import CumsumSolutions
 
-class cumsum(Problem):
+class cumsum(Problem, CumsumSolutions):
     """Cumulative sum (prefix sum) problem."""
     
     def __init__(self):
         super().__init__(
             name="cumsum"
         )
-    
-    def reference_solution(self, input_tensor: torch.Tensor) -> torch.Tensor:
-        """
-        PyTorch implementation of cumulative sum.
-        
-        Args:
-            input_tensor: Input tensor of shape (N)
-            
-        Returns:
-            Cumulative sum of the input tensor
-        """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            return torch.cumsum(input_tensor, dim=0)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

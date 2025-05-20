@@ -3,30 +3,16 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from .solution import EluSolutions
 
 
-class elu(Problem):
+class elu(Problem, EluSolutions):
     """ELU (Exponential Linear Unit) activation function problem."""
     
     def __init__(self):
         super().__init__(
             name="elu"
         )
-        self.alpha = 1.0  # Default alpha value for ELU
-    
-    def reference_solution(self, input_matrix: torch.Tensor) -> torch.Tensor:
-        """
-        PyTorch implementation of ELU.
-        
-        Args:
-            input_matrix: Input matrix of shape (M, N)
-            
-        Returns:
-            Result of ELU activation
-        """
-        with torch.no_grad():
-            return torch.nn.functional.elu(input_matrix, alpha=self.alpha)
-    
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """
         Generate test cases for ELU.

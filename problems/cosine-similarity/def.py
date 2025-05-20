@@ -3,28 +3,15 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from .solution import CosineSimilaritySolutions
 
-class cosine_similarity(Problem):
+class cosine_similarity(Problem, CosineSimilaritySolutions):
     """Cosine Similarity problem."""
     
     def __init__(self):
         super().__init__(
             name="cosine-similarity"
         )
-    
-    def reference_solution(self, predictions: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
-        """
-        PyTorch implementation of element-wise Cosine Similarity.
-        
-        Args:
-            predictions: Predictions tensor of shape (N, D)
-            targets: Targets tensor of shape (N, D)
-            
-        Returns:
-            Negative cosine similarity tensor of shape (N,)
-        """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            return 1 - torch.nn.functional.cosine_similarity(predictions, targets, dim=1)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

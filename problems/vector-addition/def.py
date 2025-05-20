@@ -3,28 +3,15 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from .solution import VectorAdditionSolutions
 
-class vector_addition(Problem):
+class vector_addition(Problem, VectorAdditionSolutions):
     """Vector addition problem."""
     
     def __init__(self):
         super().__init__(
             name="vector-addition"
         )
-    
-    def reference_solution(self, A: torch.Tensor, B: torch.Tensor) -> torch.Tensor:
-        """
-        PyTorch implementation of vector addition.
-        
-        Args:
-            A: First input tensor
-            B: Second input tensor
-            
-        Returns:
-            Result of A + B
-        """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            return A + B
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

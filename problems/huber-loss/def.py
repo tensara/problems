@@ -3,30 +3,16 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from .solution import HuberLossSolutions
 
 
-class huber_loss(Problem):
+class huber_loss(Problem, HuberLossSolutions):
     """Huber Loss (Smooth L1 Loss) problem."""
     
     def __init__(self):
         super().__init__(
             name="huber-loss"
         )
-    
-    def reference_solution(self, predictions: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
-        """
-        PyTorch implementation of element-wise Huber Loss (Smooth L1 Loss).
-        
-        Args:
-            predictions: Predictions tensor of shape (N,)
-            targets: Targets tensor of shape (N,)
-            
-        Returns:
-            Element-wise Huber loss tensor of shape (N,)
-        """
-        with torch.no_grad():
-            # Use reduction='none' to get element-wise loss
-            return torch.nn.functional.smooth_l1_loss(predictions, targets, reduction='none', beta=1.0)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

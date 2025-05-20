@@ -3,28 +3,16 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from tinygrad.tensor import Tensor
+from .solution import ArgmaxSolutions
 
-class argmax(Problem):
+class argmax(Problem, ArgmaxSolutions):
     """Argmax over dimension problem."""
     
     def __init__(self):
         super().__init__(
             name="argmax"
         )
-    
-    def reference_solution(self, input_tensor: torch.Tensor, dim: int) -> torch.Tensor:
-        """
-        PyTorch implementation of argmax over dimension.
-        
-        Args:
-            input_tensor: Input tensor of arbitrary shape
-            dim: Dimension to perform argmax over
-            
-        Returns:
-            Result of argmax operation
-        """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            return torch.argmax(input_tensor, dim=dim).to(torch.int32)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

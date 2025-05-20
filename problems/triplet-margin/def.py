@@ -3,41 +3,16 @@ import torch.nn as nn
 import ctypes
 from typing import List, Dict, Tuple, Any
 
-from problem import Problem 
+from problem import Problem
+from .solution import TripletMarginSolutions
 
-class triplet_margin(Problem):
+class triplet_margin(Problem, TripletMarginSolutions):
     """Triplet Margin Loss problem."""
 
     def __init__(self):
         super().__init__(
             name="triplet-margin"
         )
-        self.margin = 1.0  # Standard margin for TripletMarginLoss
-
-    def reference_solution(self, anchor: torch.Tensor, positive: torch.Tensor, negative: torch.Tensor) -> torch.Tensor:
-        """
-        PyTorch implementation of Triplet Margin Loss.
-
-        Args:
-            anchor (torch.Tensor): Anchor points, shape (batch_size, embedding_dim)
-            positive (torch.Tensor): Positive examples, shape (batch_size, embedding_dim)
-            negative (torch.Tensor): Negative examples, shape (batch_size, embedding_dim)
-
-        Returns:
-            torch.Tensor: Triplet loss value (scalar)
-        """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            # Use PyTorch's built-in TripletMarginLoss
-            loss_fn = nn.TripletMarginLoss(margin=self.margin)
-            
-            # Move to the same device as inputs
-            loss_fn = loss_fn.to(anchor.device)
-            
-            # Calculate the loss
-            loss = loss_fn(anchor, positive, negative)
-            
-            return loss
-
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """
         Generate test cases for Triplet Margin Loss.

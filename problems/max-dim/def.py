@@ -3,30 +3,16 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from .solution import MaxDimSolutions
 
 
-class max_dim(Problem):
+class max_dim(Problem, MaxDimSolutions):
     """Max over dimension problem."""
     
     def __init__(self):
         super().__init__(
             name="max-dim"
         )
-    
-    def reference_solution(self, input_tensor: torch.Tensor, dim: int) -> torch.Tensor:
-        """
-        PyTorch implementation of max over dimension.
-        
-        Args:
-            input_tensor: Input tensor of arbitrary shape
-            dim: Dimension to reduce over
-            
-        Returns:
-            Result of max reduction with keepdim=True (values only)
-        """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            # Get only the values, not the indices
-            return torch.max(input_tensor, dim=dim, keepdim=True)[0]
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

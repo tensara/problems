@@ -3,40 +3,16 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from tinygrad.tensor import Tensor
+from .solution import AvgPool2dSolutions
 
-class avg_pool_2d(Problem):
+class avg_pool_2d(Problem, AvgPool2dSolutions):
     """2D average pooling problem."""
     
     def __init__(self):
         super().__init__(
             name="avg-pool-2d"
         )
-    
-    def reference_solution(self, input_tensor: torch.Tensor, kernel_size: int, 
-                         stride: int, padding: int) -> torch.Tensor:
-        """
-        PyTorch implementation of 2D average pooling.
-        
-        Args:
-            input_tensor: Input tensor of shape (H, W)
-            kernel_size: Size of the pooling window
-            stride: Stride of the pooling window
-            padding: Padding to be applied before pooling
-            
-        Returns:
-            Result of average pooling
-        """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            input_reshaped = input_tensor.view(1, 1, input_tensor.size(0), input_tensor.size(1))
-            
-            result = torch.nn.functional.avg_pool2d(
-                input_reshaped,
-                kernel_size=kernel_size,
-                stride=stride,
-                padding=padding,
-            )
-            
-            return result.view(result.size(2), result.size(3))
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

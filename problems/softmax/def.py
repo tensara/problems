@@ -3,29 +3,16 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from .solution import SoftmaxSolutions
 
 
-class softmax(Problem):
+class softmax(Problem, SoftmaxSolutions):
     """Softmax function problem."""
     
     def __init__(self):
         super().__init__(
             name="softmax"
         )
-    
-    def reference_solution(self, input_tensor: torch.Tensor, dim: int) -> torch.Tensor:
-        """
-        PyTorch implementation of softmax function.
-        
-        Args:
-            input_tensor: Input tensor of arbitrary shape
-            dim: Dimension to compute softmax over
-            
-        Returns:
-            Softmax probabilities along the specified dimension
-        """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            return torch.nn.functional.softmax(input_tensor, dim=dim)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

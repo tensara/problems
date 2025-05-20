@@ -3,30 +3,16 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from .solution import MinDimSolutions
 
 
-class min_dim(Problem):
+class min_dim(Problem, MinDimSolutions):
     """Min over dimension problem."""
     
     def __init__(self):
         super().__init__(
             name="min-dim"
         )
-    
-    def reference_solution(self, input_tensor: torch.Tensor, dim: int) -> torch.Tensor:
-        """
-        PyTorch implementation of min over dimension.
-        
-        Args:
-            input_tensor: Input tensor of arbitrary shape
-            dim: Dimension to reduce over
-            
-        Returns:
-            Result of min reduction with keepdim=True (values only)
-        """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            # Get only the values, not the indices
-            return torch.min(input_tensor, dim=dim, keepdim=True)[0]
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

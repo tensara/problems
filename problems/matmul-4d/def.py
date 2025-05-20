@@ -3,29 +3,16 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from .solution import Matmul4dSolutions
 
 
-class matmul_4d(Problem):
+class matmul_4d(Problem, Matmul4dSolutions):
     """4D tensor-matrix multiplication problem."""
     
     def __init__(self):
         super().__init__(
             name="matmul-4d"
         )
-    
-    def reference_solution(self, A: torch.Tensor, B: torch.Tensor) -> torch.Tensor:
-        """
-        PyTorch implementation of 4D tensor-matrix multiplication.
-        
-        Args:
-            A: First input tensor of shape (b, i, j, l)
-            B: Second input matrix of shape (l, k)
-            
-        Returns:
-            Result of shape (b, i, j, k) from multiplying A and B along the last dimension of A
-        """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            return torch.einsum("bijl,lk->bijk", A, B)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

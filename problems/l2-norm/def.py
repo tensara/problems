@@ -3,36 +3,16 @@ import torch.nn as nn
 import ctypes
 from typing import List, Dict, Tuple, Any
 
-from problem import Problem 
+from problem import Problem
+from .solution import L2NormSolutions
 
-class l2_norm(Problem):
+class l2_norm(Problem, L2NormSolutions):
     """L2 Normalization problem."""
 
     def __init__(self):
         super().__init__(
             name="l2-norm"
         )
-        self.epsilon = 1e-10  # Small epsilon for numerical stability
-
-    def reference_solution(self, x: torch.Tensor) -> torch.Tensor:
-        """
-        PyTorch implementation of L2 Normalization.
-
-        Args:
-            x (torch.Tensor): Input tensor of shape (B, D)
-
-        Returns:
-            torch.Tensor: Output tensor with L2 Normalization applied, same shape as input.
-        """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            l2_norm = torch.norm(x, p=2, dim=1, keepdim=True)
-            
-            l2_norm = l2_norm + self.epsilon
-            
-            output = x / l2_norm
-            
-            return output
-
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """
         Generate test cases for L2 Normalization.

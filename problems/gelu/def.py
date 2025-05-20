@@ -3,28 +3,16 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from .solution import GeluSolutions
 
 
-class gelu(Problem):
+class gelu(Problem, GeluSolutions):
     """GELU activation function problem."""
     
     def __init__(self):
         super().__init__(
             name="gelu"
         )
-    
-    def reference_solution(self, input_matrix: torch.Tensor) -> torch.Tensor:
-        """
-        PyTorch implementation of GELU.
-        
-        Args:
-            input_matrix: Input matrix of shape (M, N)
-            
-        Returns:
-            Result of GELU activation
-        """
-        with torch.no_grad():
-            return torch.nn.functional.gelu(input_matrix)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

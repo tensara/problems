@@ -3,29 +3,16 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from .solution import MeanDimSolutions
 
 
-class mean_dim(Problem):
+class mean_dim(Problem, MeanDimSolutions):
     """Mean over dimension problem."""
     
     def __init__(self):
         super().__init__(
             name="mean-dim"
         )
-    
-    def reference_solution(self, input_tensor: torch.Tensor, dim: int) -> torch.Tensor:
-        """
-        PyTorch implementation of mean over dimension.
-        
-        Args:
-            input_tensor: Input tensor of arbitrary shape
-            dim: Dimension to reduce over
-            
-        Returns:
-            Result of mean reduction with keepdim=True
-        """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            return torch.mean(input_tensor, dim=dim, keepdim=True)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

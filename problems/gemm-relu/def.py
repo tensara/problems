@@ -3,38 +3,16 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from .solution import GemmReluSolutions
 
 
-class gemm_relu(Problem):
+class gemm_relu(Problem, GemmReluSolutions):
     """GEMM with Bias and ReLU problem."""
     
     def __init__(self):
         super().__init__(
             name="gemm-relu"
         )
-    
-    def reference_solution(self, input_matrix: torch.Tensor, weights: torch.Tensor, bias: torch.Tensor) -> torch.Tensor:
-        """
-        PyTorch implementation of GEMM with bias and ReLU.
-        
-        Args:
-            input_matrix: Input matrix of shape (B, N) (batch_size, input_features)
-            weights: Weight matrix of shape (M, N) (output_features, input_features)
-            bias: Bias vector of shape (M) (output_features)
-            
-        Returns:
-            Result of ReLU(input_matrix @ weights.T + bias)
-        """
-
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            # Matrix multiplication: (B, N) @ (N, M) -> (B, M)
-            result = torch.mm(input_matrix, weights.t())
-            # Add bias: (B, M) + (M) -> (B, M)
-            result = result + bias
-            # Apply ReLU activation
-            result = torch.relu(result)
-            
-            return result
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

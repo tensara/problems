@@ -3,29 +3,16 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from .solution import Matmul3dSolutions
 
 
-class matmul_3d(Problem):
+class matmul_3d(Problem, Matmul3dSolutions):
     """3D matrix multiplication problem."""
     
     def __init__(self):
         super().__init__(
             name="matmul-3d"
         )
-    
-    def reference_solution(self, A: torch.Tensor, B: torch.Tensor) -> torch.Tensor:
-        """
-        PyTorch implementation of 3D tensor-matrix multiplication.
-        
-        Args:
-            A: First input tensor of shape (N, M, K)
-            B: Second input matrix of shape (K, L)
-            
-        Returns:
-            Result of shape (N, M, L) from multiplying A and B along the last dimension of A
-        """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            return torch.matmul(A, B)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

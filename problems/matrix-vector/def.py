@@ -3,29 +3,16 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from .solution import MatrixVectorSolutions
 
 
-class matrix_vector(Problem):
+class matrix_vector(Problem, MatrixVectorSolutions):
     """Matrix vector multiplication problem."""
     
     def __init__(self):
         super().__init__(
             name="matrix-vector-multiplication"
         )
-    
-    def reference_solution(self, matrix: torch.Tensor, vector: torch.Tensor) -> torch.Tensor:
-        """
-        PyTorch implementation of matrix-vector multiplication.
-        
-        Args:
-            matrix: Input matrix of shape (M, K)
-            vector: Input vector of shape (K)
-            
-        Returns:
-            Result of matrix-vector multiplication of shape (M)
-        """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            return torch.matmul(matrix, vector)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

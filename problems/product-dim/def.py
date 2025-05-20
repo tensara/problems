@@ -3,29 +3,16 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from .solution import ProductDimSolutions
 
 
-class product_dim(Problem):
+class product_dim(Problem, ProductDimSolutions):
     """Product over dimension problem."""
     
     def __init__(self):
         super().__init__(
             name="product-dim"
         )
-    
-    def reference_solution(self, input_tensor: torch.Tensor, dim: int) -> torch.Tensor:
-        """
-        PyTorch implementation of product over dimension.
-        
-        Args:
-            input_tensor: Input tensor of arbitrary shape
-            dim: Dimension to reduce over
-            
-        Returns:
-            Result of product reduction with keepdim=True
-        """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            return torch.prod(input_tensor, dim=dim, keepdim=True)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

@@ -3,27 +3,15 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from .solution import SwishSolutions
 
-class swish(Problem):
+class swish(Problem, SwishSolutions):
     """Swish activation function problem."""
     
     def __init__(self):
         super().__init__(
             name="swish"
         )
-    
-    def reference_solution(self, input_matrix: torch.Tensor) -> torch.Tensor:
-        """
-        PyTorch implementation of Swish.
-        
-        Args:
-            input_matrix: Input matrix of shape (M, N)
-            
-        Returns:
-            Result of Swish activation
-        """
-        with torch.no_grad():
-            return input_matrix  * torch.sigmoid(input_matrix)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

@@ -3,37 +3,17 @@ import torch.nn as nn
 import ctypes
 from typing import List, Dict, Tuple, Any
 
-from problem import Problem 
+from problem import Problem
+from tinygrad.tensor import Tensor
+from .solution import BatchNormSolutions
 
-class batch_norm(Problem):
+class batch_norm(Problem, BatchNormSolutions):
     """Batch Normalization problem."""
 
     def __init__(self):
         super().__init__(
             name="batch-norm"
         )
-        self.epsilon = 1e-5  # Standard epsilon for BatchNorm
-
-    def reference_solution(self, x: torch.Tensor) -> torch.Tensor:
-        """
-        PyTorch implementation of Batch Normalization using nn.BatchNorm2d.
-
-        Args:
-            x (torch.Tensor): Input tensor of shape (B, F, D1, D2)
-
-        Returns:
-            torch.Tensor: Output tensor with Batch Normalization applied, same shape as input.
-        """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            # Create BatchNorm2d layer with no affine parameters and no running stats
-            bn = nn.BatchNorm2d(
-                num_features=x.size(1),  # F dimension
-                affine=False,  # No learnable parameters
-                track_running_stats=False,  # Don't track running stats
-                eps=self.epsilon
-            )
-            return bn(x)
-
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """
         Generate test cases for Batch Normalization.

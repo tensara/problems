@@ -3,36 +3,16 @@ import torch.nn as nn
 import ctypes
 from typing import List, Dict, Tuple, Any
 
-from problem import Problem 
+from problem import Problem
+from .solution import L1NormSolutions
 
-class l1_norm(Problem):
+class l1_norm(Problem, L1NormSolutions):
     """L1 Normalization problem."""
 
     def __init__(self):
         super().__init__(
             name="l1-norm"
         )
-        self.epsilon = 1e-10  # Small epsilon for numerical stability
-
-    def reference_solution(self, x: torch.Tensor) -> torch.Tensor:
-        """
-        PyTorch implementation of L1 Normalization.
-
-        Args:
-            x (torch.Tensor): Input tensor of shape (B, D)
-
-        Returns:
-            torch.Tensor: Output tensor with L1 Normalization applied, same shape as input.
-        """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            l1_norm = torch.sum(torch.abs(x), dim=1, keepdim=True)
-            
-            l1_norm = l1_norm + self.epsilon
-            
-            output = x / l1_norm
-            
-            return output
-
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """
         Generate test cases for L1 Normalization.

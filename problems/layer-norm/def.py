@@ -3,43 +3,16 @@ import torch.nn as nn
 import ctypes
 from typing import List, Dict, Tuple, Any
 
-from problem import Problem 
+from problem import Problem
+from .solution import LayerNormSolutions
 
-class layer_norm(Problem):
+class layer_norm(Problem, LayerNormSolutions):
     """Layer Normalization problem."""
 
     def __init__(self):
         super().__init__(
             name="layer-norm"
         )
-        self.epsilon = 1e-5 # Standard epsilon for LayerNorm
-
-    def reference_solution(self, x: torch.Tensor, gamma: torch.Tensor, beta: torch.Tensor) -> torch.Tensor:
-        """
-        PyTorch implementation of Layer Normalization.
-
-        Args:
-            x (torch.Tensor): Input tensor of shape (B, F, D1, D2)
-            gamma (torch.Tensor): Scale tensor of shape (F, D1, D2)
-            beta (torch.Tensor): Shift tensor of shape (F, D1, D2)
-
-        Returns:
-            torch.Tensor: Output tensor with Layer Normalization applied, same shape as input.
-        """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            # Normalize over the last 3 dimensions (F, D1, D2)
-            normalized_shape = x.shape[1:] 
-            
-            # Use torch.nn.functional.layer_norm
-            output = torch.nn.functional.layer_norm(
-                x, 
-                normalized_shape, 
-                weight=gamma, 
-                bias=beta, 
-                eps=self.epsilon
-            )
-            return output
-
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """
         Generate test cases for Layer Normalization.

@@ -3,27 +3,15 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from .solution import SoftPlusSolutions
 
-class soft_plus(Problem):
+class soft_plus(Problem, SoftPlusSolutions):
     """Softplus activation function problem."""
     
     def __init__(self):
         super().__init__(
             name="soft_plus"
         )
-    
-    def reference_solution(self, input_matrix: torch.Tensor) -> torch.Tensor:
-        """
-        PyTorch implementation of Softplus.
-        
-        Args:
-            input_matrix: Input matrix of shape (M, N)
-            
-        Returns:
-            Result of Softplus activation
-        """
-        with torch.no_grad():
-            return torch.nn.functional.softplus(input_matrix)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

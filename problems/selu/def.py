@@ -3,27 +3,15 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from .solution import SeluSolutions
 
-class selu(Problem):
+class selu(Problem, SeluSolutions):
     """SELU (Scaled Exponential Linear Unit) activation function problem."""
     
     def __init__(self):
         super().__init__(
             name="selu"
         )
-    
-    def reference_solution(self, input_matrix: torch.Tensor) -> torch.Tensor:
-        """
-        PyTorch implementation of SELU.
-        
-        Args:
-            input_matrix: Input matrix of shape (M, N)
-            
-        Returns:
-            Result of SELU activation
-        """
-        with torch.no_grad():
-            return torch.selu(input_matrix)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

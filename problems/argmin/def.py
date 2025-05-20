@@ -3,28 +3,16 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from tinygrad.tensor import Tensor
+from .solution import ArgminSolutions
 
-class argmin(Problem):
+class argmin(Problem, ArgminSolutions):
     """Argmin over dimension problem."""
     
     def __init__(self):
         super().__init__(
             name="argmin"
         )
-    
-    def reference_solution(self, input_tensor: torch.Tensor, dim: int) -> torch.Tensor:
-        """
-        PyTorch implementation of argmin over dimension.
-        
-        Args:
-            input_tensor: Input tensor of arbitrary shape
-            dim: Dimension to perform argmin over
-            
-        Returns:
-            Result of argmin operation
-        """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            return torch.argmin(input_tensor, dim=dim).to(torch.int32)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

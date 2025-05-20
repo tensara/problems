@@ -3,29 +3,17 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from .solution import SigmoidSolutions
 
 
 
-class sigmoid(Problem):
+class sigmoid(Problem, SigmoidSolutions):
     """Sigmoid activation function problem."""
     
     def __init__(self):
         super().__init__(
             name="sigmoid"
         )
-    
-    def reference_solution(self, input_matrix: torch.Tensor) -> torch.Tensor:
-        """
-        PyTorch implementation of Sigmoid.
-        
-        Args:
-            input_matrix: Input matrix of shape (M, N)
-            
-        Returns:
-            Result of Sigmoid activation
-        """
-        with torch.no_grad():
-            return torch.sigmoid(input_matrix)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

@@ -3,29 +3,16 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from .solution import HingeLossSolutions
 
 
-class hinge_loss(Problem):
+class hinge_loss(Problem, HingeLossSolutions):
     """Hinge Loss problem for binary classification."""
     
     def __init__(self):
         super().__init__(
             name="hinge-loss"
         )
-    
-    def reference_solution(self, predictions: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
-        """
-        PyTorch implementation of element-wise Hinge Loss.
-        
-        Args:
-            predictions: Predictions tensor of shape (N,)
-            targets: Binary targets tensor of shape (N,) with values in {-1, 1}
-            
-        Returns:
-            Element-wise hinge loss tensor of shape (N,)
-        """
-        with torch.no_grad():
-            return torch.clamp(1 - predictions * targets, min=0)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """

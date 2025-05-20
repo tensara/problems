@@ -3,40 +3,16 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from tinygrad.tensor import Tensor
+from .solution import AvgPool1dSolutions
 
-class avg_pool_1d(Problem):
+class avg_pool_1d(Problem, AvgPool1dSolutions):
     """1D average pooling problem."""
     
     def __init__(self):
         super().__init__(
             name="avg-pool-1d"
         )
-    
-    def reference_solution(self, input_tensor: torch.Tensor, kernel_size: int, 
-                         stride: int, padding: int) -> torch.Tensor:
-        """
-        PyTorch implementation of 1D average pooling.
-        
-        Args:
-            input_tensor: Input tensor of shape (H)
-            kernel_size: Size of the pooling window
-            stride: Stride of the pooling window
-            padding: Padding to be applied before pooling
-            
-        Returns:
-            Result of average pooling
-        """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            input_reshaped = input_tensor.view(1, 1, input_tensor.size(0))
-            
-            result = torch.nn.functional.avg_pool1d(
-                input_reshaped,
-                kernel_size=kernel_size,
-                stride=stride,
-                padding=padding,
-            )
-            
-            return result.view(result.size(2))
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """
