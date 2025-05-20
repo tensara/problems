@@ -1,5 +1,6 @@
 import torch
 from typing import List, Dict, Tuple, Any
+from tinygrad.tensor import Tensor
 
 class SymmetricMatmulSolutions:
     """Mixin class for symmetric matrix multiplication problem solutions."""
@@ -17,3 +18,17 @@ class SymmetricMatmulSolutions:
         """
         with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
             return torch.matmul(matrix_a, matrix_b)
+
+    def reference_tinygrad_solution(self, matrix_a: Tensor, matrix_b: Tensor) -> Tensor:
+        """
+        Tinygrad implementation of symmetric matrix multiplication.
+
+        Args:
+            matrix_a: First input matrix of shape (N, N) (expected to be symmetric)
+            matrix_b: Second input matrix of shape (N, N) (expected to be symmetric)
+
+        Returns:
+            Result of matrix multiplication of shape (N, N)
+        """
+        # Tinygrad's @ operator performs matrix multiplication
+        return matrix_a @ matrix_b

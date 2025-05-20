@@ -1,5 +1,6 @@
 import torch
 from typing import List, Dict, Tuple, Any
+from tinygrad.tensor import Tensor
 
 class LowerTrigMatmulSolutions:
     """Mixin class for lower triangular matrix multiplication problem solutions."""
@@ -23,3 +24,22 @@ class LowerTrigMatmulSolutions:
             # The product of two lower triangular matrices is lower triangular.
             # No need for an extra torch.tril on the result.
             return torch.matmul(A_tril, B_tril)
+
+    def reference_tinygrad_solution(self, A: Tensor, B: Tensor) -> Tensor:
+        """
+        Tinygrad implementation of lower triangular matrix multiplication.
+        Ensures inputs are lower triangular before multiplying.
+
+        Args:
+            A: First input matrix (expected to be lower triangular)
+            B: Second input matrix (expected to be lower triangular)
+
+        Returns:
+            Result of A * B (which will also be lower triangular)
+        """
+        # Ensure inputs are lower triangular
+        A_tril = A.tril()
+        B_tril = B.tril()
+        # The product of two lower triangular matrices is lower triangular.
+        # No need for an extra tril on the result.
+        return A_tril @ B_tril

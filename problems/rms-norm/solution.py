@@ -1,5 +1,6 @@
 import torch
 from typing import List, Dict, Tuple, Any
+from tinygrad.tensor import Tensor
 
 class RmsNormSolutions:
     """Mixin class for RMS Normalization problem solutions."""
@@ -26,3 +27,21 @@ class RmsNormSolutions:
             output = x / rms
 
             return output
+
+    def reference_tinygrad_solution(self, x: Tensor) -> Tensor:
+        """
+        Tinygrad implementation of RMS Normalization.
+
+        Args:
+            x (Tensor): Input tensor of arbitrary shape
+
+        Returns:
+            Tensor: Output tensor with RMS Normalization applied, same shape as input.
+        """
+        # Calculate the RMS along the feature dimension (dim=1)
+        rms = (x.pow(2).mean(axis=1, keepdim=True) + self.epsilon).sqrt()
+
+        # Normalize the input by dividing by the RMS
+        output = x / rms
+
+        return output

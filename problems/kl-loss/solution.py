@@ -1,5 +1,6 @@
 import torch
 from typing import List, Dict, Tuple, Any
+from tinygrad.tensor import Tensor
 
 class KlLossSolutions:
     """Mixin class for Kullback-Leibler Divergence problem solutions."""
@@ -30,3 +31,27 @@ class KlLossSolutions:
             element_wise_kl = torch.where(targets > 0, element_wise_kl, torch.zeros_like(element_wise_kl))
 
             return element_wise_kl
+
+    def reference_tinygrad_solution(self, predictions: Tensor, targets: Tensor) -> Tensor:
+        """
+        Tinygrad implementation of element-wise Kullback-Leibler Divergence.
+
+        Args:
+            predictions: Predictions tensor of shape (N,) representing a probability distribution
+            targets: Targets tensor of shape (N,) representing a probability distribution
+
+        Returns:
+            Element-wise KL divergence tensor of shape (N,)
+        """
+        # Add small epsilon to avoid numerical issues with log(0)
+        eps = 1e-10
+        pred_safe = predictions.clamp(eps)
+        target_safe = targets.clamp(eps)
+
+        # Compute element-wise KL divergence
+        element_wise_kl = target_safe * (target_safe.log() - pred_safe.log())
+
+        # Zero out elements where target is 0 (by convention)
+        element_wise_kl = element_wise_kl.where(targets > 0, 0)
+
+        return element_wise_kl

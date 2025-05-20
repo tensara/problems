@@ -1,5 +1,6 @@
 import torch
 from typing import List, Dict, Tuple, Any
+from tinygrad.tensor import Tensor
 
 class MatrixVectorSolutions:
     """Mixin class for matrix vector multiplication problem solutions."""
@@ -17,3 +18,17 @@ class MatrixVectorSolutions:
         """
         with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
             return torch.matmul(matrix, vector)
+
+    def reference_tinygrad_solution(self, matrix: Tensor, vector: Tensor) -> Tensor:
+        """
+        Tinygrad implementation of matrix-vector multiplication.
+
+        Args:
+            matrix: Input matrix of shape (M, K)
+            vector: Input vector of shape (K)
+
+        Returns:
+            Result of matrix-vector multiplication of shape (M)
+        """
+        # Tinygrad's @ operator performs matrix-vector multiplication
+        return matrix @ vector

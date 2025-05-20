@@ -1,5 +1,6 @@
 import torch
 from typing import List, Dict, Tuple, Any
+from tinygrad.tensor import Tensor
 
 class L1NormSolutions:
     """Mixin class for L1 Normalization problem solutions."""
@@ -24,3 +25,21 @@ class L1NormSolutions:
             output = x / l1_norm
 
             return output
+
+    def reference_tinygrad_solution(self, x: Tensor) -> Tensor:
+        """
+        Tinygrad implementation of L1 Normalization.
+
+        Args:
+            x (Tensor): Input tensor of shape (B, D)
+
+        Returns:
+            Tensor: Output tensor with L1 Normalization applied, same shape as input.
+        """
+        l1_norm = x.abs().sum(axis=1, keepdim=True)
+
+        l1_norm = l1_norm + self.epsilon
+
+        output = x / l1_norm
+
+        return output

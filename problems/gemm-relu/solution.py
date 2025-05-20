@@ -1,5 +1,6 @@
 import torch
 from typing import List, Dict, Tuple, Any
+from tinygrad.tensor import Tensor
 
 class GemmReluSolutions:
     """Mixin class for GEMM with Bias and ReLU problem solutions."""
@@ -26,3 +27,24 @@ class GemmReluSolutions:
             result = torch.relu(result)
 
             return result
+
+    def reference_tinygrad_solution(self, input_matrix: Tensor, weights: Tensor, bias: Tensor) -> Tensor:
+        """
+        Tinygrad implementation of GEMM with bias and ReLU.
+
+        Args:
+            input_matrix: Input matrix of shape (B, N) (batch_size, input_features)
+            weights: Weight matrix of shape (M, N) (output_features, input_features)
+            bias: Bias vector of shape (M) (output_features)
+
+        Returns:
+            Result of ReLU(input_matrix @ weights.T + bias)
+        """
+        # Matrix multiplication: (B, N) @ (N, M) -> (B, M)
+        result = input_matrix @ weights.T
+        # Add bias: (B, M) + (M) -> (B, M)
+        result = result + bias
+        # Apply ReLU activation
+        result = result.relu()
+
+        return result
