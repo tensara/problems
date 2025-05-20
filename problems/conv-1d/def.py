@@ -5,7 +5,7 @@ from typing import List, Dict, Tuple, Any
 from problem import Problem
 from .solution import Conv1dSolutions
 
-class conv_1d(Problem, Conv1dSolutions):
+class conv_1d(Conv1dSolutions, Problem):
     """1D convolution problem."""
     
     def __init__(self):

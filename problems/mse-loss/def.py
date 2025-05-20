@@ -4,7 +4,7 @@ from typing import List, Dict, Tuple, Any
 from problem import Problem
 from .solution import MseLossSolutions
 
-class mse_loss(Problem, MseLossSolutions):
+class mse_loss(MseLossSolutions, Problem):
     """Mean Squared Error loss problem."""
     
     def __init__(self):

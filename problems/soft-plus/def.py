@@ -5,7 +5,7 @@ from typing import List, Dict, Tuple, Any
 from problem import Problem
 from .solution import SoftPlusSolutions
 
-class soft_plus(Problem, SoftPlusSolutions):
+class soft_plus(SoftPlusSolutions, Problem):
     """Softplus activation function problem."""
     
     def __init__(self):

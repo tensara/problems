@@ -7,7 +7,7 @@ from .solution import ReluSolutions
 
 
 
-class relu(Problem, ReluSolutions):
+class relu(ReluSolutions, Problem):
     """ReLU activation function problem."""
     
     def __init__(self):

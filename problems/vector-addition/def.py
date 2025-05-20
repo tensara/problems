@@ -5,7 +5,7 @@ from typing import List, Dict, Tuple, Any
 from problem import Problem
 from .solution import VectorAdditionSolutions
 
-class vector_addition(Problem, VectorAdditionSolutions):
+class vector_addition(VectorAdditionSolutions, Problem):
     """Vector addition problem."""
     
     def __init__(self):

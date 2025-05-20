@@ -6,7 +6,7 @@ from problem import Problem
 from .solution import MatrixMultiplicationSolutions
 
 
-class matrix_multiplication(Problem, MatrixMultiplicationSolutions):
+class matrix_multiplication(MatrixMultiplicationSolutions, Problem):
     """Matrix multiplication problem."""
     
     def __init__(self):

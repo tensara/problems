@@ -6,7 +6,7 @@ from problem import Problem
 from .solution import UpperTrigMatmulSolutions
 
 
-class upper_trig_matmul(Problem, UpperTrigMatmulSolutions):
+class upper_trig_matmul(UpperTrigMatmulSolutions, Problem):
     """Upper triangular matrix multiplication problem."""
     
     def __init__(self):

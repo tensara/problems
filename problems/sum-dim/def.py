@@ -6,7 +6,7 @@ from problem import Problem
 from .solution import SumDimSolutions
 
 
-class sum_dim(Problem, SumDimSolutions):
+class sum_dim(SumDimSolutions, Problem):
     """Sum over dimension problem."""
     
     def __init__(self):

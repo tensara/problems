@@ -5,7 +5,7 @@ from typing import List, Dict, Tuple, Any
 from problem import Problem
 from .solution import HardSigmoidSolutions
 
-class hard_sigmoid(Problem, HardSigmoidSolutions):
+class hard_sigmoid(HardSigmoidSolutions, Problem):
     """Hard Sigmoid activation function problem."""
     
     def __init__(self):

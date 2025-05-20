@@ -5,7 +5,7 @@ from typing import List, Dict, Tuple, Any
 from problem import Problem
 from .solution import ConvSquare3dSolutions
 
-class conv_square_3d(Problem, ConvSquare3dSolutions):
+class conv_square_3d(ConvSquare3dSolutions, Problem):
     """3D convolution problem with square input and square kernel."""
     
     def __init__(self):

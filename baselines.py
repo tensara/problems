@@ -1,180 +1,241 @@
-# This script will generate Tinygrad baseline solutions for all problems.
-
 import os
 import glob
 import sys
-import os
-import ast
+import importlib.util
 import inspect
-import textwrap
+import torch
+import numpy as np
 
-# Add the root directory to sys.path to allow importing 'problem'
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+# Get the absolute path to the project root directory (where baselines.py is)
+project_root = os.path.abspath(os.path.dirname(__file__))
 
-from problem import Problem
+# Add the project root to sys.path if it's not already there
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+try:
+    from problem import Problem # Assuming problem.py is in the project root
+except ImportError as e:
+    print(f"CRITICAL: Failed to import 'Problem' class from 'problem.py'. Ensure 'problem.py' exists in project root: {project_root}")
+    print(f"Error details: {e}")
+    sys.exit(1)
 
 PROBLEMS_DIR = "problems"
-SOLUTION_FILENAME = "solution.py"
 
-def generate_tinygrad_solution(problem_dir):
-    """Generates the Tinygrad solution for a single problem."""
-    problem_name = os.path.basename(problem_dir)
-    def_file_path = os.path.join(problem_dir, "def.py")
-    problem_md_path = os.path.join(problem_dir, "problem.md")
-    solution_file_path = os.path.join(problem_dir, SOLUTION_FILENAME)
+def verify_problem_solutions(problem_dir_path):
+    problem_name = os.path.basename(problem_dir_path)
+    def_file_path = os.path.join(problem_dir_path, "def.py")
+    solution_file_path = os.path.join(problem_dir_path, "solution.py")
 
-    print(f"Generating Tinygrad solution for problem: {problem_name}")
+    print(f"\nVerifying solutions for problem: {problem_name}")
 
-    # Load problem definition module
+    if not os.path.exists(def_file_path):
+        print(f"  ERROR: def.py not found at {def_file_path}. Skipping {problem_name}.")
+        return
+    if not os.path.exists(solution_file_path):
+        print(f"  ERROR: solution.py not found at {solution_file_path}. This is required by def.py. Skipping {problem_name}.")
+        return
+
+    problem_instance = None
+    problem_class_loaded = False
+    def_module_name = f"problems.{problem_name}.def"
+    tinygrad_module_name = f"problems.{problem_name}.solution" # Define here for cleanup scope
+
     try:
-        import importlib.util # Explicitly import here
-        spec = importlib.util.spec_from_file_location("problem_definition", def_file_path)
-        module = importlib.util.module_from_spec(spec)
-        sys.modules[f"problem_definition_{problem_name}"] = module # Use unique name to avoid conflicts
-        spec.loader.exec_module(module)
+        spec = importlib.util.spec_from_file_location(def_module_name, def_file_path)
+        if spec is None or spec.loader is None:
+            print(f"  ERROR: Could not create module spec for {def_module_name} from {def_file_path}")
+            return
 
-        # Find the problem class dynamically
+        module = importlib.util.module_from_spec(spec)
+        module.__package__ = f"problems.{problem_name}"
+        
+        sys.modules[def_module_name] = module
+        print(f"  DEBUG: Executing module {def_module_name} from {def_file_path} with package {module.__package__}")
+        spec.loader.exec_module(module)
+        print(f"  DEBUG: Finished executing module {def_module_name}")
+
         problem_class = None
         for name, obj in inspect.getmembers(module):
             if inspect.isclass(obj) and issubclass(obj, Problem) and obj is not Problem:
                 problem_class = obj
                 break
-
+        
         if problem_class is None:
-            print(f"Error loading problem definition for {problem_name}: Could not find a class inheriting from Problem in {def_file_path}")
+            print(f"  ERROR: Could not find a class inheriting from Problem in {def_file_path}")
             return
 
-        problem_instance = problem_class()
-        reference_solution = problem_instance.reference_solution
-        # We might need to read problem_md_path for input/output specs, but let's start with def.py
-    except Exception as e:
-        print(f"Error loading problem definition for {problem_name}: {e}")
-        # If we can't load the problem definition, we can't generate a solution.
-        return
+        print(f"  DEBUG: Found problem_class: {problem_class.__name__} in module {module}")
+        print(f"  DEBUG: MRO for {problem_class.__name__}: {problem_class.mro()}")
 
-    # Get the source code of the reference solution
-    try:
-        source_code = inspect.getsource(reference_solution)
-    except Exception as e:
-        print(f"Error getting source code for {problem_name}: {e}")
-        return
+        # Check for reference_solution specifically on the class BEFORE instantiation
+        if hasattr(problem_class, 'reference_solution'):
+            method_obj = problem_class.reference_solution
+            print(f"  DEBUG: 'reference_solution' found in problem_class attributes. Type: {type(method_obj)}")
+            # Check if it's an abstract method directly on the class (won't show if overridden by concrete)
+            is_abstract = getattr(method_obj, '__isabstractmethod__', False)
+            print(f"  DEBUG: Is problem_class.reference_solution marked abstract? {is_abstract}")
+            if not is_abstract and callable(method_obj):
+                 # For a classmethod/staticmethod, check the underlying function if possible
+                if isinstance(method_obj, (classmethod, staticmethod)):
+                    is_abstract_on_func = getattr(method_obj.__func__, '__isabstractmethod__', False)
+                    print(f"  DEBUG: Underlying function for {type(method_obj)} is abstract? {is_abstract_on_func}")
+                print(f"  DEBUG: problem_class.reference_solution appears concrete and callable.")
+            elif is_abstract:
+                 print(f"  DEBUG: problem_class.reference_solution IS STILL ABSTRACT on the class object itself.")
+            else:
+                 print(f"  DEBUG: problem_class.reference_solution is present but not callable or has an issue.")
 
-    # Translate PyTorch to Tinygrad
-    tinygrad_code = translate_pytorch_to_tinygrad(source_code, problem_name)
-
-    if tinygrad_code is None:
-        print(f"Could not translate PyTorch solution for {problem_name}")
-        return
-
-
-    # Write the Tinygrad solution to file
-    try:
-        with open(solution_file_path, "w") as f:
-            f.write(tinygrad_code)
-        print(f"Generated {solution_file_path}")
-        # print(f"Generated content:\n{tinygrad_code}") # Optional: print generated content
-    except Exception as e:
-        print(f"Error writing solution file for {problem_name}: {e}")
-
-
-def translate_pytorch_to_tinygrad(pytorch_source_code: str, problem_name: str) -> str | None:
-    """
-    Translates PyTorch source code to Tinygrad source code.
-
-    Args:
-        pytorch_source_code: The source code of the PyTorch reference solution.
-        problem_name: The name of the problem.
-
-    Returns:
-        The generated Tinygrad source code as a string, or None if translation fails.
-    """
-    try:
-        # Dedent the source code before parsing
-        dedented_source_code = textwrap.dedent(pytorch_source_code)
-        # Parse the AST
-        tree = ast.parse(dedented_source_code)
-
-        # Find the function definition node
-        function_node = None
-        for node in ast.walk(tree):
-            if isinstance(node, ast.FunctionDef):
-                function_node = node
-                break
-
-        if function_node is None:
-            print("Could not find function definition in PyTorch source code.")
-            return None
-
-        # Basic AST traversal and translation
-        tinygrad_body_lines = []
-        translated = False
-        for node in ast.walk(function_node):
-            if isinstance(node, ast.Call):
-                # Handle torch.argmax
-                if isinstance(node.func, ast.Attribute) and \
-                   isinstance(node.func.value, ast.Name) and \
-                   node.func.value.id == 'torch' and node.func.attr == 'argmax':
-
-                    if len(node.args) >= 2:
-                        input_tensor_node = node.args[0]
-                        dim_node = node.args[1]
-
-                        # Assuming the input tensor is the first argument to the generated function
-                        input_tensor_name = "args[0]" # This needs to be more robust
-
-                        # Extract the dimension argument
-                        dim_arg = ast.unparse(dim_node)
-
-                        tinygrad_body_lines.append(f"input_tensor_tg = {input_tensor_name}")
-                        tinygrad_body_lines.append(f"dim = {dim_arg}") # Assuming dim is passed as an argument
-                        tinygrad_body_lines.append(f"return input_tensor_tg.argmax(axis=dim)")
-                        translated = True
-                        break # Assuming only one main operation for now
-
-        # Construct the Tinygrad function string
-        header = f"""# Tinygrad baseline solution for {problem_name}
-
-from tinygrad.tensor import Tensor
-
-def {problem_name}_tinygrad(*args):
-    # This is a generated Tinygrad baseline solution.
-    # The implementation is based on the PyTorch reference solution.
-
-    # The reference solution can be accessed via the 'reference_solution' variable
-    # if the problem definition was loaded successfully.
-"""
-
-        if translated:
-            # Indent the body lines
-            indented_body = textwrap.indent("\n".join(tinygrad_body_lines), "    ")
-            tinygrad_code = header + "\n" + indented_body + "\n"
         else:
-             # Placeholder for untranslated problems
-             placeholder_body = f"""
-    # TODO: Implement the translation from the PyTorch reference solution to Tinygrad.
-    # The reference solution can be accessed via the 'reference_solution' variable
-    # if the problem definition was loaded successfully.
-
-    raise NotImplementedError(f"Tinygrad solution not yet automatically translated for {{problem_name}}")
-"""
-             indented_placeholder_body = textwrap.indent(placeholder_body, "    ")
-             tinygrad_code = header + "\n" + indented_placeholder_body + "\n"
+            print(f"  DEBUG: 'reference_solution' NOT FOUND in problem_class attributes/MRO directly via hasattr.")
 
 
-        return tinygrad_code
+        problem_instance = problem_class() # <<<< THIS IS WHERE THE ORIGINAL ERROR OCCURS
+        problem_class_loaded = True
+        print(f"  DEBUG: Successfully instantiated {problem_class.__name__}")
 
-    except Exception as e:
-        print(f"Error during PyTorch to Tinygrad translation for {problem_name}: {e}")
-        return None
+
+    except ImportError as e_exec:
+        print(f"  ERROR: ImportError during loading of {def_module_name} (possibly from '.solution'): {e_exec}")
+        return
+    except Exception as e: # This catches the TypeError during problem_class()
+        print(f"  ERROR: Error processing problem definition for {problem_name} from {def_file_path}: {e}")
+        import traceback
+        traceback.print_exc() # Print full traceback for this error
+        return
+    # finally:
+        # Module cleanup is now at the end of the main verify_problem_solutions function
+
+    if not problem_class_loaded or problem_instance is None:
+        print(f"  Skipping {problem_name} due to previous errors in loading its definition.")
+        return
+
+    # --- Solution loading and verification ---
+    tinygrad_solution_func = None
+    try:
+        # Try to get reference_tinygrad_solution from the instance first
+        if hasattr(problem_instance, 'reference_tinygrad_solution') and callable(problem_instance.reference_tinygrad_solution):
+            tinygrad_solution_func = problem_instance.reference_tinygrad_solution
+            print(f"  DEBUG: Found 'reference_tinygrad_solution' method on problem_instance.")
+        else:
+            print(f"  DEBUG: 'reference_tinygrad_solution' not found as a callable method on problem_instance. Will try loading solution module separately.")
+            # Fallback: Load solution.py module to find the function (less ideal if it's a method)
+            spec_sol = importlib.util.spec_from_file_location(tinygrad_module_name, solution_file_path)
+            if spec_sol is None or spec_sol.loader is None:
+                print(f"  ERROR: Could not create module spec for {tinygrad_module_name} from {solution_file_path}")
+            else:
+                tinygrad_module = importlib.util.module_from_spec(spec_sol)
+                tinygrad_module.__package__ = f"problems.{problem_name}"
+                sys.modules[tinygrad_module_name] = tinygrad_module
+                spec_sol.loader.exec_module(tinygrad_module)
+                print(f"  DEBUG: Loaded solution module {tinygrad_module_name}")
+
+                # Attempt to find a suitable function in the loaded solution module
+                for name, obj in inspect.getmembers(tinygrad_module):
+                    if inspect.isfunction(obj) and "tinygrad" in name.lower():
+                        tinygrad_solution_func = obj
+                        print(f"  DEBUG: Found potential tinygrad solution function in module: {name}")
+                        break
+                if tinygrad_solution_func is None: # Last resort for single function in module
+                    defined_functions = [obj for name, obj in inspect.getmembers(tinygrad_module) if inspect.isfunction(obj) and inspect.getmodule(obj) is tinygrad_module]
+                    if len(defined_functions) == 1:
+                        tinygrad_solution_func = defined_functions[0]
+                        print(f"  DEBUG: Using the only defined function in solution module: {tinygrad_solution_func.__name__}")
+
+
+        if tinygrad_solution_func is None:
+            print(f"  WARNING: Could not find tinygrad solution function for {problem_name}. Skipping tinygrad verification.")
+        else:
+            # --- Test case generation and verification ---
+            dtypes = [torch.float32] # Using only float32 for brevity now, add torch.float64 if needed
+            for dtype in dtypes:
+                print(f"    Testing with dtype: {dtype}")
+                try:
+                    test_cases_params = problem_instance.generate_test_cases(dtype)
+                except NotImplementedError:
+                    print(f"      generate_test_cases not implemented for {problem_name}. Skipping.")
+                    continue
+                except Exception as e_test_gen:
+                    print(f"      Error generating test cases for {problem_name} with dtype {dtype}: {e_test_gen}")
+                    continue
+
+                if not test_cases_params:
+                    print(f"      No test cases generated for {problem_name} with dtype {dtype}.")
+                    continue
+
+                for i, case_params in enumerate(test_cases_params):
+                    case_name = case_params.get("name", f"Unnamed Case {i+1}")
+                    print(f"      Test Case: {case_name}")
+                    try:
+                        inputs_tuple = case_params["create_inputs"]()
+                        
+                        ref_inputs_torch = [val.clone().cpu() if isinstance(val, torch.Tensor) else val for val in inputs_tuple]
+                        
+                        # Prepare inputs for tinygrad - this needs to be specific
+                        # Assuming tinygrad function expects torch tensors as input based on ArgmaxSolutions example
+                        # If it expects tinygrad.Tensor, conversion is needed here.
+                        tinygrad_inputs_torch = [val.clone().cpu() if isinstance(val, torch.Tensor) else val for val in inputs_tuple]
+
+                        ref_output = problem_instance.reference_solution(*ref_inputs_torch)
+                        tinygrad_output_val = tinygrad_solution_func(*tinygrad_inputs_torch)
+
+                        ref_output_np = ref_output.detach().cpu().numpy() if isinstance(ref_output, torch.Tensor) else np.array(ref_output)
+                        
+                        if isinstance(tinygrad_output_val, torch.Tensor):
+                            tinygrad_output_np = tinygrad_output_val.detach().cpu().numpy()
+                        elif hasattr(tinygrad_output_val, 'numpy'): # For tinygrad.Tensor
+                            tinygrad_output_np = tinygrad_output_val.numpy()
+                        else:
+                            tinygrad_output_np = np.array(tinygrad_output_val)
+
+                        tolerance = {torch.float32: 1e-5, torch.float64: 1e-8}.get(dtype, 1e-5)
+                        outputs_match = np.allclose(ref_output_np, tinygrad_output_np, atol=tolerance, rtol=tolerance)
+
+                        result_str = "MATCH" if outputs_match else "DO NOT MATCH"
+                        print(f"        Reference vs Tinygrad: {result_str}")
+                        if not outputs_match:
+                             print(f"          Max Diff: {np.max(np.abs(ref_output_np - tinygrad_output_np)) if ref_output_np.shape == tinygrad_output_np.shape else 'Shape Mismatch'}")
+
+
+                    except Exception as e_verify:
+                        print(f"        Error during verification of test case {case_name}: {e_verify}")
+                        import traceback
+                        traceback.print_exc()
+    
+    except Exception as e_outer_sol: # Catch errors related to solution module loading if any part fails
+        print(f"  ERROR: Outer error related to solution processing for {problem_name}: {e_outer_sol}")
+        import traceback
+        traceback.print_exc()
+
+
+    # Clean up modules from sys.modules to prevent side-effects for subsequent problem loadings
+    if def_module_name in sys.modules:
+        del sys.modules[def_module_name]
+        print(f"  DEBUG: Unloaded module {def_module_name}")
+    if tinygrad_module_name in sys.modules:
+        del sys.modules[tinygrad_module_name]
+        print(f"  DEBUG: Unloaded module {tinygrad_module_name}")
 
 
 def main():
-    """Main function to iterate through problems and generate solutions."""
-    problem_dirs = glob.glob(os.path.join(PROBLEMS_DIR, "*"))
+    abs_problems_dir = os.path.join(project_root, PROBLEMS_DIR)
+    problem_dirs_glob = glob.glob(os.path.join(abs_problems_dir, "*"))
 
-    for problem_dir in problem_dirs:
-        if os.path.isdir(problem_dir):
-            generate_tinygrad_solution(problem_dir)
+    if not problem_dirs_glob:
+        print(f"No problem directories found in {abs_problems_dir}. Please check the PROBLEMS_DIR path and directory structure.")
+        return
+
+    # Filter out files, keep only directories
+    problem_dirs_list = sorted([p for p in problem_dirs_glob if os.path.isdir(p)])
+    
+    if not problem_dirs_list:
+        print(f"No actual problem sub-directories found in {abs_problems_dir}.")
+        return
+
+    for problem_dir_path_item in problem_dirs_list:
+        verify_problem_solutions(problem_dir_path_item)
 
 if __name__ == "__main__":
+    print(f"Python sys.path[0]: {sys.path[0]}")
+    print(f"Project root used for imports: {project_root}")
     main()

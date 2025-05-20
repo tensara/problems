@@ -7,7 +7,7 @@ from .solution import TanhSolutions
 
 
 
-class tanh(Problem, TanhSolutions):
+class tanh(TanhSolutions, Problem):
     """Tanh activation function problem."""
     
     def __init__(self):

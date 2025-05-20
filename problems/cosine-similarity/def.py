@@ -5,7 +5,7 @@ from typing import List, Dict, Tuple, Any
 from problem import Problem
 from .solution import CosineSimilaritySolutions
 
-class cosine_similarity(Problem, CosineSimilaritySolutions):
+class cosine_similarity(CosineSimilaritySolutions, Problem):
     """Cosine Similarity problem."""
     
     def __init__(self):

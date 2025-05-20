@@ -5,7 +5,7 @@ from typing import List, Dict, Tuple, Any
 from problem import Problem
 from .solution import SeluSolutions
 
-class selu(Problem, SeluSolutions):
+class selu(SeluSolutions, Problem):
     """SELU (Scaled Exponential Linear Unit) activation function problem."""
     
     def __init__(self):

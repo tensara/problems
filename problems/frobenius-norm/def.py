@@ -6,7 +6,7 @@ from typing import List, Dict, Tuple, Any
 from problem import Problem
 from .solution import FrobeniusNormSolutions
 
-class frobenius_norm(Problem, FrobeniusNormSolutions):
+class frobenius_norm(FrobeniusNormSolutions, Problem):
     """Frobenius Normalization problem."""
 
     def __init__(self):

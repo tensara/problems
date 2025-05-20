@@ -6,7 +6,7 @@ from typing import List, Dict, Tuple, Any
 from problem import Problem
 from .solution import L1NormSolutions
 
-class l1_norm(Problem, L1NormSolutions):
+class l1_norm(L1NormSolutions, Problem):
     """L1 Normalization problem."""
 
     def __init__(self):

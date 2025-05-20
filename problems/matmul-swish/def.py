@@ -6,7 +6,7 @@ from problem import Problem
 from .solution import MatmulSwishSolutions
 
 
-class matmul_swish(Problem, MatmulSwishSolutions):
+class matmul_swish(MatmulSwishSolutions, Problem):
     """Matrix multiplication with Swish activation problem."""
     
     def __init__(self):

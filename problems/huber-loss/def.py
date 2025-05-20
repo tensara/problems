@@ -6,7 +6,7 @@ from problem import Problem
 from .solution import HuberLossSolutions
 
 
-class huber_loss(Problem, HuberLossSolutions):
+class huber_loss(HuberLossSolutions, Problem):
     """Huber Loss (Smooth L1 Loss) problem."""
     
     def __init__(self):

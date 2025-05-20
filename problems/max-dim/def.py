@@ -6,7 +6,7 @@ from problem import Problem
 from .solution import MaxDimSolutions
 
 
-class max_dim(Problem, MaxDimSolutions):
+class max_dim(MaxDimSolutions, Problem):
     """Max over dimension problem."""
     
     def __init__(self):

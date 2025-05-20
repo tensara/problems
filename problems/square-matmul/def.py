@@ -6,7 +6,7 @@ from problem import Problem
 from .solution import SquareMatmulSolutions
 
 
-class square_matmul(Problem, SquareMatmulSolutions):
+class square_matmul(SquareMatmulSolutions, Problem):
     """Square matrix multiplication problem."""
     
     def __init__(self):

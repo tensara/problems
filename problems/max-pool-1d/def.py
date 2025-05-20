@@ -4,7 +4,7 @@ from typing import List, Dict, Tuple, Any
 from problem import Problem
 from .solution import MaxPool1dSolutions
 
-class max_pool_1d(Problem, MaxPool1dSolutions):
+class max_pool_1d(MaxPool1dSolutions, Problem):
     """1D max pooling problem."""
     
     def __init__(self):

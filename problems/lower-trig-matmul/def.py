@@ -6,7 +6,7 @@ from problem import Problem
 from .solution import LowerTrigMatmulSolutions
 
 
-class lower_trig_matmul(Problem, LowerTrigMatmulSolutions):
+class lower_trig_matmul(LowerTrigMatmulSolutions, Problem):
     """Lower triangular matrix multiplication problem."""
     
     def __init__(self):

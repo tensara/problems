@@ -6,7 +6,7 @@ from problem import Problem
 from .solution import KlLossSolutions
 
 
-class kl_loss(Problem, KlLossSolutions):
+class kl_loss(KlLossSolutions, Problem):
     """Kullback-Leibler Divergence problem."""
     
     def __init__(self):

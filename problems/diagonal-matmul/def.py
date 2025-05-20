@@ -5,7 +5,7 @@ from typing import List, Dict, Tuple, Any
 from problem import Problem
 from .solution import DiagonalMatmulSolutions
 
-class diagonal_matmul(Problem, DiagonalMatmulSolutions):
+class diagonal_matmul(DiagonalMatmulSolutions, Problem):
     """Diagonal matrix multiplication problem."""
     
     def __init__(self):

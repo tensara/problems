@@ -6,7 +6,7 @@ from typing import List, Dict, Tuple, Any
 from problem import Problem
 from .solution import TripletMarginSolutions
 
-class triplet_margin(Problem, TripletMarginSolutions):
+class triplet_margin(TripletMarginSolutions, Problem):
     """Triplet Margin Loss problem."""
 
     def __init__(self):

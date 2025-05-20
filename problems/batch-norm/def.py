@@ -7,7 +7,7 @@ from problem import Problem
 from tinygrad.tensor import Tensor
 from .solution import BatchNormSolutions
 
-class batch_norm(Problem, BatchNormSolutions):
+class batch_norm(BatchNormSolutions, Problem):
     """Batch Normalization problem."""
 
     def __init__(self):

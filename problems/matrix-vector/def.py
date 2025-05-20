@@ -6,7 +6,7 @@ from problem import Problem
 from .solution import MatrixVectorSolutions
 
 
-class matrix_vector(Problem, MatrixVectorSolutions):
+class matrix_vector(MatrixVectorSolutions, Problem):
     """Matrix vector multiplication problem."""
     
     def __init__(self):

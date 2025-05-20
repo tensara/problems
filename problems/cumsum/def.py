@@ -5,7 +5,7 @@ from typing import List, Dict, Tuple, Any
 from problem import Problem
 from .solution import CumsumSolutions
 
-class cumsum(Problem, CumsumSolutions):
+class cumsum(CumsumSolutions, Problem):
     """Cumulative sum (prefix sum) problem."""
     
     def __init__(self):

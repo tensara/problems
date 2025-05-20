@@ -6,7 +6,7 @@ from problem import Problem
 from .solution import GemmReluSolutions
 
 
-class gemm_relu(Problem, GemmReluSolutions):
+class gemm_relu(GemmReluSolutions, Problem):
     """GEMM with Bias and ReLU problem."""
     
     def __init__(self):

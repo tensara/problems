@@ -6,7 +6,7 @@ from problem import Problem
 from tinygrad.tensor import Tensor
 from .solution import ArgmaxSolutions
 
-class argmax(Problem, ArgmaxSolutions):
+class argmax(ArgmaxSolutions, Problem):
     """Argmax over dimension problem."""
     
     def __init__(self):

@@ -6,7 +6,7 @@ from problem import Problem
 from .solution import ProductDimSolutions
 
 
-class product_dim(Problem, ProductDimSolutions):
+class product_dim(ProductDimSolutions, Problem):
     """Product over dimension problem."""
     
     def __init__(self):

@@ -6,7 +6,7 @@ from problem import Problem
 from .solution import Matmul4dSolutions
 
 
-class matmul_4d(Problem, Matmul4dSolutions):
+class matmul_4d(Matmul4dSolutions, Problem):
     """4D tensor-matrix multiplication problem."""
     
     def __init__(self):

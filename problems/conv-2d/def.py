@@ -5,7 +5,7 @@ from typing import List, Dict, Tuple, Any
 from problem import Problem
 from .solution import Conv2dSolutions
 
-class conv_2d(Problem, Conv2dSolutions):
+class conv_2d(Conv2dSolutions, Problem):
     """2D convolution problem."""
     
     def __init__(self):

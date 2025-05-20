@@ -6,7 +6,7 @@ from problem import Problem
 from tinygrad.tensor import Tensor
 from .solution import ArgminSolutions
 
-class argmin(Problem, ArgminSolutions):
+class argmin(ArgminSolutions, Problem):
     """Argmin over dimension problem."""
     
     def __init__(self):

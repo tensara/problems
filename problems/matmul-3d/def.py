@@ -6,7 +6,7 @@ from problem import Problem
 from .solution import Matmul3dSolutions
 
 
-class matmul_3d(Problem, Matmul3dSolutions):
+class matmul_3d(Matmul3dSolutions, Problem):
     """3D matrix multiplication problem."""
     
     def __init__(self):

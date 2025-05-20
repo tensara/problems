@@ -6,7 +6,7 @@ from problem import Problem
 from .solution import MeanDimSolutions
 
 
-class mean_dim(Problem, MeanDimSolutions):
+class mean_dim(MeanDimSolutions, Problem):
     """Mean over dimension problem."""
     
     def __init__(self):

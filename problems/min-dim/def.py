@@ -6,7 +6,7 @@ from problem import Problem
 from .solution import MinDimSolutions
 
 
-class min_dim(Problem, MinDimSolutions):
+class min_dim(MinDimSolutions, Problem):
     """Min over dimension problem."""
     
     def __init__(self):

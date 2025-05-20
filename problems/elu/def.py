@@ -6,7 +6,7 @@ from problem import Problem
 from .solution import EluSolutions
 
 
-class elu(Problem, EluSolutions):
+class elu(EluSolutions, Problem):
     """ELU (Exponential Linear Unit) activation function problem."""
     
     def __init__(self):

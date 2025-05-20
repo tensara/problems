@@ -6,7 +6,7 @@ from problem import Problem
 from .solution import SoftmaxSolutions
 
 
-class softmax(Problem, SoftmaxSolutions):
+class softmax(SoftmaxSolutions, Problem):
     """Softmax function problem."""
     
     def __init__(self):

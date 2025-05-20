@@ -6,7 +6,7 @@ from problem import Problem
 from .solution import SymmetricMatmulSolutions
 
 
-class symmetric_matmul(Problem, SymmetricMatmulSolutions):
+class symmetric_matmul(SymmetricMatmulSolutions, Problem):
     """Symmetric matrix multiplication problem."""
     
     def __init__(self):

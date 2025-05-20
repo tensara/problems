@@ -6,7 +6,7 @@ from problem import Problem
 from tinygrad.tensor import Tensor
 from .solution import AvgPool3dSolutions
 
-class avg_pool_3d(Problem, AvgPool3dSolutions):
+class avg_pool_3d(AvgPool3dSolutions, Problem):
     """3D average pooling problem."""
     
     def __init__(self):

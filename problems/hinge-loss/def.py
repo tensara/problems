@@ -6,7 +6,7 @@ from problem import Problem
 from .solution import HingeLossSolutions
 
 
-class hinge_loss(Problem, HingeLossSolutions):
+class hinge_loss(HingeLossSolutions, Problem):
     """Hinge Loss problem for binary classification."""
     
     def __init__(self):

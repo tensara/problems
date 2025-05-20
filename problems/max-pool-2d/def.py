@@ -6,7 +6,7 @@ from problem import Problem
 from .solution import MaxPool2dSolutions
 
 
-class max_pool_2d(Problem, MaxPool2dSolutions):
+class max_pool_2d(MaxPool2dSolutions, Problem):
     """2D max pooling problem."""
     
     def __init__(self):

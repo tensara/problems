@@ -5,7 +5,7 @@ from typing import List, Dict, Tuple, Any
 from problem import Problem
 from .solution import SwishSolutions
 
-class swish(Problem, SwishSolutions):
+class swish(SwishSolutions, Problem):
     """Swish activation function problem."""
     
     def __init__(self):

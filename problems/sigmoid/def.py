@@ -7,7 +7,7 @@ from .solution import SigmoidSolutions
 
 
 
-class sigmoid(Problem, SigmoidSolutions):
+class sigmoid(SigmoidSolutions, Problem):
     """Sigmoid activation function problem."""
     
     def __init__(self):

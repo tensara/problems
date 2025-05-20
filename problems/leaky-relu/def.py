@@ -6,7 +6,7 @@ from problem import Problem
 from .solution import LeakyReluSolutions
 
 
-class leaky_relu(Problem, LeakyReluSolutions):
+class leaky_relu(LeakyReluSolutions, Problem):
     """Leaky ReLU activation function problem."""
     
     def __init__(self):

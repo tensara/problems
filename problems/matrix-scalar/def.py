@@ -6,7 +6,7 @@ from problem import Problem
 from .solution import MatrixScalarSolutions
 
 
-class matrix_scalar(Problem, MatrixScalarSolutions):
+class matrix_scalar(MatrixScalarSolutions, Problem):
     """Matrix scalar multiplication problem."""
     
     def __init__(self):
