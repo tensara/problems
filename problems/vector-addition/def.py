@@ -54,7 +54,25 @@ class vector_addition(Problem):
             }
             for name, size in sizes
         ]
-    
+
+    def generate_sample(self, dtype: torch.dtype = torch.float32) -> Dict[str, Any]:
+        """
+        Generate a single sample test case for debugging or interactive runs.
+        
+        Returns:
+            A single test case dictionary
+        """
+        name = "Sample (n = 8)"
+        size = 8 
+        return {
+            "name": name,
+            "dims": (size,),
+            "create_inputs": lambda: (
+                torch.tensor([1.0, 2.0, 3.0, 4.0, -1.0, -2.0, 0.0, 0.5], device="cuda", dtype=dtype),
+                torch.tensor([0.5, -1.0, 1.0, 0.0, 1.0, -1.0, 0.5, 2.0], device="cuda", dtype=dtype),
+            )
+        }
+ 
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """
