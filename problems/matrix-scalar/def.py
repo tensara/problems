@@ -50,6 +50,39 @@ class matrix_scalar(Problem):
             for scalar in scalars
         ]
     
+    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+        """
+        Generate sample test cases for matrix scalar multiplication with predictable inputs.
+
+        Returns:
+            List of sample test case dictionaries.
+        """
+        sample_cases = [
+            {
+                "name": "3x3_scalar_2.0",
+                "size": 3,
+                "scalar": 2.0
+            },
+            {
+                "name": "4x4_scalar_-0.5",
+                "size": 4,
+                "scalar": -0.5
+            }
+        ]
+
+        return [
+            {
+                "name": case["name"],
+                "size": case["size"],
+                "scalar": case["scalar"],
+                "create_inputs": lambda size_val=case["size"], scalar_val=case["scalar"], dtype_val=dtype: (
+                    torch.arange(size_val * size_val, device="cuda", dtype=dtype_val).reshape(size_val, size_val) / (size_val * size_val),
+                    scalar_val
+                )
+            }
+            for case in sample_cases
+        ]
+    
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """

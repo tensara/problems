@@ -74,6 +74,63 @@ class max_pool_2d(Problem):
             for h, w, k, s, p, d in test_configs
         ]
     
+    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+        """
+        Generate sample test cases for 2D max pooling with predictable inputs.
+
+        Returns:
+            List of sample test case dictionaries.
+        """
+        sample_configs = [
+            {
+                "name": "sample_basic_3x3",
+                "height": 5,
+                "width": 5,
+                "kernel_size": 3,
+                "stride": 1,
+                "padding": 0,
+                "dilation": 1
+            },
+            {
+                "name": "sample_padding_stride_2x2",
+                "height": 6,
+                "width": 6,
+                "kernel_size": 2,
+                "stride": 2,
+                "padding": 1,
+                "dilation": 1
+            },
+            {
+                "name": "sample_dilation_4x4",
+                "height": 7,
+                "width": 7,
+                "kernel_size": 4,
+                "stride": 1,
+                "padding": 0,
+                "dilation": 2 # Effective kernel size will be 4 + (4-1)*(2-1) = 7
+            }
+        ]
+
+        return [
+            {
+                "name": config["name"],
+                "height": config["height"],
+                "width": config["width"],
+                "kernel_size": config["kernel_size"],
+                "stride": config["stride"],
+                "padding": config["padding"],
+                "dilation": config["dilation"],
+                "create_inputs": lambda h_val=config["height"], w_val=config["width"], k_val=config["kernel_size"], s_val=config["stride"], p_val=config["padding"], d_val=config["dilation"], dtype_val=dtype: (
+                    torch.arange(h_val * w_val, device="cuda", dtype=dtype_val).reshape(h_val, w_val) / (h_val * w_val),
+                    k_val, 
+                    s_val, 
+                    p_val, 
+                    d_val
+                )
+            }
+            for config in sample_configs
+        ]
+    
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """

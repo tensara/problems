@@ -73,6 +73,26 @@ class conv_1d(Problem):
             for signal_size, kernel_size in test_configs
         ]
     
+    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+        """
+        Generate a single sample test case for debugging or interactive runs.
+        
+        Returns:
+            A list containing a single test case dictionary
+        """
+        signal_size, kernel_size = (16, 3) # Sample configuration (kernel size must be odd)
+        return [
+            {
+                "name": f"N={signal_size}, K={kernel_size}",
+                "signal_size": signal_size,
+                "kernel_size": kernel_size,
+                "create_inputs": lambda s=signal_size, k=kernel_size: (
+                    torch.arange(1, s + 1, device="cuda", dtype=dtype).float(), # Sequential input
+                    torch.tensor([1.0, 2.0, 1.0], device="cuda", dtype=dtype) # Simple kernel for easy verification
+                )
+            }
+        ]
+    
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """

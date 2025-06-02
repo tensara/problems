@@ -73,6 +73,59 @@ class max_pool_1d(Problem):
             for h, k, s, p, d in test_configs
         ]
     
+    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+        """
+        Generate sample test cases for 1D max pooling with predictable inputs.
+
+        Returns:
+            List of sample test case dictionaries.
+        """
+        sample_configs = [
+            {
+                "name": "sample_basic",
+                "size": 10,
+                "kernel_size": 3,
+                "stride": 1,
+                "padding": 0,
+                "dilation": 1
+            },
+            {
+                "name": "sample_padding_stride",
+                "size": 12,
+                "kernel_size": 4,
+                "stride": 2,
+                "padding": 1,
+                "dilation": 1
+            },
+            {
+                "name": "sample_dilation",
+                "size": 15,
+                "kernel_size": 3,
+                "stride": 1,
+                "padding": 0,
+                "dilation": 2
+            }
+        ]
+
+        return [
+            {
+                "name": config["name"],
+                "size": config["size"],
+                "kernel_size": config["kernel_size"],
+                "stride": config["stride"],
+                "padding": config["padding"],
+                "dilation": config["dilation"],
+                "create_inputs": lambda size_val=config["size"], k_val=config["kernel_size"], s_val=config["stride"], p_val=config["padding"], d_val=config["dilation"], dtype_val=dtype: (
+                    torch.arange(size_val, device="cuda", dtype=dtype_val) / size_val,
+                    k_val,
+                    s_val,
+                    p_val,
+                    d_val
+                )
+            }
+            for config in sample_configs
+        ]
+    
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """

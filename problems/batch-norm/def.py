@@ -64,6 +64,28 @@ class batch_norm(Problem):
             for B, F, D1, D2 in test_configs
         ]
 
+    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+        """
+        Generate a single sample test case for debugging or interactive runs.
+        
+        Returns:
+            A list containing a single test case dictionary
+        """
+        B, F, D1, D2 = (2, 2, 2, 2) # Sample configuration
+        return [
+            {
+                "name": f"B={B}, F={F}, D1={D1}, D2={D2}",
+                "B": B,
+                "F": F,
+                "D1": D1,
+                "D2": D2,
+                "create_inputs": lambda B=B, F=F, D1=D1, D2=D2: (
+                    # Create a simple, predictable input for easy verification
+                    torch.arange(1, B * F * D1 * D2 + 1, device="cuda", dtype=dtype).float().view(B, F, D1, D2),
+                )
+            }
+        ]
+
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """

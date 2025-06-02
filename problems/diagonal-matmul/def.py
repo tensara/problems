@@ -65,6 +65,25 @@ class diagonal_matmul(Problem):
             for matrix in test_matrices
         ]
     
+    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+        """
+        Generate a single sample test case for debugging or interactive runs.
+        
+        Returns:
+            A list containing a single test case dictionary
+        """
+        N, M = (4, 4) # Sample dimensions
+        return [
+            {
+                "name": f"Sample ({N}x{N} * {N}x{M})",
+                "dims": (N, M),
+                "create_inputs": lambda n=N, m=M: (
+                    torch.arange(1, n + 1, device="cuda", dtype=dtype).float(), # Sequential diagonal
+                    torch.arange(1, n * m + 1, device="cuda", dtype=dtype).float().view(n, m) # Sequential matrix B
+                )
+            }
+        ]
+    
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """

@@ -57,6 +57,28 @@ class sum_dim(Problem):
             for shape, dim in test_configs
         ]
     
+    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+        """
+        Generate a single sample test case for debugging or interactive runs.
+        
+        Returns:
+            A list containing a single test case dictionary
+        """
+        shape = (3, 4, 2)  # Sample shape
+        dim = 1  # Sum over middle dimension
+        return [
+            {
+                "name": f"shape={shape}, dim={dim}",
+                "shape": shape,
+                "dim": dim,
+                "create_inputs": lambda shape=shape, dim=dim: (
+                    # Create sequential input for easy verification
+                    torch.arange(1, torch.prod(torch.tensor(shape)).item() + 1, device="cuda", dtype=dtype).float().view(*shape),
+                    dim
+                )
+            }
+        ]
+    
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """

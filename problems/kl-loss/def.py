@@ -83,6 +83,26 @@ class kl_loss(Problem):
         
         return test_cases
     
+    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+        """
+        Generate a single sample test case for debugging or interactive runs.
+        
+        Returns:
+            A list containing a single test case dictionary
+        """
+        n = 8 # Sample size
+        return [
+            {
+                "name": f"Sample N={n}",
+                "n": n,
+                "create_inputs": lambda n=n: (
+                    # Simple, predictable probability distributions for easy verification
+                    torch.tensor([0.1, 0.2, 0.3, 0.4, 0.0, 0.0, 0.0, 0.0], device="cuda", dtype=dtype).softmax(dim=0),
+                    torch.tensor([0.4, 0.3, 0.2, 0.1, 0.0, 0.0, 0.0, 0.0], device="cuda", dtype=dtype).softmax(dim=0)
+                )
+            }
+        ]
+    
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """

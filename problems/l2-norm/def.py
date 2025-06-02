@@ -61,6 +61,28 @@ class l2_norm(Problem):
             for B, D in test_configs
         ]
 
+    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+        """
+        Generate a single sample test case for debugging or interactive runs.
+        
+        Returns:
+            A list containing a single test case dictionary
+        """
+        B, D = (2, 4) # Sample dimensions: Batch=2, Dimension=4
+        return [
+            {
+                "name": f"Sample B={B}, D={D}",
+                "B": B,
+                "D": D,
+                "create_inputs": lambda B=B, D=D: (
+                    # Simple sequential input for easy verification
+                    # Includes positive, negative, and zero values
+                    torch.tensor([[-1.0, 2.0, 0.0, -3.0],
+                                  [4.0, -0.5, 1.5, 0.0]], device="cuda", dtype=dtype),
+                )
+            }
+        ]
+
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """

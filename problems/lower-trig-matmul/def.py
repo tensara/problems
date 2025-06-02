@@ -73,6 +73,25 @@ class lower_trig_matmul(Problem):
             for matrix in test_matrices
         ]
     
+    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+        """
+        Generate a single sample test case for debugging or interactive runs.
+        
+        Returns:
+            A list containing a single test case dictionary
+        """
+        N = 4 # Sample dimension
+        return [
+            {
+                "name": f"Sample {N}x{N}",
+                "dims": (N,),
+                "create_inputs": lambda n=N: (
+                    torch.tril(torch.arange(1, n*n + 1, device="cuda", dtype=dtype).float().view(n, n)),
+                    torch.tril(torch.flip(torch.arange(1, n*n+1, device="cuda", dtype=dtype).float().view(n,n),dims=[0,1]))
+                )
+            }
+        ]
+    
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """

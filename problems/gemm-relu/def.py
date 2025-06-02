@@ -68,6 +68,29 @@ class gemm_relu(Problem):
             for batch_size, in_features, out_features in test_configs
         ]
     
+    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+        """
+        Generate a single sample test case for debugging or interactive runs.
+        
+        Returns:
+            A list containing a single test case dictionary
+        """
+        B, N, M = (2, 3, 4) # Sample dimensions: Batch=2, InFeatures=3, OutFeatures=4
+        return [
+            {
+                "name": f"Sample B={B}, N={N}, M={M}",
+                "batch_size": B,
+                "in_features": N,
+                "out_features": M,
+                "create_inputs": lambda b=B, n=N, m=M: (
+                    # Simple sequential inputs for easy verification
+                    torch.arange(1, b * n + 1, device="cuda", dtype=dtype).float().view(b, n),
+                    torch.arange(1, m * n + 1, device="cuda", dtype=dtype).float().view(m, n),
+                    torch.arange(1, m + 1, device="cuda", dtype=dtype).float()
+                )
+            }
+        ]
+    
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """
