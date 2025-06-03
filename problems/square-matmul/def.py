@@ -56,22 +56,15 @@ class square_matmul(Problem):
         Returns:
             A list containing a single test case dictionary
         """
-        n = 3  # Small size for easy verification
-        return [
-            {
-                "name": f"{n}x{n}",
-                "size": n,
-                "create_inputs": lambda n=n: (
-                    # Create sequential input for easy verification
-                    torch.tensor([[1.0, 2.0, 3.0],
-                                [4.0, 5.0, 6.0],
-                                [7.0, 8.0, 9.0]], device="cuda", dtype=dtype),
-                    torch.tensor([[9.0, 8.0, 7.0],
-                                [6.0, 5.0, 4.0],
-                                [3.0, 2.0, 1.0]], device="cuda", dtype=dtype)
-                )
-            }
-        ]
+        n = 4 
+        return {
+            "name": f"{n}x{n}",
+            "size": n,
+            "create_inputs": lambda n=n: (
+                torch.randn((n, n), device="cuda", dtype=dtype) * 2 - 1,
+                torch.randn((n, n), device="cuda", dtype=dtype) * 2 - 1
+            )
+        }
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

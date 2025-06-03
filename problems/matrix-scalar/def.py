@@ -57,31 +57,17 @@ class matrix_scalar(Problem):
         Returns:
             List of sample test case dictionaries.
         """
-        sample_cases = [
-            {
-                "name": "3x3_scalar_2.0",
-                "size": 3,
-                "scalar": 2.0
-            },
-            {
-                "name": "4x4_scalar_-0.5",
-                "size": 4,
-                "scalar": -0.5
-            }
-        ]
-
-        return [
-            {
-                "name": case["name"],
-                "size": case["size"],
-                "scalar": case["scalar"],
-                "create_inputs": lambda size_val=case["size"], scalar_val=case["scalar"], dtype_val=dtype: (
-                    torch.arange(size_val * size_val, device="cuda", dtype=dtype_val).reshape(size_val, size_val) / (size_val * size_val),
-                    scalar_val
-                )
-            }
-            for case in sample_cases
-        ]
+        shape = (8, 8)
+        scalar = -0.5
+        return {
+            "name": f"shape={shape}, scalar={scalar}",
+            "size": shape[0],
+            "scalar": scalar,
+            "create_inputs": lambda size_val=shape[0], scalar_val=scalar, dtype_val=dtype: (
+                torch.arange(size_val * size_val, device="cuda", dtype=dtype_val).reshape(size_val, size_val) / (size_val * size_val),
+                scalar_val
+            )
+        }
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

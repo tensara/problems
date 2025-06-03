@@ -71,46 +71,26 @@ class matmul_swish(Problem):
             for b, i, o, s in test_configs
         ]
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self, dtype: torch.dtype = torch.float32) -> Dict[str, Any]:
         """
-        Generate sample test cases for matrix multiplication with Swish activation.
+        Generate sample test case for matrix multiplication with Swish activation.
 
         Returns:
-            List of sample test case dictionaries with predictable inputs.
+            Dictionary containing the sample test case with predictable inputs.
         """
-        sample_configs = [
-            {
-                "name": "sample_small",
-                "batch_size": 2,
-                "in_features": 3,
-                "out_features": 4,
-                "scaling_factor": 1.5
-            },
-            {
-                "name": "sample_medium",
-                "batch_size": 3,
-                "in_features": 4,
-                "out_features": 2,
-                "scaling_factor": 0.8
-            }
-        ]
-
-        return [
-            {
-                "name": config["name"],
-                "batch_size": config["batch_size"],
-                "in_features": config["in_features"],
-                "out_features": config["out_features"],
-                "scaling_factor": config["scaling_factor"],
-                "create_inputs": lambda b=config["batch_size"], i=config["in_features"], o=config["out_features"], s=config["scaling_factor"], dtype_val=dtype: (
-                    torch.arange(b * i, device="cuda", dtype=dtype_val).reshape(b, i) / (b * i),
-                    torch.arange(o * i, device="cuda", dtype=dtype_val).reshape(o, i) / (o * i),
-                    torch.arange(o, device="cuda", dtype=dtype_val) / o,
-                    s
-                )
-            }
-            for config in sample_configs
-        ]
+        return {
+            "name": "sample_8x8",
+            "batch_size": 8,
+            "in_features": 8, 
+            "out_features": 8,
+            "scaling_factor": 1.0,
+            "create_inputs": lambda b=8, i=8, o=8, s=1.0, dtype_val=dtype: (
+                torch.arange(b * i, device="cuda", dtype=dtype_val).reshape(b, i) / (b * i),
+                torch.arange(o * i, device="cuda", dtype=dtype_val).reshape(o, i) / (o * i),
+                torch.arange(o, device="cuda", dtype=dtype_val) / o,
+                s
+            )
+        }
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

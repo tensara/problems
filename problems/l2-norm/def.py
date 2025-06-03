@@ -68,20 +68,22 @@ class l2_norm(Problem):
         Returns:
             A list containing a single test case dictionary
         """
-        B, D = (2, 4) # Sample dimensions: Batch=2, Dimension=4
-        return [
-            {
-                "name": f"Sample B={B}, D={D}",
-                "B": B,
-                "D": D,
-                "create_inputs": lambda B=B, D=D: (
-                    # Simple sequential input for easy verification
-                    # Includes positive, negative, and zero values
-                    torch.tensor([[-1.0, 2.0, 0.0, -3.0],
-                                  [4.0, -0.5, 1.5, 0.0]], device="cuda", dtype=dtype),
-                )
-            }
-        ]
+        B, D = (8, 8)
+        return {
+            "name": f"Sample B={B}, D={D}",
+            "B": B,
+            "D": D,
+            "create_inputs": lambda B=B, D=D: (
+                torch.tensor([[0.1, 0.8, 0.3, 0.9, 0.2, 0.7, 0.4, 0.6],
+                                [0.9, 0.2, 0.7, 0.4, 0.1, 0.8, 0.3, 0.5],
+                                [0.3, 0.7, 0.1, 0.9, 0.4, 0.6, 0.2, 0.8],
+                                [0.8, 0.3, 0.6, 0.1, 0.9, 0.4, 0.7, 0.2],
+                                [0.2, 0.9, 0.4, 0.7, 0.1, 0.8, 0.3, 0.6],
+                                [0.7, 0.2, 0.8, 0.3, 0.6, 0.1, 0.9, 0.4],
+                                [0.4, 0.8, 0.2, 0.6, 0.3, 0.9, 0.1, 0.7],
+                                [0.6, 0.1, 0.9, 0.4, 0.7, 0.2, 0.8, 0.3]], device="cuda", dtype=dtype),
+            )
+        }
 
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

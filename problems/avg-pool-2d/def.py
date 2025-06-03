@@ -78,20 +78,18 @@ class avg_pool_2d(Problem):
             A list containing a single test case dictionary
         """
         h, w, k, s, p = (8, 8, 3, 2, 1) # Sample configuration
-        return [
-            {
-                "name": f"H={h}, W={w}, K={k}, S={s}, P={p}",
-                "height": h,
-                "width": w,
-                "kernel_size": k,
-                "stride": s,
-                "padding": p,
-                "create_inputs": lambda h=h, w=w, k=k, s=s, p=p: (
-                    torch.arange(1, h * w + 1, device="cuda", dtype=dtype).float().view(h, w), # Sequential input
-                    k, s, p
-                )
-            }
-        ]
+        return {
+            "name": f"H={h}, W={w}, K={k}, S={s}, P={p}",
+            "height": h,
+            "width": w,
+            "kernel_size": k,
+            "stride": s,
+            "padding": p,
+            "create_inputs": lambda h=h, w=w, k=k, s=s, p=p: (
+                torch.arange(1, h * w + 1, device="cuda", dtype=dtype).float().view(h, w), # Sequential input
+                k, s, p
+            )
+        }
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

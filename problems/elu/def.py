@@ -62,22 +62,16 @@ class elu(Problem):
         Returns:
             A list containing a single test case dictionary
         """
-        m, n = (4, 4) # Sample dimensions
-        return [
-            {
-                "name": f"Sample ({m}x{n})",
-                "rows": m,
-                "cols": n,
-                "create_inputs": lambda m=m, n=n: (
-                    # Values to cover both positive and negative cases for ELU
-                    torch.tensor([[-2.0, -1.0, 0.0, 1.0],
-                                  [2.0, -0.5, 0.5, -1.5],
-                                  [1.5, 0.0, -2.5, 3.0],
-                                  [-3.0, 2.5, -0.1, 0.1]], device="cuda", dtype=dtype),
-                )
-            }
-        ]
-    
+        m, n = (4, 4)
+        return {
+            "name": f"Sample ({m}x{n})",
+            "rows": m,
+            "cols": n,
+            "create_inputs": lambda m=m, n=n: (
+                torch.rand((m, n), device="cuda", dtype=dtype) * 10.0 - 5.0,  # uniform [-5, 5]
+            )
+        }
+
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """

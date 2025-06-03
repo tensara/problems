@@ -64,21 +64,19 @@ class product_dim(Problem):
         Returns:
             A list containing a single test case dictionary
         """
-        shape = (3, 3, 3)  # Sample 3D tensor shape
+        shape = (4, 4, 4)  # Sample 3D tensor shape
         dim = 1  # Reduce along middle dimension
-        return [
-            {
-                "name": f"shape={shape}, dim={dim}",
-                "shape": shape,
-                "dim": dim,
-                "create_inputs": lambda shape=shape, dim=dim: (
-                    # Create sequential input for easy verification
-                    # Add 1 to avoid multiplying by 0
-                    torch.arange(1, torch.prod(torch.tensor(shape)).item() + 1, device="cuda", dtype=dtype).float().view(*shape),
-                    dim
-                )
-            }
-        ]
+        return {
+            "name": f"shape={shape}, dim={dim}",
+            "shape": shape,
+            "dim": dim,
+            "create_inputs": lambda shape=shape, dim=dim: (
+                # Create sequential input for easy verification
+                # Add 1 to avoid multiplying by 0
+                torch.arange(1, torch.prod(torch.tensor(shape)).item() + 1, device="cuda", dtype=dtype).float().view(*shape),
+                dim
+            )
+        }
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

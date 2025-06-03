@@ -69,17 +69,15 @@ class rms_norm(Problem):
         Returns:
             A list containing a single test case dictionary
         """
-        shape = (3, 4)  # Sample shape (batch_size, num_features)
-        return [
-            {
-                "name": f"shape={shape}",
-                "shape": shape,
-                "create_inputs": lambda shape=shape: (
-                    # Create sequential input for easy verification
-                    torch.arange(1, torch.prod(torch.tensor(shape)).item() + 1, device="cuda", dtype=dtype).float().view(*shape),
-                )
-            }
-        ]
+        shape = (4, 4)  # Sample shape (batch_size, num_features)
+        return {
+            "name": f"shape={shape}",
+            "shape": shape,
+            "create_inputs": lambda shape=shape: (
+                # Create sequential input for easy verification
+                torch.randn(*shape, device="cuda", dtype=dtype)
+            )
+        }
 
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

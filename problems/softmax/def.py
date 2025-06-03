@@ -64,22 +64,18 @@ class softmax(Problem):
         Returns:
             A list containing a single test case dictionary
         """
-        shape = (3, 4)  # Sample shape (batch_size, num_classes)
-        dim = 1  # Apply softmax over the class dimension
-        return [
-            {
-                "name": f"shape={shape}, dim={dim}",
-                "shape": shape,
-                "dim": dim,
-                "create_inputs": lambda shape=shape, dim=dim: (
-                    # Create predictable logits for easy verification
-                    torch.tensor([[1.0, 2.0, 3.0, 4.0],
-                                [0.0, 0.5, 1.0, 1.5],
-                                [-1.0, 0.0, 1.0, 2.0]], device="cuda", dtype=dtype),
-                    dim
-                )
-            }
-        ]
+        shape = (4, 4)
+        dim = 1
+        return {
+            "name": f"shape={shape}, dim={dim}",
+            "shape": shape,
+            "dim": dim,
+            "create_inputs": lambda shape=shape, dim=dim: (
+                # Create predictable logits for easy verification
+                torch.randn(shape, device="cuda", dtype=dtype) * 2.0,
+                dim
+            )
+        }
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

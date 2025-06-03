@@ -60,17 +60,15 @@ class cumprod(Problem):
         Returns:
             A list containing a single test case dictionary
         """
-        size = 8 # Sample size
-        return [
-            {
-                "name": f"N={size}",
-                "size": size,
-                "create_inputs": lambda s=size: (
-                    # Simple sequential input for easy verification, avoiding zeros and large numbers
-                    torch.arange(1, s + 1, device="cuda", dtype=dtype).float() * 0.5 + 0.5, 
-                )
-            }
-        ]
+        size = 8
+        return {
+            "name": f"N={size}",
+            "size": size,
+            "create_inputs": lambda s=size: (
+                # Simple sequential input for easy verification, avoiding zeros and large numbers
+                torch.arange(1, s + 1, device="cuda", dtype=dtype).float() * 0.5 + 0.5, 
+            )
+        }
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

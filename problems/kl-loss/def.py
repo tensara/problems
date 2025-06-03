@@ -90,18 +90,15 @@ class kl_loss(Problem):
         Returns:
             A list containing a single test case dictionary
         """
-        n = 8 # Sample size
-        return [
-            {
-                "name": f"Sample N={n}",
-                "n": n,
-                "create_inputs": lambda n=n: (
-                    # Simple, predictable probability distributions for easy verification
-                    torch.tensor([0.1, 0.2, 0.3, 0.4, 0.0, 0.0, 0.0, 0.0], device="cuda", dtype=dtype).softmax(dim=0),
-                    torch.tensor([0.4, 0.3, 0.2, 0.1, 0.0, 0.0, 0.0, 0.0], device="cuda", dtype=dtype).softmax(dim=0)
-                )
-            }
-        ]
+        n = 8
+        return {
+            "name": f"Sample N={n}",
+            "n": n,
+            "create_inputs": lambda n=n: (
+                torch.tensor([0.1, 0.2, 0.3, 0.4, 0.0, 0.6, 0.7, 0.8], device="cuda", dtype=dtype),
+                torch.tensor([0.4, 0.3, 0.2, 0.1, 0.0, 0.2, 0.3, 0.4], device="cuda", dtype=dtype)
+            )
+        }
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

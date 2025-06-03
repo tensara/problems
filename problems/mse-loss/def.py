@@ -59,19 +59,15 @@ class mse_loss(Problem):
         Returns:
             A list containing a single test case dictionary
         """
-        shape = (3, 3)  # Sample 2D tensor shape
-        return [
-            {
-                "name": f"shape={shape}",
-                "shape": shape,
-                "create_inputs": lambda shape=shape: (
-                    # Create sequential input for predictions
-                    torch.arange(1, torch.prod(torch.tensor(shape)).item() + 1, device="cuda", dtype=dtype).float().view(*shape),
-                    # Create targets as predictions + 1 for easy verification
-                    torch.arange(2, torch.prod(torch.tensor(shape)).item() + 2, device="cuda", dtype=dtype).float().view(*shape)
-                )
-            }
-        ]
+        shape = (8, 8)  # Sample dimensions
+        return {
+            "name": f"shape={shape}",
+            "shape": shape,
+            "create_inputs": lambda shape=shape: (
+                torch.randn(shape, device="cuda", dtype=dtype),     # Predictions
+                torch.randn(shape, device="cuda", dtype=dtype)      # Targets
+            )
+        }
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

@@ -72,17 +72,15 @@ class diagonal_matmul(Problem):
         Returns:
             A list containing a single test case dictionary
         """
-        N, M = (4, 4) # Sample dimensions
-        return [
-            {
-                "name": f"Sample ({N}x{N} * {N}x{M})",
-                "dims": (N, M),
-                "create_inputs": lambda n=N, m=M: (
-                    torch.arange(1, n + 1, device="cuda", dtype=dtype).float(), # Sequential diagonal
-                    torch.arange(1, n * m + 1, device="cuda", dtype=dtype).float().view(n, m) # Sequential matrix B
-                )
-            }
-        ]
+        N, M = (8, 8)
+        return {
+            "name": f"Sample ({N}x{N} * {N}x{M})",
+            "dims": (N, M),
+            "create_inputs": lambda n=N, m=M: (
+                torch.arange(1, n + 1, device="cuda", dtype=dtype).float(), # Sequential diagonal
+                torch.arange(1, n * m + 1, device="cuda", dtype=dtype).float().view(n, m) # Sequential matrix B
+            )
+        }
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

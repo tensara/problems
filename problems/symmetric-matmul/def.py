@@ -55,22 +55,22 @@ class symmetric_matmul(Problem):
         Returns:
             A list containing a single test case dictionary
         """
-        n = 3  # Small size for easy verification
-        return [
-            {
-                "name": f"{n}x{n}",
-                "size": n,
-                "create_inputs": lambda n=n: (
-                    # Create symmetric matrices for easy verification
-                    torch.tensor([[1.0, 0.5, 0.0],
-                                [0.5, 1.0, 0.5],
-                                [0.0, 0.5, 1.0]], device="cuda", dtype=dtype),
-                    torch.tensor([[1.0, 0.5, 0.0],
-                                [0.5, 1.0, 0.5],
-                                [0.0, 0.5, 1.0]], device="cuda", dtype=dtype)
-                )
-            }
-        ]
+        n = 4
+        return {
+            "name": f"{n}x{n}",
+            "size": n,
+            "create_inputs": lambda n=n: (
+                # Create symmetric matrices for easy verification
+                torch.tensor([[1.0, 0.5, 0.0, 0.0],
+                            [0.5, 1.0, 0.5, 0.0],
+                            [0.0, 0.5, 1.0, 0.5],
+                            [0.0, 0.0, 0.5, 1.0]], device="cuda", dtype=dtype),
+                torch.tensor([[1.0, 0.5, 0.0, 0.0],
+                            [0.5, 1.0, 0.5, 0.0],
+                            [0.0, 0.5, 1.0, 0.5],
+                            [0.0, 0.0, 0.5, 1.0]], device="cuda", dtype=dtype)
+            )
+        }
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

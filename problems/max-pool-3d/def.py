@@ -77,65 +77,29 @@ class max_pool_3d(Problem):
     
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
         """
-        Generate sample test cases for 3D max pooling with predictable inputs.
+        Generate a single sample test case for 3D max pooling with predictable input.
 
         Returns:
-            List of sample test case dictionaries.
+            A list containing a single test case dictionary
         """
-        sample_configs = [
-            {
-                "name": "sample_basic_2x2x2",
-                "height": 4,
-                "width": 4,
-                "depth": 4,
-                "kernel_size": 2,
-                "stride": 1,
-                "padding": 0,
-                "dilation": 1
-            },
-            {
-                "name": "sample_padding_stride_3x3x3",
-                "height": 5,
-                "width": 5,
-                "depth": 5,
-                "kernel_size": 3,
-                "stride": 2,
-                "padding": 1,
-                "dilation": 1
-            },
-            {
-                # Effective kernel size will be 2 + (2-1)*(2-1) = 3
-                "name": "sample_dilation_2x2x2",
-                "height": 6,
-                "width": 6,
-                "depth": 6,
-                "kernel_size": 2,
-                "stride": 1,
-                "padding": 0,
-                "dilation": 2
-            }
-        ]
 
-        return [
-            {
-                "name": config["name"],
-                "height": config["height"],
-                "width": config["width"],
-                "depth": config["depth"],
-                "kernel_size": config["kernel_size"],
-                "stride": config["stride"],
-                "padding": config["padding"],
-                "dilation": config["dilation"],
-                "create_inputs": lambda h_val=config["height"], w_val=config["width"], d_val=config["depth"], k_val=config["kernel_size"], s_val=config["stride"], p_val=config["padding"], dil_val=config["dilation"], dtype_val=dtype: (
-                    torch.arange(h_val * w_val * d_val, device="cuda", dtype=dtype_val).reshape(h_val, w_val, d_val) / (h_val * w_val * d_val),
-                    k_val,
-                    s_val,
-                    p_val,
-                    dil_val
-                )
-            }
-            for config in sample_configs
-        ]
+        return {
+            "name": "sample_basic_2x2x2",
+            "height": 4,
+            "width": 4,
+            "depth": 4,
+            "kernel_size": 2,
+            "stride": 1,
+            "padding": 0,
+            "dilation": 1,
+            "create_inputs": lambda h=4, w=4, d=4, k=2, s=1, p=0, dil=1: (
+                torch.arange(h * w * d, device="cuda", dtype=dtype).reshape(h, w, d) / (h * w * d),
+                k,
+                s,
+                p,
+                dil
+            )
+        }
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

@@ -64,20 +64,17 @@ class sum_dim(Problem):
         Returns:
             A list containing a single test case dictionary
         """
-        shape = (3, 4, 2)  # Sample shape
-        dim = 1  # Sum over middle dimension
-        return [
-            {
-                "name": f"shape={shape}, dim={dim}",
-                "shape": shape,
-                "dim": dim,
-                "create_inputs": lambda shape=shape, dim=dim: (
-                    # Create sequential input for easy verification
-                    torch.arange(1, torch.prod(torch.tensor(shape)).item() + 1, device="cuda", dtype=dtype).float().view(*shape),
-                    dim
-                )
-            }
-        ]
+        shape = (4, 4, 4)
+        dim = 1 
+        return {
+            "name": f"shape={shape}, dim={dim}",
+            "shape": shape,
+            "dim": dim,
+            "create_inputs": lambda shape=shape, dim=dim: (
+                torch.randn(shape, device="cuda", dtype=dtype) * 10.0 - 5.0,
+                dim
+            )
+        }
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

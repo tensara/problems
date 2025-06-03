@@ -59,16 +59,14 @@ class cumsum(Problem):
         Returns:
             A list containing a single test case dictionary
         """
-        size = 8 # Sample size
-        return [
-            {
-                "name": f"N={size}",
-                "size": size,
-                "create_inputs": lambda s=size: (
-                    torch.arange(1, s + 1, device="cuda", dtype=dtype).float(), # Sequential input for easy verification
-                )
-            }
-        ]
+        size = 8 
+        return {
+            "name": f"N={size}",
+            "size": size,
+            "create_inputs": lambda s=size: (
+                torch.arange(1, s + 1, device="cuda", dtype=dtype).float(), # Sequential input for easy verification
+            )
+        }
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

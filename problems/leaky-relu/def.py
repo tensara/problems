@@ -67,22 +67,19 @@ class leaky_relu(Problem):
         """
         m, n = (4, 4) # Sample dimensions
         alpha = 0.01 # Sample alpha
-        return [
-            {
-                "name": f"Sample ({m}x{n}), alpha={alpha}",
-                "rows": m,
-                "cols": n,
-                "alpha": alpha,
-                "create_inputs": lambda m=m, n=n, alpha=alpha: (
-                    # Values to cover both positive and negative cases for Leaky ReLU
-                    torch.tensor([[-2.0, -1.0, 0.0, 1.0],
-                                  [2.0, -0.5, 0.5, -1.5],
-                                  [1.5, 0.0, -2.5, 3.0],
-                                  [-3.0, 2.5, -0.1, 0.1]], device="cuda", dtype=dtype),
-                    alpha
-                )
-            }
-        ]
+        return {
+            "name": f"Sample ({m}x{n}), alpha={alpha}",
+            "rows": m,
+            "cols": n,
+            "alpha": alpha,
+            "create_inputs": lambda m=m, n=n, alpha=alpha: (
+                torch.tensor([[-2.0, -1.0, 0.0, 1.0],
+                                [2.0, -0.5, 0.5, -1.5],
+                                [1.5, 0.0, -2.5, 3.0],
+                                [-3.0, 2.5, -0.1, 0.1]], device="cuda", dtype=dtype),
+                alpha
+            )
+        }
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

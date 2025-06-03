@@ -66,17 +66,14 @@ class frobenius_norm(Problem):
         Returns:
             A list containing a single test case dictionary
         """
-        shape = (2, 2, 2) # Sample 3D tensor shape
-        return [
-            {
-                "name": f"Sample shape={shape}",
-                "shape": shape,
-                "create_inputs": lambda shape=shape: (
-                    # Simple sequential input for easy verification
-                    torch.arange(1, torch.prod(torch.tensor(shape)).item() + 1, device="cuda", dtype=dtype).float().view(*shape),
-                )
-            }
-        ]
+        shape = (8, 8, 8)  # Updated to ensure dimensions are at least 8x8 and powers of 2
+        return {
+            "name": f"Sample shape={shape}",
+            "shape": shape,
+            "create_inputs": lambda shape=shape: (
+                torch.randn(*shape, device="cuda", dtype=dtype),
+            )
+        }
 
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

@@ -74,17 +74,15 @@ class matmul_4d(Problem):
         Returns:
             A list containing a single test case dictionary
         """
-        b, i, j, l, k = (2, 2, 2, 3, 4) # Sample dimensions
-        return [
-            {
-                "name": f"Sample ({b}x{i}x{j}x{l} * {l}x{k})",
-                "dims": (b, i, j, l, k),
-                "create_inputs": lambda b=b, i=i, j=j, l=l, k_dim=k: (
-                    torch.arange(1, b*i*j*l + 1, device="cuda", dtype=dtype).float().view(b, i, j, l),
-                    torch.arange(1, l*k_dim + 1, device="cuda", dtype=dtype).float().view(l, k_dim)
-                )
-            }
-        ]
+        b, i, j, l, k = (4, 4, 4, 4, 4) # Sample dimensions
+        return {
+            "name": f"Sample ({b}x{i}x{j}x{l} * {l}x{k})",
+            "dims": (b, i, j, l, k),
+            "create_inputs": lambda b=b, i=i, j=j, l=l, k_dim=k: (
+                torch.arange(1, b*i*j*l + 1, device="cuda", dtype=dtype).float().view(b, i, j, l),
+                torch.arange(1, l*k_dim + 1, device="cuda", dtype=dtype).float().view(l, k_dim)
+            )
+        }
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

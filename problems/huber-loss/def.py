@@ -62,18 +62,15 @@ class huber_loss(Problem):
         Returns:
             A list containing a single test case dictionary
         """
-        n = 8 # Sample size
-        return [
-            {
-                "name": f"Sample N={n}",
-                "n": n,
-                "create_inputs": lambda n=n: (
-                    # Predictions and targets to cover different regions of Huber loss (|x| < 1 and |x| >= 1)
-                    torch.tensor([0.2, 0.8, 1.0, 1.5, -0.3, -0.9, -1.2, 2.0], device="cuda", dtype=dtype), # predictions
-                    torch.tensor([0.0, 0.5, 0.3, 2.0, 0.1, -0.2, -2.0, 0.5], device="cuda", dtype=dtype)  # targets
-                )
-            }
-        ]
+        n = 8 
+        return {
+            "name": f"Sample N={n}",
+            "n": n,
+            "create_inputs": lambda n=n: (
+                torch.tensor([0.2, 0.8, 1.0, 1.5, -0.3, -0.9, -1.2, 2.0], device="cuda", dtype=dtype),
+                torch.tensor([0.0, 0.5, 0.3, 2.0, 0.1, -0.2, -2.0, 0.5], device="cuda", dtype=dtype) 
+            )
+        }
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

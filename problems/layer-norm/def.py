@@ -79,22 +79,19 @@ class layer_norm(Problem):
         Returns:
             A list containing a single test case dictionary
         """
-        B, F, D1, D2 = (1, 2, 2, 2) # Sample dimensions
-        return [
-            {
-                "name": f"Sample B={B}, F={F}, D1={D1}, D2={D2}",
-                "B": B,
-                "F": F,
-                "D1": D1,
-                "D2": D2,
-                "create_inputs": lambda B=B, F=F, D1=D1, D2=D2: (
-                    # Simple sequential inputs for easy verification
-                    torch.arange(1, B * F * D1 * D2 + 1, device="cuda", dtype=dtype).float().view(B, F, D1, D2),
-                    torch.ones(F, D1, D2, device="cuda", dtype=dtype), # Gamma = 1
-                    torch.zeros(F, D1, D2, device="cuda", dtype=dtype)  # Beta = 0
-                )
-            }
-        ]
+        B, F, D1, D2 = (2, 4, 4, 4)
+        return {
+            "name": f"Sample B={B}, F={F}, D1={D1}, D2={D2}",
+            "B": B,
+            "F": F,
+            "D1": D1,
+            "D2": D2,
+            "create_inputs": lambda B=B, F=F, D1=D1, D2=D2: (
+                torch.randn(B, F, D1, D2, device="cuda", dtype=dtype),
+                torch.ones(F, D1, D2, device="cuda", dtype=dtype), # Gamma = 1
+                torch.zeros(F, D1, D2, device="cuda", dtype=dtype)  # Beta = 0
+            )
+        }
 
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

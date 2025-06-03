@@ -72,19 +72,16 @@ class batch_norm(Problem):
             A list containing a single test case dictionary
         """
         B, F, D1, D2 = (2, 2, 2, 2) # Sample configuration
-        return [
-            {
-                "name": f"B={B}, F={F}, D1={D1}, D2={D2}",
-                "B": B,
-                "F": F,
-                "D1": D1,
-                "D2": D2,
-                "create_inputs": lambda B=B, F=F, D1=D1, D2=D2: (
-                    # Create a simple, predictable input for easy verification
-                    torch.arange(1, B * F * D1 * D2 + 1, device="cuda", dtype=dtype).float().view(B, F, D1, D2),
-                )
-            }
-        ]
+        return {
+            "name": f"B={B}, F={F}, D1={D1}, D2={D2}",
+            "B": B,
+            "F": F,
+            "D1": D1,
+            "D2": D2,
+            "create_inputs": lambda B=B, F=F, D1=D1, D2=D2: (
+                torch.randn((B, F, D1, D2), device="cuda", dtype=dtype),  # Input X with normal distribution
+            )
+        }
 
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

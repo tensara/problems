@@ -76,17 +76,15 @@ class conv_square_3d(Problem):
             A list containing a single test case dictionary
         """
         size, k = (4, 3) # Sample configuration (kernel size must be odd)
-        return [
-            {
-                "name": f"D=H=W={size}, K={k}",
-                "size": size,
-                "kernel_size": k,
-                "create_inputs": lambda size=size, k=k: (
-                    torch.arange(1, size**3 + 1, device="cuda", dtype=dtype).float().view(size, size, size), # Sequential input
-                    torch.ones((k, k, k), device="cuda", dtype=dtype) # Simple kernel
-                )
-            }
-        ]
+        return {
+            "name": f"D=H=W={size}, K={k}",
+            "size": size,
+            "kernel_size": k,
+            "create_inputs": lambda size=size, k=k: (
+                torch.arange(1, size**3 + 1, device="cuda", dtype=dtype).float().view(size, size, size), # Sequential input
+                torch.ones((k, k, k), device="cuda", dtype=dtype) # Simple kernel
+            )
+        }
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

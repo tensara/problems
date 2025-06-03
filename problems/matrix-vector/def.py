@@ -63,23 +63,16 @@ class matrix_vector(Problem):
         Returns:
             List of sample test case dictionaries.
         """
-        sample_configs = [
-            {"name": "small_4x3", "rows": 4, "cols": 3},
-            {"name": "medium_5x2", "rows": 5, "cols": 2}
-        ]
+        shape = (8, 8)  # Sample 2D tensor shape
+        return {
+            "name": f"shape={shape}",
+            "shape": shape,
+            "create_inputs": lambda shape=shape: (
+                torch.arange(1, torch.prod(torch.tensor(shape)).item() + 1, device="cuda", dtype=dtype).float().view(*shape),
+                torch.arange(1, shape[1] + 1, device="cuda", dtype=dtype).float()
+            )
+        }
 
-        return [
-            {
-                "name": config["name"],
-                "rows": config["rows"],
-                "cols": config["cols"],
-                "create_inputs": lambda m_rows=config["rows"], k_cols=config["cols"], dtype_val=dtype: (
-                    torch.arange(m_rows * k_cols, device="cuda", dtype=dtype_val).reshape(m_rows, k_cols) / (m_rows * k_cols),
-                    torch.arange(k_cols, device="cuda", dtype=dtype_val) / k_cols
-                )
-            }
-            for config in sample_configs
-        ]
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

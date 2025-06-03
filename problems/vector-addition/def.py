@@ -64,16 +64,14 @@ class vector_addition(Problem):
         """
         name = "Sample (n = 8)"
         size = 8 
-        return [
-            {
-                "name": name,
-                "dims": (size,),
-                "create_inputs": lambda size=size: ( # Ensure size is captured
-                    torch.tensor([1.0, 2.0, 3.0, 4.0, -1.0, -2.0, 0.0, 0.5], device="cuda", dtype=dtype),
-                    torch.tensor([0.5, -1.0, 1.0, 0.0, 1.0, -1.0, 0.5, 2.0], device="cuda", dtype=dtype),
-                )
-            }
-        ]
+        return {
+            "name": name,
+            "dims": (size,),
+            "create_inputs": lambda size=size: ( # Ensure size is captured
+                torch.tensor([1.0, 2.0, 3.0, 4.0, -1.0, -2.0, 0.0, 0.5], device="cuda", dtype=dtype),
+                torch.tensor([0.5, -1.0, 1.0, 0.0, 1.0, -1.0, 0.5, 2.0], device="cuda", dtype=dtype),
+            )
+        }
  
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

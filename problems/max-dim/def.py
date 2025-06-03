@@ -65,36 +65,17 @@ class max_dim(Problem):
         Returns:
             List of sample test case dictionaries.
         """
-        sample_configs = [
-            {
-                "name": "2x3x4_dim0",
-                "shape": (2, 3, 4),
-                "dim": 0
-            },
-            {
-                "name": "3x2x2_dim1",
-                "shape": (3, 2, 2),
-                "dim": 1
-            },
-            {
-                "name": "4x2x3_dim2",
-                "shape": (4, 2, 3),
-                "dim": 2
-            }
-        ]
-
-        return [
-            {
-                "name": config["name"],
-                "shape": config["shape"],
-                "dim": config["dim"],
-                "create_inputs": lambda shape_val=config["shape"], dim_val=config["dim"], dtype_val=dtype: (
-                    torch.arange(torch.prod(torch.tensor(shape_val)).item(), device="cuda", dtype=dtype_val).reshape(shape_val) / torch.prod(torch.tensor(shape_val)).item(),
-                    dim_val
-                )
-            }
-            for config in sample_configs
-        ]
+        shape = (4, 4, 4)
+        dim = 1 
+        return {
+            "name": f"shape={shape}, dim={dim}",
+            "shape": shape,
+            "dim": dim,
+            "create_inputs": lambda shape=shape, dim=dim: (
+                torch.rand(shape, device="cuda", dtype=dtype) * 10.0 - 5.0,
+                dim
+            )
+        }
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

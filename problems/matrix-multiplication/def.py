@@ -67,37 +67,22 @@ class matrix_multiplication(Problem):
             for matrix in test_matrices
         ]
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self, dtype: torch.dtype = torch.float32) -> Dict[str, Any]:
         """
-        Generate sample test cases for matrix multiplication with predictable inputs.
+        Generate sample test case for matrix multiplication with predictable inputs.
 
         Returns:
-            List of sample test case dictionaries.
+            Dictionary containing the sample test case.
         """
-        # Matrix dimensions: (M, K) × (K, N) = (M, N)
-        # dims represents (M, N, K)
-        sample_matrices = [
-            {
-                "name": "small_square",
-                "dims": (4, 4, 4),
-            },
-            {
-                "name": "small_rectangular",
-                "dims": (2, 3, 4), # M=2, N=3, K=4. A is 2x4, B is 4x3
-            }
-        ]
-
-        return [
-            {
-                "name": matrix["name"],
-                "dims": matrix["dims"],
-                "create_inputs": lambda m_dims=matrix["dims"], dtype_val=dtype: (
-                    torch.arange(m_dims[0] * m_dims[2], device="cuda", dtype=dtype_val).reshape(m_dims[0], m_dims[2]) / (m_dims[0] * m_dims[2]),
-                    torch.arange(m_dims[2] * m_dims[1], device="cuda", dtype=dtype_val).reshape(m_dims[2], m_dims[1]) / (m_dims[2] * m_dims[1])
-                )
-            }
-            for matrix in sample_matrices
-        ]
+        m_dims = (8, 8, 8)  # M, N, K dimensions
+        return {
+            "name": "8x8_square",
+            "dims": m_dims,
+            "create_inputs": lambda m_dims=m_dims: (
+                torch.rand((m_dims[0], m_dims[2]), device="cuda", dtype=dtype) * 2 - 1,  # uniform [-1, 1]
+                torch.rand((m_dims[2], m_dims[1]), device="cuda", dtype=dtype) * 2 - 1   # uniform [-1, 1]
+            )
+        }
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

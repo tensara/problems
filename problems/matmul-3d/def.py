@@ -74,17 +74,15 @@ class matmul_3d(Problem):
         Returns:
             A list containing a single test case dictionary
         """
-        N, M, K, L = (2, 2, 3, 4) # Sample dimensions
-        return [
-            {
-                "name": f"Sample ({N}x{M}x{K} * {K}x{L})",
-                "dims": (N, M, K, L),
-                "create_inputs": lambda n=N, m=M, k=K, l=L: (
-                    torch.arange(1, n*m*k + 1, device="cuda", dtype=dtype).float().view(n, m, k),
-                    torch.arange(1, k*l + 1, device="cuda", dtype=dtype).float().view(k, l)
-                )
-            }
-        ]
+        N, M, K, L = (4, 4, 4, 4)
+        return {
+            "name": f"Sample ({N}x{M}x{K} * {K}x{L})",
+            "dims": (N, M, K, L),
+            "create_inputs": lambda n=N, m=M, k=K, l=L: (
+                torch.arange(1, n*m*k + 1, device="cuda", dtype=dtype).float().view(n, m, k),
+                torch.arange(1, k*l + 1, device="cuda", dtype=dtype).float().view(k, l)
+            )
+        }
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

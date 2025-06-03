@@ -86,19 +86,17 @@ class conv_2d(Problem):
             A list containing a single test case dictionary
         """
         h, w, kh, kw = (8, 8, 3, 3) # Sample configuration (kernel dims must be odd)
-        return [
-            {
-                "name": f"H={h}, W={w}, Kh={kh}, Kw={kw}",
-                "height": h,
-                "width": w,
-                "kernel_height": kh,
-                "kernel_width": kw,
-                "create_inputs": lambda h=h, w=w, kh=kh, kw=kw: (
-                    torch.arange(1, h * w + 1, device="cuda", dtype=dtype).float().view(h, w), # Sequential input
-                    torch.ones((kh, kw), device="cuda", dtype=dtype) # Simple kernel (e.g., box blur if normalized)
-                )
-            }
-        ]
+        return {
+            "name": f"H={h}, W={w}, Kh={kh}, Kw={kw}",
+            "height": h,
+            "width": w,
+            "kernel_height": kh,
+            "kernel_width": kw,
+            "create_inputs": lambda h=h, w=w, kh=kh, kw=kw: (
+                torch.arange(1, h * w + 1, device="cuda", dtype=dtype).float().view(h, w), # Sequential input
+                torch.ones((kh, kw), device="cuda", dtype=dtype) # Simple kernel (e.g., box blur if normalized)
+            )
+        }
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

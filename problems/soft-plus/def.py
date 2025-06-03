@@ -61,20 +61,18 @@ class soft_plus(Problem):
             A list containing a single test case dictionary
         """
         m, n = (4, 4)  # Sample dimensions
-        return [
-            {
-                "name": f"{m}x{n}",
-                "rows": m,
-                "cols": n,
-                "create_inputs": lambda m=m, n=n: (
-                    # Create input with both positive and negative values for testing softplus
-                    torch.tensor([[-2.0, -1.0, 0.0, 1.0],
-                                [2.0, -0.5, 0.5, -1.5],
-                                [1.5, 0.0, -2.5, 3.0],
-                                [-3.0, 2.5, -0.1, 0.1]], device="cuda", dtype=dtype),
-                )
-            }
-        ]
+        return {
+            "name": f"{m}x{n}",
+            "rows": m,
+            "cols": n,
+            "create_inputs": lambda m=m, n=n: (
+                # Create input with both positive and negative values for testing softplus
+                torch.tensor([[-2.0, -1.0, 0.0, 1.0],
+                            [2.0, -0.5, 0.5, -1.5],
+                            [1.5, 0.0, -2.5, 3.0],
+                            [-3.0, 2.5, -0.1, 0.1]], device="cuda", dtype=dtype),
+            )
+        }
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:

@@ -65,24 +65,22 @@ class argmax(Problem):
         """
         shape = (8,8)
         dim = 0
-        return [
-            {
-                "name": f"shape={shape}, dim={dim}",
-                "shape": shape,
-                "dim": dim,
-                "create_inputs": lambda shape=shape, dim=dim: (
-                    torch.tensor([[4.0, -4.5, 5.0, 3.0, -2.0, 3.2, 2.2, 0.5],
-                                [-2.0, -4.5, 5.0, 3.0, -2.0, 3.2, 2.2, 0.5],
-                                [4.0, -4.5, 5.0, 3.0, -2.0, 3.2, 2.2, 0.5],
-                                [4.0, -4.5, 5.0, 3.0, -2.0, 3.2, 2.2, 0.5],
-                                [4.0, -4.5, 5.0, 3.0, -2.0, 3.2, 2.2, 0.5],
-                                [4.0, -4.5, 5.0, 3.0, -2.0, 3.2, 2.2, 0.5],
-                                [4.0, -4.5, 5.0, 3.0, -2.0, 3.2, 2.2, 0.5],
-                                [4.0, -4.5, 5.0, 3.0, -2.0, 3.2, 2.2, 0.5]], device="cuda", dtype=dtype),
-                    dim
-                )
-            }
-        ]
+        return {
+            "name": f"shape={shape}, dim={dim}",
+            "shape": shape,
+            "dim": dim,
+            "create_inputs": lambda shape=shape, dim=dim: (
+                torch.tensor([[4.0, -4.5, 5.0, 3.0, -2.0, 3.2, 2.2, 0.5],
+                            [-2.0, -4.5, 5.0, 3.0, -2.0, 3.2, 2.2, 0.5],
+                            [4.0, -4.5, 5.0, 3.0, -2.0, 3.2, 2.2, 0.5],
+                            [4.0, -4.5, 5.0, 3.0, -2.0, 3.2, 2.2, 0.5],
+                            [4.0, -4.5, 5.0, 3.0, -2.0, 3.2, 2.2, 0.5],
+                            [4.0, -4.5, 5.0, 3.0, -2.0, 3.2, 2.2, 0.5],
+                            [4.0, -4.5, 5.0, 3.0, -2.0, 3.2, 2.2, 0.5],
+                            [4.0, -4.5, 5.0, 3.0, -2.0, 3.2, 2.2, 0.5]], device="cuda", dtype=dtype),
+                dim
+            )
+        }
 
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
