@@ -66,7 +66,8 @@ class matrix_vector(Problem):
         shape = (8, 8)  # Sample 2D tensor shape
         return {
             "name": f"shape={shape}",
-            "shape": shape,
+            "rows": 8,
+            "cols": 8,
             "create_inputs": lambda shape=shape: (
                 torch.arange(1, torch.prod(torch.tensor(shape)).item() + 1, device="cuda", dtype=dtype).float().view(*shape),
                 torch.arange(1, shape[1] + 1, device="cuda", dtype=dtype).float()
