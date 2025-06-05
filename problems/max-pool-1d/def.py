@@ -73,6 +73,31 @@ class max_pool_1d(Problem):
             for h, k, s, p, d in test_configs
         ]
     
+    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+        """
+        Generate sample test cases for 1D max pooling with predictable inputs.
+
+        Returns:
+            List of sample test case dictionaries.
+        """
+
+        return {
+            "name": "sample_basic_3x3",
+            "size": 16,
+            "kernel_size": 3,
+            "stride": 1,
+            "padding": 0,
+            "dilation": 1,
+            "create_inputs": lambda size_val=16, k_val=3, s_val=1, p_val=0, d_val=1, dtype_val=dtype: (
+                torch.rand((size_val), device="cuda", dtype=dtype_val) * 10.0 - 5.0,
+                k_val,
+                s_val,
+                p_val,
+                d_val
+            )
+        }
+
+    
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """

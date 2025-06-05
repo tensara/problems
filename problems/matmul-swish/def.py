@@ -71,6 +71,27 @@ class matmul_swish(Problem):
             for b, i, o, s in test_configs
         ]
     
+    def generate_sample(self, dtype: torch.dtype = torch.float32) -> Dict[str, Any]:
+        """
+        Generate sample test case for matrix multiplication with Swish activation.
+
+        Returns:
+            Dictionary containing the sample test case with predictable inputs.
+        """
+        return {
+            "name": "sample_8x8",
+            "batch_size": 8,
+            "in_features": 8, 
+            "out_features": 8,
+            "scaling_factor": 1.0,
+            "create_inputs": lambda b=8, i=8, o=8, s=1.0, dtype_val=dtype: (
+                torch.arange(b * i, device="cuda", dtype=dtype_val).reshape(b, i) / (b * i),
+                torch.arange(o * i, device="cuda", dtype=dtype_val).reshape(o, i) / (o * i),
+                torch.arange(o, device="cuda", dtype=dtype_val) / o,
+                s
+            )
+        }
+    
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """

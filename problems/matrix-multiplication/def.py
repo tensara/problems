@@ -67,6 +67,23 @@ class matrix_multiplication(Problem):
             for matrix in test_matrices
         ]
     
+    def generate_sample(self, dtype: torch.dtype = torch.float32) -> Dict[str, Any]:
+        """
+        Generate sample test case for matrix multiplication with predictable inputs.
+
+        Returns:
+            Dictionary containing the sample test case.
+        """
+        m_dims = (8, 8, 8)  # M, N, K dimensions
+        return {
+            "name": "8x8_square",
+            "dims": m_dims,
+            "create_inputs": lambda m_dims=m_dims: (
+                torch.rand((m_dims[0], m_dims[2]), device="cuda", dtype=dtype) * 2 - 1,  # uniform [-1, 1]
+                torch.rand((m_dims[2], m_dims[1]), device="cuda", dtype=dtype) * 2 - 1   # uniform [-1, 1]
+            )
+        }
+    
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """

@@ -72,6 +72,27 @@ class layer_norm(Problem):
             for B, F, D1, D2 in test_configs
         ]
 
+    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+        """
+        Generate a single sample test case for debugging or interactive runs.
+        
+        Returns:
+            A list containing a single test case dictionary
+        """
+        B, F, D1, D2 = (2, 4, 4, 4)
+        return {
+            "name": f"Sample B={B}, F={F}, D1={D1}, D2={D2}",
+            "B": B,
+            "F": F,
+            "D1": D1,
+            "D2": D2,
+            "create_inputs": lambda B=B, F=F, D1=D1, D2=D2: (
+                torch.randn(B, F, D1, D2, device="cuda", dtype=dtype),
+                torch.ones(F, D1, D2, device="cuda", dtype=dtype), # Gamma = 1
+                torch.zeros(F, D1, D2, device="cuda", dtype=dtype)  # Beta = 0
+            )
+        }
+
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """
