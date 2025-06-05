@@ -74,8 +74,7 @@ class rms_norm(Problem):
             "name": f"shape={shape}",
             "shape": shape,
             "create_inputs": lambda shape=shape: (
-                # Create sequential input for easy verification
-                torch.randn(*shape, device="cuda", dtype=dtype)
+                torch.randn(*shape, device="cuda", dtype=dtype),
             )
         }
 
