@@ -66,12 +66,32 @@ class frobenius_norm(Problem):
         Returns:
             A list containing a single test case dictionary
         """
-        shape = (8, 8, 8)  # Updated to ensure dimensions are at least 8x8 and powers of 2
+        shape = (4, 4, 4)
         return {
             "name": f"Sample shape={shape}",
             "shape": shape,
             "create_inputs": lambda shape=shape: (
-                torch.randn(*shape, device="cuda", dtype=dtype),
+                torch.tensor([
+                    [[1.0, 2.0, -1.0, 0.5],
+                     [0.0, -2.0, 1.5, -0.5],
+                     [2.0, -1.0, 0.0, 1.0],
+                     [-0.5, 1.0, -2.0, 0.0]],
+                    
+                    [[-1.0, 0.5, 2.0, -0.5],
+                     [1.0, -1.5, -2.0, 0.5],
+                     [-0.5, 2.0, 1.5, -1.0],
+                     [0.5, -2.0, 1.0, 0.0]],
+                    
+                    [[0.5, -1.0, 2.0, -0.5],
+                     [-2.0, 1.5, -0.5, 1.0],
+                     [1.0, -0.5, 2.0, -1.5],
+                     [-1.0, 0.5, -2.0, 1.0]],
+                    
+                    [[2.0, -0.5, 1.0, -2.0],
+                     [-1.0, 0.5, -1.5, 2.0],
+                     [0.5, -2.0, 1.0, -0.5],
+                     [-1.5, 1.0, -0.5, 2.0]]
+                ], device="cuda", dtype=dtype),
             )
         }
 

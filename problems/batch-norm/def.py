@@ -79,7 +79,10 @@ class batch_norm(Problem):
             "D1": D1,
             "D2": D2,
             "create_inputs": lambda B=B, F=F, D1=D1, D2=D2: (
-                torch.randn((B, F, D1, D2), device="cuda", dtype=dtype),  # Input X with normal distribution
+                torch.tensor([
+                    [[[1.0, -2.0], [0.5, -1.5]], [[-0.5, 2.0], [1.5, -1.0]]],
+                    [[[-1.0, 0.5], [2.0, -0.5]], [[1.0, -1.5], [-2.0, 0.5]]]
+                ], device="cuda", dtype=dtype),
             )
         }
 

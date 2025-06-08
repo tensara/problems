@@ -68,7 +68,12 @@ class elu(Problem):
             "rows": m,
             "cols": n,
             "create_inputs": lambda m=m, n=n: (
-                torch.rand((m, n), device="cuda", dtype=dtype) * 10.0 - 5.0,  # uniform [-5, 5]
+                torch.tensor([
+                    [-5.0, -2.5, 0.0, 2.5],
+                    [-4.0, -1.5, 1.0, 3.5], 
+                    [-3.0, -0.5, 2.0, 4.5],
+                    [-2.0, 0.5, 3.0, 5.0]
+                ], device="cuda", dtype=dtype),
             )
         }
 
