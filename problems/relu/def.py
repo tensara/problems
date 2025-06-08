@@ -55,6 +55,30 @@ class relu(Problem):
             for name, m, n in test_configs
         ]
     
+    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+        """
+        Generate a single sample test case for debugging or interactive runs.
+        
+        Returns:
+            A list containing a single test case dictionary
+        """
+        m, n = (8, 8)  # Sample dimensions
+        return {
+            "name": f"{m}x{n}",
+            "rows": m,
+            "cols": n,
+            "create_inputs": lambda m=m, n=n: (
+                torch.tensor([[1.0, -2.0, 3.0, -4.0, 5.0, -1.5, 2.5, 0.0],
+                            [-3.5, 4.0, -1.0, 2.0, -5.0, 1.5, -2.5, 3.5],
+                            [2.0, -3.0, 4.5, -2.0, 1.5, -4.0, 3.0, -1.5],
+                            [-4.5, 5.0, -3.0, 1.0, -2.0, 4.0, -1.0, 2.0],
+                            [3.0, -4.0, 2.0, -1.5, 4.0, -3.0, 1.0, -2.5],
+                            [-2.5, 3.0, -4.5, 5.0, -1.0, 2.0, -3.0, 4.0],
+                            [4.0, -1.5, 2.0, -3.0, 5.0, -2.5, 3.0, -4.5],
+                            [-1.0, 2.0, -3.5, 4.0, -2.5, 3.0, -4.0, 1.0]], device="cuda", dtype=dtype),
+            )
+        }
+    
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """

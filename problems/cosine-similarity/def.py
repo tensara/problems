@@ -57,6 +57,24 @@ class cosine_similarity(Problem):
         
         return test_cases
     
+    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+        """
+        Generate a single sample test case for debugging or interactive runs.
+        
+        Returns:
+            A list containing a single test case dictionary
+        """
+        n, d = (8, 8)
+        return {
+            "name": f"N={n}, D={d}",
+            "n": n,
+            "d": d,
+            "create_inputs": lambda n=n, d=d: (
+                torch.arange(1, n * d + 1, device="cuda", dtype=dtype).float().view(n, d),
+                torch.flip(torch.arange(1, n * d + 1, device="cuda", dtype=dtype).float().view(n, d), dims=[1])
+            )
+        }
+    
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """

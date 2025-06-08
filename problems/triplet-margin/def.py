@@ -69,6 +69,46 @@ class triplet_margin(Problem):
             for batch, embedding_dim in test_configs
         ]
 
+    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+        """
+        Generate a single sample test case for debugging or interactive runs.
+        
+        Returns:
+            A list containing a single test case dictionary
+        """
+        batch, embedding_dim = (8, 8)  # Updated to ensure dimensions are at least 8x8 and powers of 2
+        return {
+            "name": f"batch={batch}, embedding_dim={embedding_dim}",
+            "batch": batch,
+            "embedding_dim": embedding_dim,
+            "create_inputs": lambda batch=batch, embedding_dim=embedding_dim: (
+                torch.tensor([[1.0, 2.0, 3.0, 4.0, 0.0, 0.0, 0.0, 0.0],
+                              [0.0, 0.5, 1.0, 1.5, 0.0, 0.0, 0.0, 0.0],
+                              [-1.0, 0.0, 1.0, 2.0, 0.0, 0.0, 0.0, 0.0],
+                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]], device="cuda", dtype=dtype),
+                torch.tensor([[1.1, 2.1, 3.1, 4.1, 0.0, 0.0, 0.0, 0.0],
+                              [0.1, 0.6, 1.1, 1.6, 0.0, 0.0, 0.0, 0.0],
+                              [-0.9, 0.1, 1.1, 2.1, 0.0, 0.0, 0.0, 0.0],
+                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]], device="cuda", dtype=dtype),
+                torch.tensor([[2.0, 3.0, 4.0, 5.0, 0.0, 0.0, 0.0, 0.0],
+                              [1.0, 1.5, 2.0, 2.5, 0.0, 0.0, 0.0, 0.0],
+                              [0.0, 1.0, 2.0, 3.0, 0.0, 0.0, 0.0, 0.0],
+                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]], device="cuda", dtype=dtype)
+            )
+        }
+
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """

@@ -56,6 +56,25 @@ class matrix_vector(Problem):
             for m, k in test_configs
         ]
     
+    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+        """
+        Generate sample test cases for matrix-vector multiplication with predictable inputs.
+
+        Returns:
+            List of sample test case dictionaries.
+        """
+        shape = (8, 8)  # Sample 2D tensor shape
+        return {
+            "name": f"shape={shape}",
+            "rows": 8,
+            "cols": 8,
+            "create_inputs": lambda shape=shape: (
+                torch.arange(1, torch.prod(torch.tensor(shape)).item() + 1, device="cuda", dtype=dtype).float().view(*shape),
+                torch.arange(1, shape[1] + 1, device="cuda", dtype=dtype).float()
+            )
+        }
+
+    
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """

@@ -52,6 +52,23 @@ class mse_loss(Problem):
             for shape in test_configs
         ]
     
+    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+        """
+        Generate a single sample test case for debugging or interactive runs.
+        
+        Returns:
+            A list containing a single test case dictionary
+        """
+        shape = (8, 8)  # Sample dimensions
+        return {
+            "name": f"shape={shape}",
+            "shape": shape,
+            "create_inputs": lambda shape=shape: (
+                torch.randn(shape, device="cuda", dtype=dtype),     # Predictions
+                torch.randn(shape, device="cuda", dtype=dtype)      # Targets
+            )
+        }
+    
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
         """
