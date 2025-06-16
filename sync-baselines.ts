@@ -12,8 +12,10 @@ const baselineFiles = {
 }
 
 const args = process.argv.slice(2);
-const targetBaselines = args.length > 0 ? args : Object.keys(baselineFiles);
+const tempBaselines = args.filter(arg => !arg.startsWith("--problems=") && !arg.startsWith("--gpu="));
 const targetProblems = args.find(arg => arg.startsWith("--problems="))?.split("=")[1]?.split(",");
+const gpuType = args.find(arg => arg.startsWith("--gpu="))?.split("=")[1] || "A100-80GB";
+const targetBaselines = tempBaselines.length > 0 ? tempBaselines : Object.keys(baselineFiles);
 
 const getProblemsDir = () => path.join(process.cwd(), "problems");
 const getSolutionPath = (slug: string, baseline: string) =>
@@ -27,7 +29,7 @@ async function main() {
     .filter((slug) => slug !== ".DS_Store" && slug !== "__pycache__")
     .filter((slug) => !targetProblems || targetProblems.includes(slug));
 
-  console.log(`Running benchmarks for baselines: ${targetBaselines.join(", ")}`);
+  console.log(`Running benchmarks for baselines: ${targetBaselines.join(", ")} on ${gpuType}`);
   if (targetProblems) {
     console.log(`Targeting specific problems: ${targetProblems.join(", ")}`);
   }
@@ -65,7 +67,7 @@ async function main() {
         language: "python",
         modalEndpoint: process.env.BASELINE_ENDPOINT as string,
         baseline: baseline,
-        gpuType: "T4",
+        gpuType: gpuType,
         dtype: "float32"
       });
 
@@ -84,16 +86,19 @@ async function main() {
             baselineBenchmarks: {
               ...existingBenchmarks,
               [baseline]: {
-                results: result.results,
-                avg_gflops: result.avg_gflops,
-                avg_runtime_ms: result.avg_runtime_ms,
-                total_tests: result.total_tests
+                ...existingBenchmarks[baseline],
+                [gpuType]: {
+                  results: result.results,
+                  avg_gflops: result.avg_gflops,
+                  avg_runtime_ms: result.avg_runtime_ms,
+                  total_tests: result.total_tests
+                }
               }
             }
           }
         });
 
-        console.log(`✓ ${baseline} benchmark completed and saved`);
+        console.log(`✓ ${baseline} benchmark completed and saved for ${slug} on ${gpuType}`);
         console.log(`  - Tests: ${result.results.length}`);
         const avgGflops = result.results.reduce((sum, r) => sum + r.gflops, 0) / result.results.length;
         console.log(`  - Avg GFLOPS: ${avgGflops.toFixed(2)}`);

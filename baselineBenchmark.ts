@@ -14,6 +14,7 @@ export async function runBaselineBenchmark(params: {
   modalEndpoint: string;
   baseline: string;
   dtype?: string;
+  check?: boolean;
 }): Promise<{
   success: boolean;
   results?: TestResult[];
@@ -37,6 +38,7 @@ export async function runBaselineBenchmark(params: {
           gpu: params.gpuType ?? "t4",
           dtype: params.dtype ?? "float32",
           language: params.language,
+          check: params.check ?? false,
         }),
       }
     );
@@ -79,6 +81,18 @@ export async function runBaselineBenchmark(params: {
               results: data.test_results,
               avg_gflops: data.avg_gflops,
               avg_runtime_ms: data.avg_runtime_ms,
+              total_tests: data.total_tests,
+            };
+          } else if (data.status === "CHECKED") {
+            const results: TestResult[] = data.test_results.map((test: any) => ({
+              test_id: test.test_id,
+              name: test.name,
+              gflops: 0, 
+              runtime_ms: 0,
+            }));
+            return {
+              success: data.test_results.every((test: any) => (test.status === "PASSED")),
+              results,
               total_tests: data.total_tests,
             };
           } else if (data.error) {
