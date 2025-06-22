@@ -66,6 +66,7 @@ class running_sum_1d(Problem):
                 "window_size": window_size,
                 "create_inputs": lambda s=signal_size, w=window_size: (
                     torch.rand(s, device="cuda", dtype=dtype) * 10.0 - 5.0,
+                    w
                 )
             }
             for signal_size, window_size in test_configs
@@ -84,7 +85,8 @@ class running_sum_1d(Problem):
             "signal_size": signal_size,
             "window_size": window_size,
             "create_inputs": lambda s=signal_size, w=window_size: (
-                torch.arange(1, s + 1, device="cuda", dtype=dtype).float()
+                torch.arange(1, s + 1, device="cuda", dtype=dtype).float(),
+                w
             )
         }
     
