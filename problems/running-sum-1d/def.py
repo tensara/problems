@@ -140,9 +140,10 @@ class running_sum_1d(Problem):
         return {
             "argtypes": [
                 ctypes.POINTER(ctypes.c_float),  # input_signal
+                ctypes.c_size_t,                 # window_size (W)
                 ctypes.POINTER(ctypes.c_float),  # output
-                ctypes.c_size_t,                 # signal_size (N)
-                ctypes.c_size_t                  # window_size (W)
+                ctypes.c_size_t                  # signal_size (N)
+
             ],
             "restype": None
         }
