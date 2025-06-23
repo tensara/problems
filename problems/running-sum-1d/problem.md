@@ -10,6 +10,11 @@ parameters:
     pointer: "true"
     const: "true"
 
+  - name: "W" 
+    type: "size_t"
+    pointer: "false"
+    constant: "false"
+    
   - name: "output" 
     type: "[VAR]"
     pointer: "true"
@@ -20,10 +25,7 @@ parameters:
     pointer: "false"
     constant: "false"
     
-  - name: "W" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
+
     
 ---
 
