@@ -174,8 +174,7 @@ class running_sum_1d(Problem):
             test_case: The test case dictionary
             
         Returns:
-            List containing the signal size N and window_size W
+            List containing the signal size N
         """
         N = test_case["signal_size"]
-        W = test_case["window_size"]
-        return [N, W]
+        return [N]
