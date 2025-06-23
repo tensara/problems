@@ -34,8 +34,8 @@ class matrix_power(Problem):
         Returns:
             List of test case dictionaries with varying sizes and powers
         """
-        matrix_sizes = [64, 128, 256, 512]
-        powers = [2, 3, 4, 5]
+        matrix_sizes = [512, 1024, 2048, 4096]
+        powers = [8, 24, 32]
         
         return [
             {
