@@ -28,7 +28,7 @@ class running_sum_1d(Problem):
             # Perform 1D convolution using PyTorch's built-in function
             # using kernel of ones to compute the running sum
             input_reshaped = input_tensor.view(1, 1, -1)
-            kernel = torch.ones(window_size, dtype=input_tensor.dtype)
+            kernel = torch.ones(window_size, dtype=input_tensor.dtype, device=input_tensor.device)
             kernel_reshaped = kernel.view(1, 1, -1)
             
             # Calculate padding size to maintain the same output size
