@@ -14,7 +14,7 @@ parameters:
     type: "size_t"
     pointer: "false"
     constant: "false"
-    
+
   - name: "output" 
     type: "[VAR]"
     pointer: "true"
@@ -43,4 +43,6 @@ The running sum operation slides the window over the input data and computing th
 - Vector $\text{output}$ of size $\text{N}$ (output sums)
 
 ## Notes:
+- $\text{W}$ is odd and smaller than $\text{N}$
 - Use zero padding at the boundaries where the window extends beyond the input data
+- The window is centered at each position, with $(W-1)/2$ elements on each side
