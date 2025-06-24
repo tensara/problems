@@ -2,7 +2,7 @@
 slug: "running-sum-1d"
 title: "1D Running Sum"
 difficulty: "EASY" 
-author: "nanrek"
+author: "nnarek"
 tags: ["convolution"]
 parameters:
   - name: "input"
