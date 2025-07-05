@@ -5,6 +5,7 @@
   "main": "sync-problems.ts",
   "scripts": {
     "sync-problems": "tsx sync-problems.ts",
+    "sync-baselines": "tsx sync-baselines.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
