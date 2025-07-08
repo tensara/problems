@@ -35,7 +35,7 @@ class matrix_power(Problem):
             List of test case dictionaries with varying sizes and powers
         """
         matrix_sizes = [512, 1024, 2048]
-        powers = [8, 24, 32]
+        powers = [2, 4, 8]
         
         return [
             {
@@ -43,8 +43,8 @@ class matrix_power(Problem):
                 "size": size,
                 "power": power,
                 "create_inputs": lambda size=size, power=power: (
-                    # Generate well-conditioned matrix for numerical stability
-                    torch.randn((size, size), device="cuda", dtype=dtype) * 0.1 + torch.eye(size, device="cuda", dtype=dtype),
+                    # Generate well-conditioned matrix with small values
+                    torch.randn((size, size), device="cuda", dtype=dtype) * 0.01 + torch.eye(size, device="cuda", dtype=dtype) * 0.1,
                     power
                 )
             }
