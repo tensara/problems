@@ -81,10 +81,10 @@ class box_blur(Problem):
         Returns:
             A list containing a single test case dictionary
         """
-        image_size = (16, 16)
+        image_size = (8, 8)
         kernel_size = 3
         return {
-            "name": "Sample (h=16, w=16, kernel=3x3)",
+            "name": "Sample (h=8, w=8, kernel=3x3)",
             "height": image_size[0],
             "width": image_size[1],
             "kernel_size": kernel_size,
@@ -148,10 +148,10 @@ class box_blur(Problem):
         return {
             "argtypes": [
                 ctypes.POINTER(ctypes.c_float),  # input_image
+                ctypes.c_int,                    # kernel_size
                 ctypes.POINTER(ctypes.c_float),  # output_image
                 ctypes.c_size_t,                 # height
-                ctypes.c_size_t,                 # width
-                ctypes.c_int                     # kernel_size
+                ctypes.c_size_t                  # width
             ],
             "restype": None
         }
@@ -192,5 +192,4 @@ class box_blur(Problem):
         """
         height = test_case["height"]
         width = test_case["width"]
-        kernel_size = test_case["kernel_size"]
-        return [height, width, kernel_size] 
+        return [height, width] 

@@ -10,6 +10,11 @@ parameters:
     pointer: "true"
     const: "true"
   
+  - name: "kernel_size" 
+    type: "int"
+    pointer: "false"
+    constant: "false"
+
   - name: "output_image" 
     type: "[VAR]"
     pointer: "true"
@@ -22,11 +27,6 @@ parameters:
     
   - name: "width" 
     type: "size_t"
-    pointer: "false"
-    constant: "false"
-
-  - name: "kernel_size" 
-    type: "int"
     pointer: "false"
     constant: "false"
 
