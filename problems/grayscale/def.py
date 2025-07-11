@@ -37,12 +37,11 @@ class grayscale(Problem):
         Returns:
             List of test case dictionaries with varying image sizes
         """
-        # Test case configurations with specific image sizes
         image_sizes = [
-            (512, 512),     # Standard square image
-            (1024, 768),    # Common HD resolution
-            (1920, 1080),   # Full HD resolution
-            (3840, 2160)    # 4K resolution (for larger benchmarks)
+            (512, 512),    
+            (1024, 768),    
+            (1920, 1080),   
+            (3840, 2160)    
         ]
         
         test_cases = []
@@ -53,7 +52,6 @@ class grayscale(Problem):
                 "width": width,
                 "channels": 3,
                 "create_inputs": lambda h=height, w=width: (
-                    # Create a tensor in HWC format with values in [0, 255]
                     torch.rand((h, w, 3), device="cuda", dtype=dtype) * 255.0,
                 )
             })
@@ -67,9 +65,9 @@ class grayscale(Problem):
         Returns:
             A list containing a single test case dictionary
         """
-        name = "Sample (h=16, w=16)"
-        height = 16
-        width = 16
+        name = "Sample (h=8, w=8)"
+        height = 8
+        width = 8
         return {
             "name": name,
             "height": height,

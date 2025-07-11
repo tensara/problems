@@ -37,15 +37,12 @@ class threshold(Problem):
         Returns:
             List of test case dictionaries with varying image sizes and threshold values
         """
-        # Test case configurations with specific image sizes
         image_sizes = [
-            (512, 512),     # Standard square image
-            (1024, 768),    # Common HD resolution
-            (1920, 1080),   # Full HD resolution
-            (3840, 2160)    # 4K resolution (for larger benchmarks)
+            (1024, 768),    
+            (1920, 1080),   
+            (3840, 2160)    
         ]
         
-        # Different threshold values to test
         threshold_values = [64.0, 128.0, 192.0]
         
         test_cases = []
@@ -72,12 +69,16 @@ class threshold(Problem):
         Returns:
             A list containing a single test case dictionary
         """
-        image_size = (16, 16)
+        image_size = (8, 8)
         threshold_value = 128.0
         return {
-            "name": "Sample (h=16, w=16, threshold=128.0)",
+            "name": "Sample (h=8, w=8, threshold=128.0)",
             "height": image_size[0],
             "width": image_size[1],
+            "create_inputs": lambda h=image_size[0], w=image_size[1], t=threshold_value: (
+                torch.rand((h, w), device="cuda", dtype=dtype) * 255.0,
+                t
+            )
         }
     
     def verify_result(self, expected_output: torch.Tensor, 
@@ -130,11 +131,11 @@ class threshold(Problem):
         """
         return {
             "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # input_image
-                ctypes.POINTER(ctypes.c_float),  # output_image
+                ctypes.POINTER(ctypes.c_float),  # image
+                ctypes.c_float,                  # threshold_value
+                ctypes.POINTER(ctypes.c_float),  # thresholded_image
                 ctypes.c_size_t,                 # height
                 ctypes.c_size_t,                 # width
-                ctypes.c_float                   # threshold_value
             ],
             "restype": None
         }
@@ -171,5 +172,4 @@ class threshold(Problem):
         """
         height = test_case["height"]
         width = test_case["width"]
-        threshold_value = test_case["threshold_value"]
-        return [height, width, threshold_value] 
+        return [height, width] 

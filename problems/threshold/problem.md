@@ -10,6 +10,11 @@ parameters:
     pointer: "true"
     const: "true"
   
+  - name: "threshold_value" 
+    type: "float"
+    pointer: "false"
+    constant: "false"
+  
   - name: "output_image" 
     type: "[VAR]"
     pointer: "true"
@@ -25,10 +30,6 @@ parameters:
     pointer: "false"
     constant: "false"
 
-  - name: "threshold_value" 
-    type: "float"
-    pointer: "false"
-    constant: "false"
 
 ---
 

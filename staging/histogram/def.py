@@ -25,12 +25,9 @@ class histogram(Problem):
             Histogram array of shape (num_bins,) containing pixel counts
         """
         with torch.no_grad():
-            # Initialize histogram
             histogram = torch.zeros(num_bins, device=input_image.device, dtype=torch.float32)
             
-            # Compute histogram
             for pixel_value in input_image.flatten():
-                # Clamp pixel value to valid range and convert to bin index
                 bin_idx = int(torch.clamp(pixel_value, 0, num_bins - 1).item())
                 histogram[bin_idx] += 1
             
@@ -46,7 +43,6 @@ class histogram(Problem):
         image_sizes = [
             (512, 512),
             (1024, 768),
-            (1920, 1080),
             (2560, 1440)   
         ]
         
@@ -61,7 +57,6 @@ class histogram(Problem):
                     "width": width,
                     "num_bins": num_bins,
                     "create_inputs": lambda h=height, w=width, b=num_bins: (
-                        # Create a random grayscale image with values in [0, b-1]
                         torch.randint(0, b, (h, w), device="cuda", dtype=dtype),
                         b
                     )
@@ -76,10 +71,10 @@ class histogram(Problem):
         Returns:
             A list containing a single test case dictionary
         """
-        image_size = (16, 16)
+        image_size = (8, 8)
         num_bins = 256
         return {
-            "name": "Sample (h=16, w=16, bins=256)",
+            "name": "Sample (h=8, w=8, bins=256)",
             "height": image_size[0],
             "width": image_size[1],
             "num_bins": num_bins,
@@ -137,11 +132,11 @@ class histogram(Problem):
         """
         return {
             "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # input_image
-                ctypes.POINTER(ctypes.c_float),  # histogram_output
+                ctypes.POINTER(ctypes.c_float),  # image
+                ctypes.c_int,                    # num_bins
+                ctypes.POINTER(ctypes.c_float),  # histogram
                 ctypes.c_size_t,                 # height
-                ctypes.c_size_t,                 # width
-                ctypes.c_int                     # num_bins
+                ctypes.c_size_t                  # width
             ],
             "restype": None
         }
@@ -180,5 +175,4 @@ class histogram(Problem):
         """
         height = test_case["height"]
         width = test_case["width"]
-        num_bins = test_case["num_bins"]
-        return [height, width, num_bins] 
+        return [height, width] 

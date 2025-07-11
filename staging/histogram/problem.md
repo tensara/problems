@@ -5,12 +5,17 @@ difficulty: "EASY"
 author: "sarthak"
 tags: ["graphics", "statistics"]
 parameters:
-  - name: "input_image"
+  - name: "image"
     type: "[VAR]"
     pointer: "true"
     const: "true"
+
+  - name: "num_bins" 
+    type: "int"
+    pointer: "false"
+    constant: "false"
   
-  - name: "histogram_output" 
+  - name: "histogram" 
     type: "[VAR]"
     pointer: "true"
     const: "false"
@@ -22,11 +27,6 @@ parameters:
     
   - name: "width" 
     type: "size_t"
-    pointer: "false"
-    constant: "false"
-
-  - name: "num_bins" 
-    type: "int"
     pointer: "false"
     constant: "false"
 
