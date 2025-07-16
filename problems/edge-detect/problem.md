@@ -55,5 +55,3 @@ This algorithm computes horizontal and vertical gradients, then combines them to
 - The input tensor is a single-channel grayscale image
 - Only compute gradients for interior pixels (ignore 1-pixel border)
 - Border pixels remain zero in the output
-- The output shows edge strength - higher values indicate stronger edges
-- This is a fundamental operation in computer vision and image analysis 

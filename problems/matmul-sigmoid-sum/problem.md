@@ -1,9 +1,9 @@
 ---
 slug: "matmul-sigmoid-sum"
-title: "Matrix Multiplication + Sigmoid + Sum Fusion"
+title: "Matrix Multiplication + Sigmoid + Sum"
 difficulty: "HARD"
 author: "sarthak"
-tags: ["matmul", "sigmoid", "sum", "fusion"]
+tags: ["matmul", "reduction", "fusion"]
 parameters:
   - name: "input_a"
     type: "[VAR]"
@@ -54,9 +54,7 @@ This operation consists of three steps:
 - Matrix $B$ of size $K \times N$
 
 ## Output
-- Scalar value representing the sum of sigmoid(A * B)
+- Scalar value representing the sum of $\sigma(AB)$
 
 ## Notes:
 - All matrices $A$ and $B$ are stored in row-major order
-- The fusion of these operations can provide significant performance benefits by reducing memory bandwidth
-- Consider optimizing memory access patterns and reducing intermediate results 

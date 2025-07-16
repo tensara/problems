@@ -52,6 +52,3 @@ This creates a blurring effect by smoothing out pixel values. The larger the ker
 ## Notes:
 - The input tensor is a single-channel grayscale image
 - Handle edge cases by only averaging available pixels (no padding)
-- For pixels near the border, use a smaller effective kernel
-- The kernel size should be odd (3x3, 5x5, 7x7, etc.)
-- This is a fundamental operation in computer graphics and image processing 

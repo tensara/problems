@@ -36,8 +36,6 @@ class matmul_sigmoid_sum(Problem):
         Returns:
             List of test case dictionaries with varying matrix dimensions
         """
-        # Matrix dimensions: (M, K) × (K, N) = (M, N)
-        # dims represents (M, N, K)
         test_matrices = [
             {
                 "name": "512x512 x 512x512",
@@ -76,7 +74,7 @@ class matmul_sigmoid_sum(Problem):
         Returns:
             Dictionary containing the sample test case.
         """
-        m_dims = (4, 4, 4)  # M, N, K dimensions
+        m_dims = (4, 4, 4) 
         return {
             "name": "4x4_square",
             "dims": m_dims,
