@@ -25,12 +25,9 @@ class histogram(Problem):
             Histogram array of shape (num_bins,) containing pixel counts
         """
         with torch.no_grad():
-            histogram = torch.zeros(num_bins, device=input_image.device, dtype=torch.float32)
-            
-            for pixel_value in input_image.flatten():
-                bin_idx = int(torch.clamp(pixel_value, 0, num_bins - 1).item())
-                histogram[bin_idx] += 1
-            
+            clamped_input = torch.clamp(input_image, 0, num_bins - 1)
+            indices = clamped_input.long().flatten()
+            histogram = torch.bincount(indices, minlength=num_bins).float()
             return histogram
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
@@ -41,9 +38,9 @@ class histogram(Problem):
             List of test case dictionaries with varying image sizes and bin counts
         """
         image_sizes = [
-            (512, 512),
-            (1024, 768),
-            (2560, 1440)   
+            (2560, 1440),
+            (2048, 2048),
+            (4096, 4096)
         ]
         
         bin_counts = [64, 128, 256]

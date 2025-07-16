@@ -25,26 +25,28 @@ class edge_detect(Problem):
         """
         with torch.no_grad():
             h, w = input_image.shape
-            output = torch.zeros_like(input_image)
             
-            # Apply simple gradient-based edge detection
-            for i in range(1, h - 1):
-                for j in range(1, w - 1):
-                    # Compute horizontal gradient (Gx)
-                    gx = (input_image[i, j + 1] - input_image[i, j - 1]) / 2.0
-                    
-                    # Compute vertical gradient (Gy)
-                    gy = (input_image[i + 1, j] - input_image[i - 1, j]) / 2.0
-                    
-                    # Compute gradient magnitude
-                    magnitude = torch.sqrt(gx * gx + gy * gy)
-                    output[i, j] = magnitude
+            gx_kernel = torch.tensor([[-1, 0, 1]], device=input_image.device) / 2.0
+            gy_kernel = torch.tensor([[-1], [0], [1]], device=input_image.device) / 2.0
             
-            # Normalize to [0, 255] range
-            if output.max() > 0:
-                output = (output / output.max()) * 255.0
+            input_reshaped = input_image.view(1, 1, h, w)
+            gx_kernel = gx_kernel.view(1, 1, 1, 3)
+            gy_kernel = gy_kernel.view(1, 1, 3, 1)
             
-            return output
+            gx = torch.nn.functional.conv2d(input_reshaped, gx_kernel, padding=(0, 1))
+            gy = torch.nn.functional.conv2d(input_reshaped, gy_kernel, padding=(1, 0))
+            
+            magnitude = torch.sqrt(gx**2 + gy**2).squeeze()
+            
+            magnitude[0, :] = 0
+            magnitude[-1, :] = 0
+            magnitude[:, 0] = 0
+            magnitude[:, -1] = 0
+            
+            if magnitude.max() > 0:
+                magnitude = (magnitude / magnitude.max()) * 255.0
+            
+            return magnitude
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """
@@ -54,10 +56,11 @@ class edge_detect(Problem):
             List of test case dictionaries with varying image sizes
         """
         image_sizes = [
-            (512, 512),     
             (1024, 768),    
-            (1920, 1080),   
-            (2560, 1440)    
+            (1920, 1080),
+            (2048, 2048),
+            (2560, 1440),
+            (4096, 4096)
         ]
         
         test_cases = []

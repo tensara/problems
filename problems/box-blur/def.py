@@ -26,19 +26,26 @@ class box_blur(Problem):
         """
         with torch.no_grad():
             h, w = input_image.shape
-            output = torch.zeros_like(input_image)
-            
             pad = kernel_size // 2
             
-            for i in range(h):
-                for j in range(w):
-                    start_i = max(0, i - pad)
-                    end_i = min(h, i + pad + 1)
-                    start_j = max(0, j - pad)
-                    end_j = min(w, j + pad + 1)
-                    
-                    kernel_area = input_image[start_i:end_i, start_j:end_j]
-                    output[i, j] = torch.mean(kernel_area)
+            padded = torch.nn.functional.pad(input_image, (pad, pad, pad, pad), mode='constant', value=0)
+            input_reshaped = padded.view(1, 1, h + 2*pad, w + 2*pad)
+            
+            kernel = torch.ones(1, 1, kernel_size, kernel_size, device=input_image.device)
+            
+            y = torch.arange(h, device=input_image.device)
+            x = torch.arange(w, device=input_image.device)
+            yy, xx = torch.meshgrid(y, x, indexing='ij')
+            
+            i_start = torch.clamp(yy - pad, 0, h)
+            i_end = torch.clamp(yy + pad + 1, 0, h) 
+            j_start = torch.clamp(xx - pad, 0, w)
+            j_end = torch.clamp(xx + pad + 1, 0, w)
+            
+            valid_elements = (i_end - i_start) * (j_end - j_start)
+            
+            output = torch.nn.functional.conv2d(input_reshaped, kernel).view(h, w)
+            output = output / valid_elements
             
             return output
     
@@ -50,13 +57,11 @@ class box_blur(Problem):
             List of test case dictionaries with varying image sizes and kernel sizes
         """
         image_sizes = [
-            (512, 512),     
-            (1024, 768),    
-            (1920, 1080),   
-            (2560, 1440) 
+            (1920, 1080),
+            (2048, 2048)
         ]
         
-        kernel_sizes = [3, 5, 7]
+        kernel_sizes = [15, 21, 27]
         
         test_cases = []
         for height, width in image_sizes:
