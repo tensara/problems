@@ -1,6 +1,7 @@
 import torch
 import ctypes
 from typing import List, Dict, Tuple, Any
+import math
 
 from problem import Problem
 
@@ -24,7 +25,7 @@ class array_sort(Problem):
             Sorted array of shape (n,)
         """
         with torch.no_grad():
-            sorted_array, _ = torch.sort(input_array)
+            sorted_array = torch.sort(input_array)[0]
             return sorted_array
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
@@ -35,11 +36,14 @@ class array_sort(Problem):
             List of test case dictionaries with varying array sizes
         """
         array_sizes = [
-            1000,      
-            5000,      
-            10000,     
-            25000,     
-            50000     
+            50000,
+            100000,
+            500000,
+            1000000,
+            5000000,
+            10000000,
+            20000000,
+            50000000
         ]
         
         test_cases = []
@@ -48,7 +52,7 @@ class array_sort(Problem):
                 "name": f"size_{size}",
                 "size": size,
                 "create_inputs": lambda s=size: (
-                    torch.rand(s, device="cuda", dtype=dtype) * 1000.0,
+                    torch.randint(0, 1000, (s,), device="cuda", dtype=dtype),
                 )
             })
         
@@ -66,7 +70,7 @@ class array_sort(Problem):
             "name": "Sample (size=16)",
             "size": size,
             "create_inputs": lambda s=size: (
-                torch.rand(s, device="cuda", dtype=dtype) * 1000.0,
+                torch.randint(0, 1000, (s,), device="cuda", dtype=dtype),
             )
         }
 
@@ -120,8 +124,8 @@ class array_sort(Problem):
         """
         return {
             "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # input_array
-                ctypes.POINTER(ctypes.c_float),  # output_array
+                ctypes.POINTER(ctypes.c_int),  # input_array
+                ctypes.POINTER(ctypes.c_int),  # output_array
                 ctypes.c_size_t,                 # size
             ],
             "restype": None
@@ -146,7 +150,6 @@ class array_sort(Problem):
         # - Average case: O(n log n) comparisons for efficient algorithms
         # - Worst case: O(n^2) for simple algorithms, O(n log n) for advanced ones
         # We'll use O(n log n) as a reasonable estimate for efficient sorting
-        import math
         return int(size * math.log2(size) * 3)  # 3 FLOPs per comparison (compare + potential swap operations)
     
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
