@@ -170,8 +170,7 @@ class shortest_path(Problem):
             Number of floating point operations
         """
         N = test_case["dims"][0]
-        M = (N * (N-1))/8
-        return M * math.log2(N) + M * (1 + math.log2(M))
+        return N * N * 2
     
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
