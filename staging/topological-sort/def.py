@@ -227,20 +227,6 @@ class topological_sort(Problem):
             "restype": None
         }
     
-    # def get_flops(self, test_case: Dict[str, Any]) -> int:
-    #     """
-    #     Get the number of floating point operations for the problem.
-        
-    #     Args:
-    #         test_case: The test case dictionary
-            
-    #     Returns:
-    #         Number of floating point operations
-    #     """
-    #     N = test_case["dims"][0]
-    #     # Kahn's algorithm: O(V + E) where E is number of edges
-    #     # Approximate as O(N^2) for dense graphs
-    #     return N * N
     
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """

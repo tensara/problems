@@ -163,19 +163,7 @@ class all_pairs_shortest_path(Problem):
             "restype": None
         }
     
-    # def get_flops(self, test_case: Dict[str, Any]) -> int:
-    #     """
-    #     Get the number of floating point operations for the problem.
-        
-    #     Args:
-    #         test_case: The test case dictionary
-            
-    #     Returns:
-    #         Number of floating point operations
-    #     """
-    #     N = test_case["dims"][0]
-    #     # Floyd-Warshall: O(N^3) comparisons and additions
-    #     return N * N * N * 3
+
     
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
