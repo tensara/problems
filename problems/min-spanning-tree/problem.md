@@ -3,7 +3,7 @@ slug: "min-spanning-tree"
 title: "Minimum Spanning Tree"
 difficulty: "MEDIUM"
 author: "sarthak"
-tags: ["graph"]
+tags: ["graphs"]
 parameters:
   - name: "A"
     type: "[VAR]"

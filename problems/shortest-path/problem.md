@@ -2,8 +2,8 @@
 slug: "shortest-path"
 title: "Single Source Shortest Path"
 difficulty: "MEDIUM"
-author: "assistant"
-tags: ["graph", "shortest-path", "dijkstra"]
+author: "sarthak"
+tags: ["graphs"]
 parameters:
   - name: "d_adj_matrix"
     type: "[VAR]"
