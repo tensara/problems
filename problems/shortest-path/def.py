@@ -38,6 +38,7 @@ class shortest_path(Problem):
                 new_dist = dist[u] + weights
                 dist.scatter_reduce_(0, v, new_dist, reduce='amin')
 
+            dist = torch.where(torch.isinf(dist), -1.0, dist)
             return dist
 
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
@@ -48,6 +49,7 @@ class shortest_path(Problem):
             List of test case dictionaries with varying graph sizes
         """
         sizes = [
+            ("n = 512 (disconnected)", 512),
             ("n = 2048", 2048),
             ("n = 4096", 4096),
             ("n = 6144", 6144),
@@ -83,6 +85,12 @@ class shortest_path(Problem):
             backward_indices = torch.arange(1, size, device="cuda")[backward_mask]
             backward_weights = torch.randint(1, 6, (backward_mask.sum(),), device="cuda", dtype=dtype)
             adj_matrix[backward_indices, backward_indices - 1] = backward_weights
+
+        # making disconnected graph for the smaller testcase        
+        if size == 512:
+            num_disconnected = torch.randint(size // 10, size // 5, (1,), device="cuda").item()
+            disconnected_nodes = torch.randperm(size, device="cuda")[:num_disconnected]
+            adj_matrix[disconnected_nodes, :] = 0
         
         source = torch.randint(0, size, (1,), device="cuda").item()
         return adj_matrix, source

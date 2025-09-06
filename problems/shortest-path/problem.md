@@ -40,5 +40,5 @@ $$
 - Source node index $s$
 
 ## Output
-- Array $d$ of size $N$ containing shortest distances from source $s$ to all nodes. If a node is unreachable, its distance should be $\infty$.
+- Array $d$ of size $N$ containing shortest distances from source $s$ to all nodes. If a node is unreachable, its distance should be $-1$.
 
