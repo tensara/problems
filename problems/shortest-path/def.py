@@ -49,7 +49,7 @@ class shortest_path(Problem):
             List of test case dictionaries with varying graph sizes
         """
         sizes = [
-            ("n = 512 (disconnected)", 512),
+            ("n = 512", 512),
             ("n = 2048", 2048),
             ("n = 4096", 4096),
             ("n = 6144", 6144),
