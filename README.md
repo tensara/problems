@@ -25,6 +25,7 @@ The `def.py` file is extended from the [problems class](https://github.com/tensa
 - `verify_result`: implement logic to check whether the output of a submission matches the expected result. This is flexible -- you can include comparisons for numerical values or verify algorithmically. 
 - `get_function_signature`: return argtypes based on [ctypes](https://docs.python.org/3/library/ctypes.html).
 - `get_flops`: get the number of FLOPs as a function of the testcase size. Relevant for [benchmarking submissions](https://tensara.org/blog/benchmarking-solutions).
+TODO: Get generalized FLOP counting?
 - `get_extra_params`: (soon to be phased out) returns function parameters not used by `reference_solution`.
 
 The `problem.md` file should contain a description of the problem written in Markdown (LaTeX supported!). The YAML Front Matter should contain:
