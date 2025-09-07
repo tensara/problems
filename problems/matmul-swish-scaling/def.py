@@ -164,8 +164,8 @@ class matmul_swish_scaling(Problem):
             "argtypes": [
                 ctypes.POINTER(ctypes.c_float),  # matrix_a
                 ctypes.POINTER(ctypes.c_float),  # matrix_b
-                ctypes.POINTER(ctypes.c_float),  # output_matrix
                 ctypes.c_float,                  # scale factor
+                ctypes.POINTER(ctypes.c_float),  # output_matrix
                 ctypes.c_size_t,                 # M (rows in A)
                 ctypes.c_size_t,                 # N (columns in B)
                 ctypes.c_size_t                  # K (columns in A, rows in B)
@@ -203,5 +203,4 @@ class matmul_swish_scaling(Problem):
             List containing the scale factor and dimensions M, N, K
         """
         M, N, K = test_case["dims"]
-        scale = test_case["scale"]
-        return [scale, M, N, K] 
+        return [M, N, K] 

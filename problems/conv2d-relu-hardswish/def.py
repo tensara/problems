@@ -25,33 +25,20 @@ class conv2d_relu_hardswish(Problem):
             Result of conv2d -> ReLU -> HardSwish fusion
         """
         with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            # Ensure kernel sizes are odd
-            assert kernel.size(0) % 2 == 1, "Kernel height must be odd"
-            assert kernel.size(1) % 2 == 1, "Kernel width must be odd"
-            
-            # Perform 2D convolution using PyTorch's built-in function
-            # Convert to shape expected by conv2d: [batch, channels, height, width]
             input_reshaped = input_image.view(1, 1, input_image.size(0), input_image.size(1))
             kernel_reshaped = kernel.view(1, 1, kernel.size(0), kernel.size(1))
             
-            # Calculate padding size to maintain the same output size
             padding_h = kernel.size(0) // 2
             padding_w = kernel.size(1) // 2
             
-            # Perform convolution
             conv_result = torch.nn.functional.conv2d(
                 input_reshaped, 
                 kernel_reshaped, 
                 padding=(padding_h, padding_w)
             )
             
-            # Reshape back to original dimensions
             conv_result = conv_result.view(input_image.size(0), input_image.size(1))
-            
-            # Apply ReLU activation
-            relu_result = torch.nn.functional.relu(conv_result)
-            
-            # Apply HardSwish activation: x * ReLU6(x + 3) / 6
+            relu_result = torch.nn.functional.relu(conv_result)            
             hardswish_result = relu_result * torch.nn.functional.relu6(relu_result + 3) / 6
             
             return hardswish_result
@@ -94,7 +81,7 @@ class conv2d_relu_hardswish(Problem):
         Returns:
             A test case dictionary
         """
-        h, w, kh, kw = (4, 4, 3, 3) # Sample configuration (kernel dims must be odd)
+        h, w, kh, kw = (4, 4, 3, 3)
         return {
             "name": f"H={h}, W={w}, Kh={kh}, Kw={kw}",
             "height": h,
@@ -190,9 +177,6 @@ class conv2d_relu_hardswish(Problem):
         Returns:
             Number of floating point operations
         """
-        # Conv2D FLOPS = 2 * H * W * Kh * Kw
-        # ReLU FLOPS = 0 (comparison operation only)
-        # HardSwish FLOPS = 5 * H * W (add, relu6, mul, div, mul)
         H = test_case["height"]
         W = test_case["width"]
         Kh = test_case["kernel_height"]

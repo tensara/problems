@@ -53,5 +53,3 @@ This creates a frequency distribution showing how many pixels have each intensit
 - The input tensor contains integer pixel values in range [0, num_bins-1]
 - Each histogram bin counts pixels with that specific intensity value
 - The sum of all histogram bins equals the total number of pixels
-- Histograms are fundamental for image analysis, enhancement, and segmentation
-- Handle potential race conditions when multiple threads access the same bin 

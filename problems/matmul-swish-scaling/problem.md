@@ -1,47 +1,47 @@
 ---
 slug: "matmul-swish-scaling"
-title: "Matrix Multiplication + Swish + Scaling Fusion"
-difficulty: "HARD"
+title: "Matrix Multiplication with Swish and Scaling"
+difficulty: "MEDIUM"
 author: "sarthak"
-tags: ["matmul", "swish", "scaling", "fusion"]
+tags: ["matmul", "activation-function", "fused"]
 parameters:
-  - name: "input_a"
+  - name: "A"
     type: "[VAR]"
     pointer: "true"
     const: "true"
   
-  - name: "input_b"
+  - name: "B"
     type: "[VAR]"
     pointer: "true"
     const: "true"
-
-  - name: "output_matrix" 
-    type: "[VAR]"
-    pointer: "true"
-    const: "false"
-
+  
   - name: "scale"
     type: "float"
     pointer: "false"
     constant: "false"
 
-  - name: "m"
+  - name: "output" 
+    type: "[VAR]"
+    pointer: "true"
+    const: "false"
+
+  - name: "M"
     type: "size_t"
     pointer: "false"
     constant: "false"
     
-  - name: "n" 
+  - name: "N" 
     type: "size_t"
     pointer: "false"
     constant: "false"
     
-  - name: "k"
+  - name: "K"
     type: "size_t"
     pointer: "false"
     constant: "false"
 ---
 
-Perform fused matrix multiplication followed by Swish activation followed by scaling:
+Perform a matrix multiplication followed by Swish activation followed by scaling:
 
 $$
 O[i][j] = \text{scale} \times \text{swish}\left(\sum_{k=0}^{K-1} A[i][k] \cdot B[k][j]\right)
@@ -64,6 +64,3 @@ This operation consists of three steps:
 
 ## Notes:
 - All matrices $A$, $B$, and $O$ are stored in row-major order
-- Swish is a smooth, non-monotonic activation function that often outperforms ReLU
-- The fusion of these operations can provide significant performance benefits by reducing memory bandwidth
-- Consider optimizing for numerical stability when computing the sigmoid function 
