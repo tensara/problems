@@ -1,42 +1,42 @@
 ---
 slug: "matmul-sigmoid-sum"
-title: "Matrix Multiplication + Sigmoid + Sum"
-difficulty: "HARD"
+title: "Matrix Multiplication with Sigmoid and Sum"
+difficulty: "MEDIUM"
 author: "sarthak"
-tags: ["matmul", "reduction", "fusion"]
+tags: ["matmul", "reduction", "fused"]
 parameters:
-  - name: "input_a"
+  - name: "A"
     type: "[VAR]"
     pointer: "true"
     const: "true"
   
-  - name: "input_b"
+  - name: "B"
     type: "[VAR]"
     pointer: "true"
     const: "true"
 
-  - name: "output_result" 
+  - name: "output" 
     type: "[VAR]"
     pointer: "true"
     const: "false"
 
-  - name: "m"
+  - name: "M"
     type: "size_t"
     pointer: "false"
     constant: "false"
     
-  - name: "n" 
+  - name: "N" 
     type: "size_t"
     pointer: "false"
     constant: "false"
     
-  - name: "k"
+  - name: "K"
     type: "size_t"
     pointer: "false"
     constant: "false"
 ---
 
-Perform fused matrix multiplication followed by sigmoid activation followed by summation:
+Perform a matrix multiplication followed by sigmoid activation followed by summation:
 
 $$
 \text{result} = \sum_{i=0}^{M-1} \sum_{j=0}^{N-1} \sigma\left(\sum_{k=0}^{K-1} A[i][k] \cdot B[k][j]\right)
@@ -54,7 +54,7 @@ This operation consists of three steps:
 - Matrix $B$ of size $K \times N$
 
 ## Output
-- Scalar value representing the sum of $\sigma(AB)$
+- Scalar value `output` representing the sum of $\sigma(AB)$
 
 ## Notes:
-- All matrices $A$ and $B$ are stored in row-major order
+- The matrices $A$ and $B$ are stored in row-major order

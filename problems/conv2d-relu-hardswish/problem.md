@@ -1,11 +1,11 @@
 ---
 slug: "conv2d-relu-hardswish"
-title: "2D Convolution + ReLU + HardSwish Fusion"
-difficulty: "HARD"
+title: "2D Convolution with ReLU and HardSwish"
+difficulty: "MEDIUM"
 author: "sarthak"
-tags: ["conv2d", "relu", "hardswish", "fusion"]
+tags: ["convolution", "activation-function", "fused"]
 parameters:
-  - name: "input_image"
+  - name: "image"
     type: "[VAR]"
     pointer: "true"
     const: "true"
@@ -20,31 +20,31 @@ parameters:
     pointer: "true"
     const: "false"
 
-  - name: "height"
+  - name: "H"
     type: "size_t"
     pointer: "false"
     constant: "false"
     
-  - name: "width" 
+  - name: "W" 
     type: "size_t"
     pointer: "false"
     constant: "false"
     
-  - name: "kernel_height"
+  - name: "Kh"
     type: "size_t"
     pointer: "false"
     constant: "false"
     
-  - name: "kernel_width"
+  - name: "Kw"
     type: "size_t"
     pointer: "false"
     constant: "false"
 ---
 
-Perform fused 2D convolution followed by ReLU activation followed by HardSwish activation:
+Perform a 2D convolution followed by ReLU activation followed by HardSwish activation:
 
 1. **2D Convolution**: 
-   $$C[i][j] = \sum_{u=0}^{K_h-1} \sum_{v=0}^{K_w-1} I[i+u-\frac{K_h-1}{2}][j+v-\frac{K_w-1}{2}] \cdot K[u][v]$$
+   $$C[i][j] = \sum_{u=0}^{K_h-1} \sum_{v=0}^{K_w-1} I\left[i+u-\frac{K_h-1}{2}\right]\left[j+v-\frac{K_w-1}{2}\right] \cdot K[u][v]$$
 
 2. **ReLU Activation**:
    $$R[i][j] = \max(0, C[i][j])$$
@@ -55,15 +55,12 @@ Perform fused 2D convolution followed by ReLU activation followed by HardSwish a
 where $\text{ReLU6}(x) = \min(6, \max(0, x))$.
 
 ## Input
-- Input image $I$ of size $H \times W$
-- Convolution kernel $K$ of size $K_h \times K_w$ (both dimensions must be odd)
+- `image` of size $H \times W$
+- `kernel` of size $K_h \times K_w$ (both dimensions must be odd)
 
 ## Output
-- Output image $O$ of size $H \times W$
+- `output` of size $H \times W$
 
 ## Notes:
-- Zero padding is applied to maintain the same output size as input
-- The kernel dimensions must be odd numbers
-- HardSwish is an efficient approximation of Swish activation
-- The fusion of these operations can significantly reduce memory bandwidth requirements
-- Consider optimizing memory access patterns across all three operations 
+- Use zero padding at the boundaries where the kernel extends beyond the input image
+- Both kernel height $K_h$ and kernel width $K_w$ will be odd integers

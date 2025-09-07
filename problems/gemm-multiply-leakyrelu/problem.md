@@ -1,21 +1,21 @@
 ---
 slug: "gemm-multiply-leakyrelu"
-title: "GEMM + Element-wise Multiply + LeakyReLU Fusion"
-difficulty: "HARD"
+title: "GEMM with Element-wise Multiply and LeakyReLU"
+difficulty: "MEDIUM"
 author: "sarthak"
-tags: ["gemm", "multiply", "leakyrelu", "fusion"]
+tags: ["matmul", "activation-function", "fused"]
 parameters:
-  - name: "matrix_a"
+  - name: "A"
     type: "[VAR]"
     pointer: "true"
     const: "true"
   
-  - name: "matrix_b"
+  - name: "B"
     type: "[VAR]"
     pointer: "true"
     const: "true"
 
-  - name: "matrix_c"
+  - name: "C"
     type: "[VAR]"
     pointer: "true"
     const: "true"
@@ -25,28 +25,28 @@ parameters:
     pointer: "false"
     constant: "false"
 
-  - name: "output_matrix" 
+  - name: "output" 
     type: "[VAR]"
     pointer: "true"
     const: "false"
 
-  - name: "m"
+  - name: "M"
     type: "size_t"
     pointer: "false"
     constant: "false"
     
-  - name: "n" 
+  - name: "N" 
     type: "size_t"
     pointer: "false"
     constant: "false"
     
-  - name: "k"
+  - name: "K"
     type: "size_t"
     pointer: "false"
     constant: "false"
 ---
 
-Perform fused GEMM (General Matrix Multiplication) followed by element-wise multiplication followed by LeakyReLU activation:
+Perform a GEMM (General Matrix Multiplication) followed by element-wise multiplication followed by LeakyReLU activation:
 
 $$
 O[i][j] = \text{LeakyReLU}\left(\left(\sum_{k=0}^{K-1} A[i][k] \cdot B[k][j]\right) \cdot C[i][j], \alpha\right)
@@ -63,13 +63,10 @@ This operation consists of three steps:
 - Matrix $A$ of size $M \times K$
 - Matrix $B$ of size $K \times N$  
 - Matrix $C$ of size $M \times N$ (for element-wise multiplication)
-- Slope parameter $\alpha$ for LeakyReLU
+- $\alpha$ for LeakyReLU
 
 ## Output
 - Matrix $O$ of size $M \times N$
 
 ## Notes:
 - All matrices $A$, $B$, $C$, and $O$ are stored in row-major order
-- LeakyReLU allows small negative values to pass through, preventing dying neurons
-- The fusion of these operations can significantly reduce memory bandwidth requirements
-- Consider optimizing for different values of $\alpha$ (typically small positive values like 0.01) 

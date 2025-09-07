@@ -6,7 +6,7 @@ from problem import Problem
 
 
 class matmul_sigmoid_sum(Problem):
-    """Matrix multiplication followed by sigmoid activation followed by summation fusion problem."""
+    """Matrix multiplication followed by sigmoid activation followed by summation problem."""
     
     def __init__(self):
         super().__init__(
@@ -31,7 +31,7 @@ class matmul_sigmoid_sum(Problem):
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """
-        Generate test cases for matmul-sigmoid-sum fusion.
+        Generate test cases for matmul-sigmoid-sum.
         
         Returns:
             List of test case dictionaries with varying matrix dimensions

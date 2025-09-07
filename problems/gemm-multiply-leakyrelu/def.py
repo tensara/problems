@@ -16,24 +16,13 @@ class gemm_multiply_leakyrelu(Problem):
     def reference_solution(self, A: torch.Tensor, B: torch.Tensor, C: torch.Tensor, alpha: float) -> torch.Tensor:
         """
         PyTorch implementation of GEMM followed by element-wise multiplication followed by LeakyReLU.
-        
-        Args:
-            A: First input matrix
-            B: Second input matrix
-            C: Element-wise multiplication matrix
-            alpha: LeakyReLU slope parameter
-            
+                    
         Returns:
             Result of LeakyReLU(GEMM(A, B) * C)
         """
         with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
-            # GEMM operation: A @ B
             gemm_result = torch.matmul(A, B)
-            
-            # Element-wise multiplication with C
             multiply_result = gemm_result * C
-            
-            # LeakyReLU activation
             leaky_relu_result = torch.nn.functional.leaky_relu(multiply_result, alpha)
             
             return leaky_relu_result
@@ -45,8 +34,6 @@ class gemm_multiply_leakyrelu(Problem):
         Returns:
             List of test case dictionaries with varying matrix dimensions
         """
-        # Matrix dimensions: (M, K) × (K, N) = (M, N)
-        # dims represents (M, N, K)
         test_matrices = [
             {
                 "name": "512x512 x 512x512",
@@ -92,7 +79,7 @@ class gemm_multiply_leakyrelu(Problem):
         Returns:
             Dictionary containing the sample test case.
         """
-        m_dims = (4, 4, 4)  # M, N, K dimensions
+        m_dims = (4, 4, 4)
         alpha = 0.01
         return {
             "name": "4x4_square",
@@ -218,5 +205,4 @@ class gemm_multiply_leakyrelu(Problem):
             List containing the alpha value and dimensions M, N, K
         """
         M, N, K = test_case["dims"]
-        alpha = test_case["alpha"]
-        return [alpha, M, N, K] 
+        return [M, N, K] 
