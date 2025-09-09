@@ -39,12 +39,12 @@ class scaled_dot_attention(Problem):
             List of test case dictionaries with varying sizes
         """
         test_configs = [
-            (1, 4, 512, 64),     # (batch, heads, seq_len, embed_dim)
-            (4, 8, 1024, 64),
-            (8, 16, 2048, 128),
-            (16, 32, 512, 256),
-            (32, 1, 128, 512),
-            (2, 12, 4096, 64)
+            (8, 16, 512, 64),  
+            (16, 32, 256, 64), 
+            (4, 32, 1024, 32),  
+            (32, 8, 512, 128),  
+            (8, 16, 512, 256),
+            (8, 16, 2048, 64)  
         ]
         
         return [
@@ -62,6 +62,60 @@ class scaled_dot_attention(Problem):
             }
             for b, h, s, e in test_configs
         ]
+    
+    def generate_sample(self, dtype: torch.dtype = torch.float32) -> Dict[str, Any]:
+        """
+        Generate sample test case for scaled dot-product attention with predictable inputs.
+
+        Returns:
+            Dictionary containing the sample test case.
+        """
+        batch, heads, seq_len, embed_dim = 1, 2, 2, 2
+        return {
+            "name": "1x2x2x2_sample",
+            "batch": batch,
+            "heads": heads,
+            "seq_len": seq_len,
+            "embed_dim": embed_dim,
+            "create_inputs": lambda: (
+                torch.tensor([
+                    [ 
+                        [
+                            [1.0, 2.0],
+                            [3.0, 4.0]
+                        ],
+                        [
+                            [0.1, 0.2],
+                            [0.3, 0.4]
+                        ]
+                    ]
+                ], device="cuda", dtype=dtype),
+                torch.tensor([
+                    [
+                        [
+                            [1.0, 0.0],
+                            [0.0, 1.0]
+                        ],
+                        [
+                            [0.5, 1.5],
+                            [1.5, 0.5]
+                        ]
+                    ]
+                ], device="cuda", dtype=dtype),
+                torch.tensor([
+                    [ 
+                        [
+                            [10.0, 20.0],
+                            [30.0, 40.0]
+                        ],
+                        [
+                            [5.0, 15.0],
+                            [25.0, 35.0]
+                        ]
+                    ]
+                ], device="cuda", dtype=dtype)
+            )
+        }
     
     def verify_result(self, expected_output: torch.Tensor, 
                      actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
@@ -148,19 +202,20 @@ class scaled_dot_attention(Problem):
         e = test_case["embed_dim"]
         
         # FLOPs calculation breakdown:
-        # 1. Matrix multiplication QK^T: b*h*s*s*e operations
+        # 1. Matrix multiplication QK^T: 2 * b*h*s*s*e operations
         # 2. Scaling by 1/sqrt(e): b*h*s*s operations
         # 3. Softmax:
         #    - Find max: b*h*s*s operations
         #    - Subtract max and exp: 2*b*h*s*s operations
         #    - Normalization (sum and divide): 2*b*h*s*s operations
-        # 4. Matrix multiplication with V: b*h*s*s*e operations
+        #    - Overall: 5*b*h*s*s operations
+        # 4. Matrix multiplication with V: 2 * b*h*s*s*e operations
         
-        # Total FLOPs: 2*b*h*s*s*e + 5*b*h*s*s
+        # Total FLOPs: 4*b*h*s*s*e + 5*b*h*s*s
         # For simplicity and to align with standard calculation methods, 
         # we'll use a more straightforward approximation focusing on the most expensive operations
         
-        return 2 * b * h * s * s * e  # Dominated by the two matrix multiplications
+        return (4 * b * h * s * s * e) + (5 * b * h * s * s)
     
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
