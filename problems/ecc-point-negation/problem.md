@@ -2,7 +2,7 @@
 slug: "ecc-point-negation"
 title: "ECC Point Negation (Batched)"
 difficulty: "EASY"
-author: "tensara"
+author: "soham"
 tags: ["crypto"]
 parameters:
   - name: "xs"
