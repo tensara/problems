@@ -12,12 +12,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "6.4.1",
+    "@prisma/client": "6.16.2",
     "@types/node": "^22.13.9",
     "dotenv": "^16.4.7",
     "fs": "0.0.1-security",
     "gray-matter": "^4.0.3",
-    "prisma": "^6.4.1",
     "tsx": "^4.19.3"
+  },
+  "devDependencies": {
+    "prisma": "^6.16.2"
   }
 }
