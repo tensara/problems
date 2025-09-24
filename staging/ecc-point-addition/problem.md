@@ -41,7 +41,7 @@ parameters:
     constant: "false"
 ---
 
-Add **N** elliptic-curve point pairs in parallel over the Tensara curve:
+Add **N** elliptic-curve point pairs in parallel over the curve:
 
 \[
 E:\ y^2 \equiv x^3 + 7 \pmod p,\quad p=2^{61}-1.

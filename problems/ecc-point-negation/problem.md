@@ -31,7 +31,7 @@ parameters:
     constant: "false"
 ---
 
-Negate **N** elliptic curve points in parallel over the Tensara curve:
+Negate **N** elliptic curve points in parallel over the curve:
 
 $$
 E: y^2 \equiv x^3 + 7 \pmod{p}, \quad p = 2^{61} - 1.
