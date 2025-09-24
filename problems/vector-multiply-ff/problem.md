@@ -1,9 +1,9 @@
 ---
-slug: "vector-multiply-babybear"
-title: "Vector Multiplication over BabyBear Field"
+slug: "vector-multiply-ff"
+title: "Vector Multiplication over Finite Field"
 difficulty: "MEDIUM"
 author: "soham"
-tags: ["finite-field", "modular-arithmetic", "vector"]
+tags: ["crypto"]
 parameters:
   - name: "d_input1"
     type: "uint32_t"
@@ -26,67 +26,63 @@ parameters:
     constant: false
 ---
 
-Perform element-wise multiplication of two vectors in the BabyBear finite field:
+Perform element-wise multiplication of two vectors in the finite field:
+
 $$
-c_i = (a_i \cdot b_i) \mod p
+c_i = (a_i \cdot b_i) \bmod p
 $$
 
-Where the modulus is:
+Where the modulus is the 31-bit Mersenne prime:
+
 $$
-p = 2^{31} - 2^{27} + 1 = 0x78000001
+p = 2^{31} - 1 = 2147483647
 $$
 
 ---
 
 ## Input
 
-- Vectors `a` and `b` of length `n`, with each element in `[0, p)`.
+- Vectors `a` and `b` of length $n$, with each element in $[0, p)$.
 
 ## Output
 
-- Vector `c` of length `n` such that:
-$$
-c_i = a_i \cdot b_i \mod p
-$$
+- Vector `c` of length $n$ such that:
+  $$
+  c_i = a_i \cdot b_i \bmod p
+  $$
 
 ---
 
 ## Constraints
 
-- `1 <= n <= 2^30`
+- $1 \le n \le 2^{30}$
 - Inputs and outputs are 32-bit unsigned integers.
-- Overflow is expected; you must reduce modulo `p` correctly.
+- Intermediate products must be reduced modulo $p$.
 
 ---
 
 ## Baseline Implementation
 
-A simple implementation might look like:
+A simple (correct) implementation:
 
 ```cpp
-uint64_t prod = (uint64_t)a[i] * b[i];
-c[i] = prod % 0x78000001;
+const uint32_t P = 2147483647u;
+uint64_t prod = (uint64_t)a[i] * (uint64_t)b[i];
+c[i] = (uint32_t)(prod % P);
+
+
 ```
 
-This is correct but slow — `%` is expensive on GPU.
+## Optimizations to explore
 
----
+Optimizations to Explore
 
-## Optimizations to Explore
+- Use Mersenne-friendly reduction for $p = 2^{31} - 1$:
 
-- Use **Montgomery** or **Barrett reduction** to avoid `%` ops
-- Inline your `mod` and `mul` helpers with `__forceinline__`
-- Use `registers` to hold constants
-- **Fuse multiply and reduce** into a single operation
-- Coalesce memory accesses to avoid warp divergence
-- Use appropriate block/thread sizing to maximize occupancy
+- exploit $2^{31} \equiv 1 \pmod p$ to fold high bits instead of %
 
----
+- Inline your helpers with **forceinline**
 
-## Verification
+- Fuse multiply-and-reduce to minimize temporaries
 
-Your solution must return results identical to the reference CPU-side or PyTorch mod logic.
-
----
-
-
+- Tune block/thread sizing for occupancy

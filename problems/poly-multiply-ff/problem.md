@@ -1,6 +1,6 @@
 ---
 slug: "poly-multiply-ff"
-title: "Polynomial Multiplication over Finite Field (p = 2^31 - 1)"
+title: "Polynomial Multiplication over Finite Field "
 difficulty: "MEDIUM"
 author: "soham"
 tags: ["crypto"]
