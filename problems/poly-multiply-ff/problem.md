@@ -51,8 +51,6 @@ $$
 c_k = \sum_{i+j=k} a_i \, b_j \pmod{p}
 $$
 
----
-
 ## Input
 
 - Two arrays `d_input1`, `d_input2` of length $n$, with values in $[0, p)$.
@@ -62,9 +60,7 @@ $$
 
 - Array `d_output` of length $2n - 1$ with coefficients of $c(x)$ modulo $p$.
 
----
-
-## Example
+## Notes
 
 For small $n=3$:
 
@@ -81,14 +77,11 @@ $$
 
 So:
 
-a = [1, 2, 3]
-b = [4, 5, 6]
-→ c = [4, 13, 28, 27, 18]
+- $a = [1, 2, 3]$
+- $b = [4, 5, 6]$
+- $c = [4, 13, 28, 27, 18]$
 
----
-
-## Naive Baseline
-
+A naive implementation:
 ```cpp
 const uint32_t P = 2147483647u;
 
@@ -102,15 +95,9 @@ static __host__ __device__ inline uint32_t mul_mod(uint32_t a, uint32_t b) {
     return (uint32_t)(prod % P);
 }
 
-for (size_t i = 0; i < n; ++i)
-  for (size_t j = 0; j < n; ++j)
+for (size_t i = 0; i < n; ++i) {
+  for (size_t j = 0; j < n; ++j) {
     d_output[i + j] = add_mod(d_output[i + j], mul_mod(d_input1[i], d_input2[j]));
+  }
+}
 ```
-
-## Optimizations to Explore
-
-Shared memory tiling or register blocking for the naive $O(n^2)$ method.
-
-Two-phase accumulation (local tile sums, then global merge).
-
-(Advanced) NTT over moduli with large roots of unity, combined with CRT back to $p$.
