@@ -38,51 +38,22 @@ $$
 p = 2^{31} - 1 = 2147483647
 $$
 
----
-
 ## Input
-
 - Vectors `a` and `b` of length $n$, with each element in $[0, p)$.
 
 ## Output
-
 - Vector `c` of length $n$ such that:
   $$
   c_i = a_i \cdot b_i \bmod p
   $$
-
----
-
-## Constraints
-
+  
+## Notes
 - $1 \le n \le 2^{30}$
 - Inputs and outputs are 32-bit unsigned integers.
 - Intermediate products must be reduced modulo $p$.
-
----
-
-## Baseline Implementation
-
-A simple (correct) implementation:
-
-```cpp
-const uint32_t P = 2147483647u;
-uint64_t prod = (uint64_t)a[i] * (uint64_t)b[i];
-c[i] = (uint32_t)(prod % P);
-
-
-```
-
-## Optimizations to explore
-
-Optimizations to Explore
-
-- Use Mersenne-friendly reduction for $p = 2^{31} - 1$:
-
-- exploit $2^{31} \equiv 1 \pmod p$ to fold high bits instead of %
-
-- Inline your helpers with **forceinline**
-
-- Fuse multiply-and-reduce to minimize temporaries
-
-- Tune block/thread sizing for occupancy
+- A simple (correct) implementation:
+  ```cpp
+  const uint32_t P = 2147483647u;
+  uint64_t prod = (uint64_t)a[i] * (uint64_t)b[i];
+  c[i] = (uint32_t)(prod % P);
+  ```
