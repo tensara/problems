@@ -22,6 +22,46 @@ const safeReadFile = (path: string): string | null => {
   }
 };
 
+const extractReferenceSolution = (pythonCode: string): string | null => {
+  if (!pythonCode) return null;
+
+  const lines = pythonCode.split("\n");
+  let inMethod = false;
+  let methodLines: string[] = [];
+  let methodIndent = 0;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    if (!inMethod && line.trim().startsWith("def reference_solution(")) {
+      inMethod = true;
+      methodIndent = line.search(/\S/); // Get the indentation level
+      methodLines.push(line);
+      continue;
+    }
+
+    if (inMethod) {
+      const currentIndent = line.search(/\S/);
+      const isEmpty = line.trim() === "";
+
+      if (!isEmpty && currentIndent <= methodIndent && currentIndent >= 0) {
+        break;
+      }
+
+      methodLines.push(line);
+    }
+  }
+
+  if (methodLines.length === 0) return null;
+
+  const dedentedLines = methodLines.map((line) => {
+    if (line.trim() === "") return line;
+    return line.slice(methodIndent);
+  });
+
+  return dedentedLines.join("\n");
+};
+
 async function main() {
   const problemsDir = getProblemsDir();
   const problemSlugs = readdirSync(problemsDir).filter(
@@ -51,6 +91,9 @@ async function main() {
     }
 
     const definition = safeReadFile(getDefinitionPath(slug));
+    const referenceSolution = definition
+      ? extractReferenceSolution(definition)
+      : null;
 
     // Upsert problem in database
     const problem = await prisma.problem.upsert({
@@ -61,6 +104,7 @@ async function main() {
         difficulty: frontmatter.difficulty,
         author: frontmatter.author,
         definition: definition,
+        referenceSolution: referenceSolution,
         parameters: frontmatter.parameters,
         tags: frontmatter.tags,
       },
@@ -71,6 +115,7 @@ async function main() {
         difficulty: frontmatter.difficulty,
         author: frontmatter.author,
         definition: definition,
+        referenceSolution: referenceSolution,
         parameters: frontmatter.parameters,
         tags: frontmatter.tags,
       },
@@ -81,6 +126,7 @@ async function main() {
     console.log(`  - Difficulty: ${frontmatter.difficulty ? "✓" : "✗"}`);
     console.log(`  - Parameters: ${frontmatter.parameters ? "✓" : "✗"}`);
     console.log(`  - Definition: ${definition ? "✓" : "✗"}`);
+    console.log(`  - Reference Solution: ${referenceSolution ? "✓" : "✗"}`);
     console.log(`  - Tags: ${frontmatter.tags ? "✓" : "✗"}`);
   }
 }
