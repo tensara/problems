@@ -9,8 +9,8 @@ parameters:
     type: "[VAR]"
     pointer: "true"
     const: "true"
-  
-  - name: "b" 
+
+  - name: "b"
     type: "[VAR]"
     pointer: "true"
     const: "false"
@@ -19,17 +19,18 @@ parameters:
     type: "size_t"
     pointer: "false"
     constant: "false"
-
 ---
 
-Sort an array of floating-point numbers in ascending order.
+Sort an array of integers in ascending order.
 
 ## Input:
-- Array $a$ of floating-point numbers of size $n$
+
+- Array $a$ of integers of size $n$
 
 ## Output:
+
 - The same array $a$ sorted in ascending order stored in $b$
 
 ## Notes:
+
 - The input array $a$ is stored in row-major order in memory
-- Array values are floating-point numbers in the range [0, 1000]
