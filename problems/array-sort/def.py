@@ -12,20 +12,14 @@ class array_sort(Problem):
     def __init__(self):
         super().__init__(name="array-sort")
 
-    # ---- Reference (integer) ----
     def reference_solution(self, input_array: torch.Tensor) -> torch.Tensor:
         """PyTorch implementation of array sorting on integers."""
         with torch.no_grad():
-            sorted_array, _ = torch.sort(input_array)  # stable, ascending
+            sorted_array, _ = torch.sort(input_array)
             return sorted_array
 
-    # ---- Tests (fixed, hardcoded sizes) ----
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
-        """
-        Generate test cases with fixed sizes (no rounding / powers-of-two helper).
-        """
-        # Choose sizes that are friendly for GPU kernels while covering a range
-        sizes = [1024, 8192, 16384, 32768, 65536]
+        sizes = [16384, 32768, 65536, 131072, 262144]
 
         test_cases = []
         for size in sizes:
@@ -34,13 +28,13 @@ class array_sort(Problem):
                     "name": f"size_{size}",
                     "size": size,
                     "create_inputs": (
-                        lambda s=size, dt=dtype: (
+                        lambda s=size: (
                             torch.randint(
-                                low=0,
-                                high=(10**9),
+                                low=1,
+                                high=int(1e9),
                                 size=(s,),
                                 device="cuda",
-                                dtype=dt,
+                                dtype=torch.int32,
                             ),
                         )
                     ),
@@ -57,13 +51,12 @@ class array_sort(Problem):
             "name": "Sample (size=16)",
             "size": size,
             "create_inputs": (
-                lambda s=size, dt=dtype: (
-                    torch.randint(0, 100, (s,), device="cuda", dtype=dt),
+                lambda s=size: (
+                    torch.randint(0, 100, (s,), device="cuda", dtype=torch.int32),
                 )
             ),
         }
 
-    # ---- Verification (exact equality for ints) ----
     def verify_result(
         self,
         expected_output: torch.Tensor,
@@ -78,7 +71,6 @@ class array_sort(Problem):
         if is_equal:
             return True, {}
 
-        # Extra debugging: monotonicity + first few diffs
         is_sorted = bool(torch.all(actual_output[:-1] <= actual_output[1:]).item())
         diff_mask = actual_output != expected_output
         idx = torch.nonzero(diff_mask).flatten()
@@ -97,7 +89,6 @@ class array_sort(Problem):
         }
         return False, debug_info
 
-    # ---- ctypes signature (ints) ----
     def get_function_signature(self) -> Dict[str, Any]:
         """
         C signature:

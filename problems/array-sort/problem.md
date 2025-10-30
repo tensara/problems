@@ -6,12 +6,12 @@ author: "sarthak"
 tags: ["sorting"]
 parameters:
   - name: "a"
-    type: "[VAR]"
+    type: "int"
     pointer: "true"
     const: "true"
 
   - name: "b"
-    type: "[VAR]"
+    type: "int"
     pointer: "true"
     const: "false"
 
