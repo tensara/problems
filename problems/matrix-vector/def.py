@@ -43,18 +43,21 @@ class matrix_vector(Problem):
             (9216, 4096)
         ]
         
-        return [
-            {
+        test_cases = []
+        for m, k in test_configs:
+            seed = Problem.get_seed(f"{self.name}_M={m}_K={k}")
+            test_cases.append({
                 "name": f"M={m}, K={k}",
                 "rows": m,
                 "cols": k,
-                "create_inputs": lambda m=m, k=k: (
-                    torch.rand((m, k), device="cuda", dtype=dtype) * 2 - 1,  # uniform [-1, 1]
-                    torch.rand((k), device="cuda", dtype=dtype) * 2 - 1      # uniform [-1, 1]
+                "create_inputs": lambda m=m, k=k, seed=seed, dtype=dtype: (
+                    *(lambda g: (
+                        torch.rand((m, k), device="cuda", dtype=dtype, generator=g) * 2 - 1,  # uniform [-1, 1]
+                        torch.rand((k), device="cuda", dtype=dtype, generator=g) * 2 - 1      # uniform [-1, 1]
+                    ))(torch.Generator(device="cuda").manual_seed(seed)),
                 )
-            }
-            for m, k in test_configs
-        ]
+            })
+        return test_cases
     
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
         """

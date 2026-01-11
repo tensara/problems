@@ -47,21 +47,25 @@ class scaled_dot_attention(Problem):
             (8, 16, 2048, 64)  
         ]
         
-        return [
-            {
-                "name": f"Batch={b}, Heads={h}, Seq_len={s}, Embed_dim={e}",
+        test_cases = []
+        for b, h, s, e in test_configs:
+            name = f"Batch={b}, Heads={h}, Seq_len={s}, Embed_dim={e}"
+            seed = Problem.get_seed(f"{self.name}_{name}_{(b, h, s, e)}")
+            test_cases.append({
+                "name": name,
                 "batch": b,
                 "heads": h,
                 "seq_len": s,
                 "embed_dim": e,
-                "create_inputs": lambda b=b, h=h, s=s, e=e: (
-                    torch.randn((b, h, s, e), device="cuda", dtype=dtype) * 0.01,  # query
-                    torch.randn((b, h, s, e), device="cuda", dtype=dtype) * 0.01,  # key
-                    torch.randn((b, h, s, e), device="cuda", dtype=dtype) * 0.01   # value
+                "create_inputs": lambda b=b, h=h, s=s, e=e, seed=seed, dtype=dtype: (
+                    (lambda g: (
+                        torch.randn((b, h, s, e), device="cuda", dtype=dtype, generator=g) * 0.01,  # query
+                        torch.randn((b, h, s, e), device="cuda", dtype=dtype, generator=g) * 0.01,  # key
+                        torch.randn((b, h, s, e), device="cuda", dtype=dtype, generator=g) * 0.01   # value
+                    ))(torch.Generator(device="cuda").manual_seed(seed))
                 )
-            }
-            for b, h, s, e in test_configs
-        ]
+            })
+        return test_cases
     
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> Dict[str, Any]:
         """

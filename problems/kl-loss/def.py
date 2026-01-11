@@ -59,25 +59,34 @@ class kl_loss(Problem):
         
         test_cases = []
         for n in tensor_sizes:
+            name = f"N={n}"
+            seed = Problem.get_seed(f"{self.name}_{name}_{(n,)}")
             test_cases.append({
-                "name": f"N={n}",
+                "name": name,
                 "n": n,
-                "create_inputs": lambda n=n: (
-                    torch.rand(n, device="cuda", dtype=dtype).softmax(dim=0),  # predictions
-                    torch.rand(n, device="cuda", dtype=dtype).softmax(dim=0)   # targets
+                "create_inputs": lambda n=n, seed=seed, dtype=dtype: (
+                    (lambda g: (
+                        torch.rand(n, device="cuda", dtype=dtype, generator=g).softmax(dim=0),  # predictions
+                        torch.rand(n, device="cuda", dtype=dtype, generator=g).softmax(dim=0)   # targets
+                    ))(torch.Generator(device="cuda").manual_seed(seed))
                 )
             })
         
         # Add special test case with sparse targets
+        sparse_name = "Sparse_targets"
+        sparse_n = 1048576
+        sparse_seed = Problem.get_seed(f"{self.name}_{sparse_name}_{(sparse_n,)}")
         test_cases.append({
-            "name": "Sparse_targets",
-            "n": 1048576,
-            "create_inputs": lambda: (
-                torch.rand(1048576, device="cuda", dtype=dtype).softmax(dim=0),  # predictions
-                torch.zeros(1048576, device="cuda", dtype=dtype).scatter_(
-                    0, torch.randint(0, 1048576, (1048576 // 10,), device="cuda"), 
-                    torch.ones(1048576 // 10, device="cuda", dtype=dtype) * 10
-                ).softmax(dim=0)  # sparse targets
+            "name": sparse_name,
+            "n": sparse_n,
+            "create_inputs": lambda seed=sparse_seed, dtype=dtype: (
+                (lambda g: (
+                    torch.rand(1048576, device="cuda", dtype=dtype, generator=g).softmax(dim=0),  # predictions
+                    torch.zeros(1048576, device="cuda", dtype=dtype).scatter_(
+                        0, torch.randint(0, 1048576, (1048576 // 10,), device="cuda", generator=g), 
+                        torch.ones(1048576 // 10, device="cuda", dtype=dtype) * 10
+                    ).softmax(dim=0)  # sparse targets
+                ))(torch.Generator(device="cuda").manual_seed(seed))
             )
         })
         

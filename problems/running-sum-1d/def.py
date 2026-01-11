@@ -59,18 +59,21 @@ class running_sum_1d(Problem):
             (524288, 8191)
         ]
         
-        return [
-            {
+        test_cases = []
+        for signal_size, window_size in test_configs:
+            seed = Problem.get_seed(f"{self.name}_N={signal_size}_W={window_size}")
+            test_cases.append({
                 "name": f"N={signal_size}, W={window_size}",
                 "signal_size": signal_size,
                 "window_size": window_size,
-                "create_inputs": lambda s=signal_size, w=window_size: (
-                    torch.rand(s, device="cuda", dtype=dtype) * 10.0 - 5.0,
+                "create_inputs": lambda s=signal_size, w=window_size, seed=seed, dtype=dtype: (
+                    *(lambda g: (
+                        torch.rand(s, device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0,
+                    ))(torch.Generator(device="cuda").manual_seed(seed)),
                     w
                 )
-            }
-            for signal_size, window_size in test_configs
-        ]
+            })
+        return test_cases
     
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
         """

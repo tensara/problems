@@ -55,18 +55,21 @@ class conv_square_3d(Problem):
             (512, 512, 512, 9),  # Large volume, large kernel
         ]
         
-        return [
-            {
+        test_cases = []
+        for size, _, _, k in test_configs:
+            seed = Problem.get_seed(f"{self.name}_size={size}_K={k}")
+            test_cases.append({
                 "name": f"D=H=W={size}, K={k}",
                 "size": size,
                 "kernel_size": k,
-                "create_inputs": lambda size=size, k=k: (
-                    torch.rand((size, size, size), device="cuda", dtype=dtype) * 10.0 - 5.0,  # uniform [-5, 5]
-                    torch.rand((k, k, k), device="cuda", dtype=dtype) * 2.0 - 1.0  # uniform [-1, 1]
+                "create_inputs": lambda size=size, k=k, seed=seed, dtype=dtype: (
+                    *(lambda g: (
+                        torch.rand((size, size, size), device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0,  # uniform [-5, 5]
+                        torch.rand((k, k, k), device="cuda", dtype=dtype, generator=g) * 2.0 - 1.0  # uniform [-1, 1]
+                    ))(torch.Generator(device="cuda").manual_seed(seed)),
                 )
-            }
-            for size, _, _, k in test_configs
-        ]
+            })
+        return test_cases
     
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
         """

@@ -49,10 +49,12 @@ class poly_multiply_ff(Problem):
         sizes = [("n = 2^6", 64), ("n = 2^8", 256), ("n = 2^10", 1024)]
         tests: List[Dict[str, Any]] = []
         for name, n in sizes:
-            def make_inputs(n=n):
+            seed = Problem.get_seed(f"{self.name}_{name}")
+            def make_inputs(n=n, seed=seed):
+                g = torch.Generator(device="cuda").manual_seed(seed)
                 # Generate directly on CUDA in [0, P)
-                A = torch.randint(0, P, (n,), dtype=torch.uint32, device="cuda")
-                B = torch.randint(0, P, (n,), dtype=torch.uint32, device="cuda")
+                A = torch.randint(0, P, (n,), dtype=torch.uint32, device="cuda", generator=g)
+                B = torch.randint(0, P, (n,), dtype=torch.uint32, device="cuda", generator=g)
                 return (A, B)
             tests.append({"name": name, "dims": (n,), "create_inputs": make_inputs})
         return tests

@@ -57,8 +57,10 @@ class max_pool_3d(Problem):
             (1024, 1024, 1024, 7, 3, 3, 1)
         ]
         
-        return [
-            {
+        test_cases = []
+        for h, w, d, k, s, p, dilation in test_configs:
+            seed = Problem.get_seed(f"{self.name}_H={h}_W={w}_D={d}_K={k}_S={s}_P={p}_dil={dilation}")
+            test_cases.append({
                 "name": f"H={h}, W={w}, D={d}, K={k}, S={s}, P={p}, dilation={dilation}",
                 "height": h,
                 "width": w,
@@ -67,13 +69,14 @@ class max_pool_3d(Problem):
                 "stride": s,
                 "padding": p,
                 "dilation": dilation,
-                "create_inputs": lambda h=h, w=w, d=d, k=k, s=s, p=p, dilation=dilation: (
-                    torch.rand((h, w, d), device="cuda", dtype=dtype) * 10.0 - 5.0,  # uniform [-5, 5]
+                "create_inputs": lambda h=h, w=w, d=d, k=k, s=s, p=p, dilation=dilation, seed=seed, dtype=dtype: (
+                    *(lambda g: (
+                        torch.rand((h, w, d), device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0,  # uniform [-5, 5]
+                    ))(torch.Generator(device="cuda").manual_seed(seed)),
                     k, s, p, dilation
                 )
-            }
-            for h, w, d, k, s, p, dilation in test_configs
-        ]
+            })
+        return test_cases
     
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
         """

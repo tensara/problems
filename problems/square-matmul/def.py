@@ -37,17 +37,20 @@ class square_matmul(Problem):
         # Test case configurations with specific matrix sizes
         matrix_sizes = [4096, 6144, 7168, 8192, 9216]
         
-        return [
-            {
+        test_cases = []
+        for n in matrix_sizes:
+            seed = Problem.get_seed(f"{self.name}_N={n}")
+            test_cases.append({
                 "name": f"{n}x{n}",
                 "size": n,
-                "create_inputs": lambda n=n: (
-                    torch.rand((n, n), device="cuda", dtype=dtype) * 2 - 1,  # uniform [-1, 1]
-                    torch.rand((n, n), device="cuda", dtype=dtype) * 2 - 1   # uniform [-1, 1]
+                "create_inputs": lambda n=n, seed=seed, dtype=dtype: (
+                    *(lambda g: (
+                        torch.rand((n, n), device="cuda", dtype=dtype, generator=g) * 2 - 1,  # uniform [-1, 1]
+                        torch.rand((n, n), device="cuda", dtype=dtype, generator=g) * 2 - 1   # uniform [-1, 1]
+                    ))(torch.Generator(device="cuda").manual_seed(seed)),
                 )
-            }
-            for n in matrix_sizes
-        ]
+            })
+        return test_cases
     
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
         """

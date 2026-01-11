@@ -56,21 +56,24 @@ class layer_norm(Problem):
             (4, 512, 32, 32),   # Different aspect ratio
         ]
 
-        return [
-            {
+        test_cases = []
+        for B, F, D1, D2 in test_configs:
+            seed = Problem.get_seed(f"{self.name}_B={B}_F={F}_D1={D1}_D2={D2}")
+            test_cases.append({
                 "name": f"B={B}, F={F}, D1={D1}, D2={D2}",
                 "B": B,
                 "F": F,
                 "D1": D1,
                 "D2": D2,
-                "create_inputs": lambda B=B, F=F, D1=D1, D2=D2: (
-                    torch.randn(B, F, D1, D2, device="cuda", dtype=dtype), # Input X
-                    torch.randn(F, D1, D2, device="cuda", dtype=dtype),      # Gamma (scale)
-                    torch.randn(F, D1, D2, device="cuda", dtype=dtype)       # Beta (shift)
+                "create_inputs": lambda B=B, F=F, D1=D1, D2=D2, seed=seed, dtype=dtype: (
+                    (lambda g: (
+                        torch.randn(B, F, D1, D2, device="cuda", dtype=dtype, generator=g), # Input X
+                        torch.randn(F, D1, D2, device="cuda", dtype=dtype, generator=g),      # Gamma (scale)
+                        torch.randn(F, D1, D2, device="cuda", dtype=dtype, generator=g)       # Beta (shift)
+                    ))(torch.Generator(device="cuda").manual_seed(seed))
                 )
-            }
-            for B, F, D1, D2 in test_configs
-        ]
+            })
+        return test_cases
 
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
         """

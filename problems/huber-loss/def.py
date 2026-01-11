@@ -44,12 +44,15 @@ class huber_loss(Problem):
         
         test_cases = []
         for n in tensor_sizes:
+            seed = Problem.get_seed(f"{self.name}_N={n}")
             test_cases.append({
                 "name": f"N={n}",
                 "n": n,
-                "create_inputs": lambda n=n: (
-                    torch.randn(n, device="cuda", dtype=dtype), # predictions
-                    torch.randn(n, device="cuda", dtype=dtype)  # targets
+                "create_inputs": lambda n=n, seed=seed, dtype=dtype: (
+                    (lambda g: (
+                        torch.randn(n, device="cuda", dtype=dtype, generator=g), # predictions
+                        torch.randn(n, device="cuda", dtype=dtype, generator=g)  # targets
+                    ))(torch.Generator(device="cuda").manual_seed(seed))
                 )
             })
         

@@ -54,24 +54,27 @@ class max_pool_1d(Problem):
             (2**25, 3, 1, 1, 1),  # H=2^25, k=3, S=1, P=1, d=1
             (2**26, 5, 3, 2, 1),  # H=2^26, k=5, S=3, P=2, d=1
         ]
-        return [
-            {
+        test_cases = []
+        for h, k, s, p, d in test_configs:
+            seed = Problem.get_seed(f"{self.name}_H={h}_K={k}_S={s}_P={p}_d={d}")
+            test_cases.append({
                 "name": f"H={h}, K={k}, S={s}, P={p}, d={d}",
                 "size": h,
                 "kernel_size": k,
                 "stride": s,
                 "padding": p,
                 "dilation": d,
-                "create_inputs": lambda size=h, kernel_size=k, stride=s, padding=p, dilation=d: (
-                    torch.rand((size), device="cuda", dtype=dtype) * 10.0 - 5.0,  # uniform [-5, 5]
+                "create_inputs": lambda size=h, kernel_size=k, stride=s, padding=p, dilation=d, seed=seed, dtype=dtype: (
+                    *(lambda g: (
+                        torch.rand((size), device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0,  # uniform [-5, 5]
+                    ))(torch.Generator(device="cuda").manual_seed(seed)),
                     kernel_size, 
                     stride, 
                     padding,
                     dilation
                 )
-            }
-            for h, k, s, p, d in test_configs
-        ]
+            })
+        return test_cases
     
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
         """

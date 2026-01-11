@@ -56,43 +56,46 @@ class shortest_path(Problem):
             ("n = 8192", 8192)
         ]
         
-        return [
-            {
+        test_cases = []
+        for name, size in sizes:
+            seed = Problem.get_seed(f"{self.name}_{name}_{(size, size)}")
+            test_cases.append({
                 "name": name,
                 "dims": (size, size),
-                "create_inputs": lambda size=size: self._create_graph_inputs(size, dtype)
-            }
-            for name, size in sizes
-        ]
+                "create_inputs": lambda size=size, seed=seed, dtype=dtype, create_inputs=self._create_graph_inputs: (
+                    create_inputs(size, dtype, torch.Generator(device="cuda").manual_seed(seed))
+                )
+            })
+        return test_cases
     
-    def _create_graph_inputs(self, size: int, dtype: torch.dtype) -> Tuple[torch.Tensor, int]:
+    def _create_graph_inputs(self, size: int, dtype: torch.dtype, generator: torch.Generator) -> Tuple[torch.Tensor, int]:
         adj_matrix = torch.zeros((size, size), device="cuda", dtype=dtype)
         
         mask = ~torch.eye(size, device="cuda", dtype=torch.bool)
-        random_mask = torch.rand((size, size), device="cuda") < 0.5
+        random_mask = torch.rand((size, size), device="cuda", generator=generator) < 0.5
         connection_mask = mask & random_mask
         
-        weights = torch.randint(1, 11, (size, size), device="cuda", dtype=dtype)
+        weights = torch.randint(1, 11, (size, size), device="cuda", dtype=dtype, generator=generator)
         adj_matrix[connection_mask] = weights[connection_mask]
         
         if size > 1:
             forward_indices = torch.arange(size - 1, device="cuda")
-            forward_weights = torch.randint(1, 6, (size - 1,), device="cuda", dtype=dtype)
+            forward_weights = torch.randint(1, 6, (size - 1,), device="cuda", dtype=dtype, generator=generator)
             adj_matrix[forward_indices, forward_indices + 1] = forward_weights
         
         if size > 1:
-            backward_mask = torch.rand(size - 1, device="cuda") < 0.3
+            backward_mask = torch.rand(size - 1, device="cuda", generator=generator) < 0.3
             backward_indices = torch.arange(1, size, device="cuda")[backward_mask]
-            backward_weights = torch.randint(1, 6, (backward_mask.sum(),), device="cuda", dtype=dtype)
+            backward_weights = torch.randint(1, 6, (backward_mask.sum(),), device="cuda", dtype=dtype, generator=generator)
             adj_matrix[backward_indices, backward_indices - 1] = backward_weights
 
         # making disconnected graph for the smaller testcase        
         if size == 512:
-            num_disconnected = torch.randint(size // 10, size // 5, (1,), device="cuda").item()
-            disconnected_nodes = torch.randperm(size, device="cuda")[:num_disconnected]
+            num_disconnected = torch.randint(size // 10, size // 5, (1,), device="cuda", generator=generator).item()
+            disconnected_nodes = torch.randperm(size, device="cuda", generator=generator)[:num_disconnected]
             adj_matrix[disconnected_nodes, :] = 0
         
-        source = torch.randint(0, size, (1,), device="cuda").item()
+        source = torch.randint(0, size, (1,), device="cuda", generator=generator).item()
         return adj_matrix, source
 
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> Dict[str, Any]:

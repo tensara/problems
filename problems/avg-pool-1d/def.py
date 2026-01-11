@@ -54,22 +54,25 @@ class avg_pool_1d(Problem):
             (2**26, 5, 3, 2),  # H=2^26, k=5, S=3, P=2
         ]
 
-        return [
-            {
+        test_cases = []
+        for h, k, s, p in test_configs:
+            seed = Problem.get_seed(f"{self.name}_H={h}_K={k}_S={s}_P={p}")
+            test_cases.append({
                 "name": f"H={h}, K={k}, S={s}, P={p}",
                 "size": h,
                 "kernel_size": k,
                 "stride": s,
                 "padding": p,
-                "create_inputs": lambda size=h, kernel_size=k, stride=s, padding=p: (
-                    torch.rand((size), device="cuda", dtype=dtype) * 10.0 - 5.0,  # uniform [-5, 5]
+                "create_inputs": lambda size=h, kernel_size=k, stride=s, padding=p, seed=seed, dtype=dtype: (
+                    *(lambda g: (
+                        torch.rand((size), device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0, # uniform [-5, 5]
+                    ))(torch.Generator(device="cuda").manual_seed(seed)),
                     kernel_size, 
                     stride, 
                     padding
                 )
-            }
-            for h, k, s, p in test_configs
-        ]
+            })
+        return test_cases
     
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
         """

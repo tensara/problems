@@ -66,13 +66,16 @@ class box_blur(Problem):
         test_cases = []
         for height, width in image_sizes:
             for kernel_size in kernel_sizes:
+                seed = Problem.get_seed(f"{self.name}_H={height}_W={width}_K={kernel_size}")
                 test_cases.append({
                     "name": f"{height}x{width}, kernel={kernel_size}x{kernel_size}",
                     "height": height,
                     "width": width,
                     "kernel_size": kernel_size,
-                    "create_inputs": lambda h=height, w=width, k=kernel_size: (
-                        torch.rand((h, w), device="cuda", dtype=dtype) * 255.0,
+                    "create_inputs": lambda h=height, w=width, k=kernel_size, seed=seed, dtype=dtype: (
+                        *(lambda g: (
+                            torch.rand((h, w), device="cuda", dtype=dtype, generator=g) * 255.0,
+                        ))(torch.Generator(device="cuda").manual_seed(seed)),
                         k
                     )
                 })

@@ -43,17 +43,20 @@ class vector_addition(Problem):
             ("n = 2^30", 1073741824),
         ]
         
-        return [
-            {
+        test_cases = []
+        for name, size in sizes:
+            seed = Problem.get_seed(f"{self.name}_{name}_{(size,)}")
+            test_cases.append({
                 "name": name,
                 "dims": (size,),
-                "create_inputs": lambda size=size: (
-                    torch.rand(size, device="cuda", dtype=dtype) * 2 - 1,  # uniform [-1, 1]
-                    torch.rand(size, device="cuda", dtype=dtype) * 2 - 1   # uniform [-1, 1]
+                "create_inputs": lambda size=size, seed=seed, dtype=dtype: (
+                    *(lambda g: (
+                        torch.rand(size, device="cuda", dtype=dtype, generator=g) * 2 - 1,  # uniform [-1, 1]
+                        torch.rand(size, device="cuda", dtype=dtype, generator=g) * 2 - 1   # uniform [-1, 1]
+                    ))(torch.Generator(device="cuda").manual_seed(seed)),
                 )
-            }
-            for name, size in sizes
-        ]
+            })
+        return test_cases
 
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
         """

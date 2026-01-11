@@ -37,18 +37,21 @@ class matrix_scalar(Problem):
         matrix_sizes = [8192, 9216]
         scalars = [0.1, 0.2, -0.3, 0.4, -0.5]
         
-        return [
-            {
-                "name": f"{n}x{n} scalar={scalar}",
-                "size": n,
-                "create_inputs": lambda n=n, scalar=scalar: (
-                    torch.rand((n, n), device="cuda", dtype=dtype) * 2 - 1,
-                    scalar
-                )
-            }
-            for n in matrix_sizes
-            for scalar in scalars
-        ]
+        test_cases = []
+        for n in matrix_sizes:
+            for scalar in scalars:
+                seed = Problem.get_seed(f"{self.name}_N={n}_scalar={scalar}")
+                test_cases.append({
+                    "name": f"{n}x{n} scalar={scalar}",
+                    "size": n,
+                    "create_inputs": lambda n=n, scalar=scalar, seed=seed, dtype=dtype: (
+                        *(lambda g: (
+                            torch.rand((n, n), device="cuda", dtype=dtype, generator=g) * 2 - 1,
+                        ))(torch.Generator(device="cuda").manual_seed(seed)),
+                        scalar
+                    )
+                })
+        return test_cases
     
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
         """

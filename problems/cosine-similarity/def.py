@@ -45,13 +45,17 @@ class cosine_similarity(Problem):
         
         test_cases = []
         for n in tensor_sizes:
+            name = f"N={n}, D={input_shape[0]}"
+            seed = Problem.get_seed(f"{self.name}_{name}_{(n, input_shape[0])}")
             test_cases.append({
-                "name": f"N={n}, D={input_shape[0]}",
+                "name": name,
                 "n": n,
                 "d": input_shape[0],
-                "create_inputs": lambda n=n: (
-                    torch.randn(n, *input_shape, device="cuda", dtype=dtype),  # predictions
-                    torch.randn(n, *input_shape, device="cuda", dtype=dtype)   # targets
+                "create_inputs": lambda n=n, d=input_shape[0], seed=seed, dtype=dtype: (
+                    *(lambda g: (
+                        torch.randn(n, d, device="cuda", dtype=dtype, generator=g),  # predictions
+                        torch.randn(n, d, device="cuda", dtype=dtype, generator=g)   # targets
+                    ))(torch.Generator(device="cuda").manual_seed(seed)),
                 )
             })
         

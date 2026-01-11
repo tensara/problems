@@ -49,17 +49,20 @@ class l2_norm(Problem):
             (128, 16384),   # Very large example
         ]
 
-        return [
-            {
+        test_cases = []
+        for B, D in test_configs:
+            seed = Problem.get_seed(f"{self.name}_B={B}_D={D}")
+            test_cases.append({
                 "name": f"B={B}, D={D}",
                 "B": B,
                 "D": D,
-                "create_inputs": lambda B=B, D=D: (
-                    torch.randn(B, D, device="cuda", dtype=dtype), # Input X
+                "create_inputs": lambda B=B, D=D, seed=seed, dtype=dtype: (
+                    (lambda g: (
+                        torch.randn(B, D, device="cuda", dtype=dtype, generator=g), # Input X
+                    ))(torch.Generator(device="cuda").manual_seed(seed))
                 )
-            }
-            for B, D in test_configs
-        ]
+            })
+        return test_cases
 
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
         """

@@ -60,18 +60,21 @@ class lower_trig_matmul(Problem):
             }
         ]
         
-        return [
-            {
+        test_cases = []
+        for matrix in test_matrices:
+            seed = Problem.get_seed(f"{self.name}_{matrix['name']}_{matrix['dims']}")
+            test_cases.append({
                 "name": matrix["name"],
                 "dims": matrix["dims"], # Store N as a tuple for consistency maybe? Or just N? Let's store N directly.
-                "create_inputs": lambda n=matrix["dims"][0]: (
-                    # Create random matrix and take lower triangle
-                    torch.tril(torch.rand(n, n, device="cuda", dtype=dtype) * 2 - 1),  # uniform [-1, 1]
-                    torch.tril(torch.rand(n, n, device="cuda", dtype=dtype) * 2 - 1)   # uniform [-1, 1]
+                "create_inputs": lambda n=matrix["dims"][0], seed=seed, dtype=dtype: (
+                    (lambda g: (
+                        # Create random matrix and take lower triangle
+                        torch.tril(torch.rand(n, n, device="cuda", dtype=dtype, generator=g) * 2 - 1),  # uniform [-1, 1]
+                        torch.tril(torch.rand(n, n, device="cuda", dtype=dtype, generator=g) * 2 - 1)   # uniform [-1, 1]
+                    ))(torch.Generator(device="cuda").manual_seed(seed))
                 )
-            }
-            for matrix in test_matrices
-        ]
+            })
+        return test_cases
     
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
         """
