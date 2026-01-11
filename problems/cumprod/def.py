@@ -41,17 +41,20 @@ class cumprod(Problem):
             1048576,
         ]
         
-        return [
-            {
+        test_cases = []
+        for size in test_configs:
+            seed = Problem.get_seed(f"{self.name}_N={size}")
+            test_cases.append({
                 "name": f"N={size}",
                 "size": size,
-                "create_inputs": lambda s=size: (
-                    # Using values close to 1 to avoid numerical instability
-                    torch.rand(s, device="cuda", dtype=dtype) * 0.2 + 0.9,
+                "create_inputs": lambda s=size, seed=seed, dtype=dtype: (
+                    (lambda g: (
+                        # Using values close to 1 to avoid numerical instability
+                        torch.rand(s, device="cuda", dtype=dtype, generator=g) * 0.2 + 0.9,
+                    ))(torch.Generator(device="cuda").manual_seed(seed))
                 )
-            }
-            for size in test_configs
-        ]
+            })
+        return test_cases
     
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
         """

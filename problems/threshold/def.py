@@ -48,14 +48,17 @@ class threshold(Problem):
         test_cases = []
         for height, width in image_sizes:
             for threshold in threshold_values:
+                seed = Problem.get_seed(f"{self.name}_H={height}_W={width}_t={threshold}")
                 test_cases.append({
                     "name": f"{height}x{width}, threshold={threshold}",
                     "height": height,
                     "width": width,
                     "threshold_value": threshold,
-                    "create_inputs": lambda h=height, w=width, t=threshold: (
-                        # Create a random grayscale image with values in [0, 255]
-                        torch.rand((h, w), device="cuda", dtype=dtype) * 255.0,
+                    "create_inputs": lambda h=height, w=width, t=threshold, seed=seed, dtype=dtype: (
+                        *(lambda g: (
+                            # Create a random grayscale image with values in [0, 255]
+                            torch.rand((h, w), device="cuda", dtype=dtype, generator=g) * 255.0,
+                        ))(torch.Generator(device="cuda").manual_seed(seed)),
                         t
                     )
                 })

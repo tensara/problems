@@ -54,22 +54,25 @@ class matmul_swish(Problem):
             (32, 256, 128, 1.0),      # Very small size
         ]
         
-        return [
-            {
+        test_cases = []
+        for b, i, o, s in test_configs:
+            seed = Problem.get_seed(f"{self.name}_B={b}_In={i}_Out={o}_Scale={s}")
+            test_cases.append({
                 "name": f"B={b}, In={i}, Out={o}, Scale={s}",
                 "batch_size": b,
                 "in_features": i,
                 "out_features": o,
                 "scaling_factor": s,
-                "create_inputs": lambda b=b, i=i, o=o, s=s: (
-                    torch.randn((b, i), device="cuda", dtype=dtype) * 0.1,  # input_matrix
-                    torch.randn((o, i), device="cuda", dtype=dtype) * 0.1,  # weight_matrix
-                    torch.randn(o, device="cuda", dtype=dtype) * 0.1,       # bias
+                "create_inputs": lambda b=b, i=i, o=o, s=s, seed=seed, dtype=dtype: (
+                    *(lambda g: (
+                        torch.randn((b, i), device="cuda", dtype=dtype, generator=g) * 0.1,  # input_matrix
+                        torch.randn((o, i), device="cuda", dtype=dtype, generator=g) * 0.1,  # weight_matrix
+                        torch.randn(o, device="cuda", dtype=dtype, generator=g) * 0.1,       # bias
+                    ))(torch.Generator(device="cuda").manual_seed(seed)),
                     s  # scaling_factor
                 )
-            }
-            for b, i, o, s in test_configs
-        ]
+            })
+        return test_cases
     
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> Dict[str, Any]:
         """

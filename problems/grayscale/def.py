@@ -46,13 +46,16 @@ class grayscale(Problem):
         
         test_cases = []
         for height, width in image_sizes:
+            seed = Problem.get_seed(f"{self.name}_H={height}_W={width}")
             test_cases.append({
                 "name": f"{height}x{width}",
                 "height": height,
                 "width": width,
                 "channels": 3,
-                "create_inputs": lambda h=height, w=width: (
-                    torch.rand((h, w, 3), device="cuda", dtype=dtype) * 255.0,
+                "create_inputs": lambda h=height, w=width, seed=seed, dtype=dtype: (
+                    (lambda g: (
+                        torch.rand((h, w, 3), device="cuda", dtype=dtype, generator=g) * 255.0,
+                    ))(torch.Generator(device="cuda").manual_seed(seed))
                 )
             })
         

@@ -57,8 +57,10 @@ class max_pool_2d(Problem):
             (4096, 4096, 7, 3, 3, 1)
         ]
         
-        return [
-            {
+        test_cases = []
+        for h, w, k, s, p, d in test_configs:
+            seed = Problem.get_seed(f"{self.name}_H={h}_W={w}_K={k}_S={s}_P={p}_D={d}")
+            test_cases.append({
                 "name": f"H={h}, W={w}, K={k}, S={s}, P={p}, D={d}",
                 "height": h,
                 "width": w,
@@ -66,13 +68,14 @@ class max_pool_2d(Problem):
                 "stride": s,
                 "padding": p,
                 "dilation": d,
-                "create_inputs": lambda h=h, w=w, k=k, s=s, p=p, d=d: (
-                    torch.rand((h, w), device="cuda", dtype=dtype) * 10.0 - 5.0,  # uniform [-5, 5]
+                "create_inputs": lambda h=h, w=w, k=k, s=s, p=p, d=d, seed=seed, dtype=dtype: (
+                    *(lambda g: (
+                        torch.rand((h, w), device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0,  # uniform [-5, 5]
+                    ))(torch.Generator(device="cuda").manual_seed(seed)),
                     k, s, p, d
                 )
-            }
-            for h, w, k, s, p, d in test_configs
-        ]
+            })
+        return test_cases
     
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> Dict[str, Any]:
         """

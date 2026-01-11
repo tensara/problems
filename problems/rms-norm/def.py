@@ -51,16 +51,19 @@ class rms_norm(Problem):
             (512, 16384)            
         ]
 
-        return [
-            {
+        test_cases = []
+        for shape in test_configs:
+            seed = Problem.get_seed(f"{self.name}_shape={shape}")
+            test_cases.append({
                 "name": f"shape={shape}",
                 "shape": shape,
-                "create_inputs": lambda shape=shape: (
-                    torch.randn(*shape, device="cuda", dtype=dtype),  # Input tensor
+                "create_inputs": lambda shape=shape, seed=seed, dtype=dtype: (
+                    *(lambda g: (
+                        torch.randn(*shape, device="cuda", dtype=dtype, generator=g),  # Input tensor
+                    ))(torch.Generator(device="cuda").manual_seed(seed)),
                 )
-            }
-            for shape in test_configs
-        ]
+            })
+        return test_cases
 
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
         """

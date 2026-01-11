@@ -65,13 +65,16 @@ class edge_detect(Problem):
         
         test_cases = []
         for height, width in image_sizes:
+            seed = Problem.get_seed(f"{self.name}_H={height}_W={width}")
             test_cases.append({
                 "name": f"{height}x{width}",
                 "height": height,
                 "width": width,
-                "create_inputs": lambda h=height, w=width: (
-                    # Create a random grayscale image with values in [0, 255]
-                    torch.rand((h, w), device="cuda", dtype=dtype) * 255.0,
+                "create_inputs": lambda h=height, w=width, seed=seed, dtype=dtype: (
+                    (lambda g: (
+                        # Create a random grayscale image with values in [0, 255]
+                        torch.rand((h, w), device="cuda", dtype=dtype, generator=g) * 255.0,
+                    ))(torch.Generator(device="cuda").manual_seed(seed))
                 )
             })
         

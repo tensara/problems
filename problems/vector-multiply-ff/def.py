@@ -38,9 +38,11 @@ class vector_multiply_ff(Problem):
         ]
         tests: List[Dict[str, Any]] = []
         for name, n in sizes:
-            def make_inputs(n=n):
-                a = torch.randint(0, P, (n,), device="cuda", dtype=torch.uint32)
-                b = torch.randint(0, P, (n,), device="cuda", dtype=torch.uint32)
+            seed = Problem.get_seed(f"{self.name}_{name}")
+            def make_inputs(n=n, seed=seed):
+                g = torch.Generator(device="cuda").manual_seed(seed)
+                a = torch.randint(0, P, (n,), device="cuda", dtype=torch.uint32, generator=g)
+                b = torch.randint(0, P, (n,), device="cuda", dtype=torch.uint32, generator=g)
                 return (a, b)
             tests.append({"name": name, "dims": (n,), "create_inputs": make_inputs})
         return tests

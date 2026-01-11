@@ -35,27 +35,34 @@ class softmax(Problem):
             List of test case dictionaries with varying sizes and dimensions
         """
         test_configs = [
-            ((16, 128, 256), 1),      # Typical hidden layer
-            ((32, 512, 512), 2),      # Large feature dimension
-            ((8, 1024, 1024), 1),     # Very large sequence length
-            ((64, 128, 128, 128), 2), # 4D tensor
-            ((4, 256, 256, 256), 3),  # Large 4D tensor
-            ((128, 10), 1),           # Classification logits
-            ((256, 50, 50), 0)        # First dimension softmax
+            ((16, 128, 256), 1, "normal"),      # Typical hidden layer
+            ((32, 512, 512), 2, "uniform"),     # Large feature dimension
+            ((8, 1024, 1024), 1, "normal"),     # Very large sequence length
+            ((64, 128, 128, 128), 2, "uniform"),# 4D tensor
+            ((4, 256, 256, 256), 3, "normal"),  # Large 4D tensor
+            ((128, 10), 1, "normal"),           # Classification logits
+            ((256, 50, 50), 0, "uniform")       # First dimension softmax
         ]
 
-        return [
-            {
-                "name": f"shape={shape}, dim={dim}",
+        test_cases = []
+        for shape, dim, dist in test_configs:
+            name = f"shape={shape}, dim={dim}, dist={dist}"
+            seed = Problem.get_seed(f"{self.name}_{name}_{(shape, dim, dist)}")
+            test_cases.append({
+                "name": name,
                 "shape": shape,
                 "dim": dim,
-                "create_inputs": lambda shape=shape, dim=dim: (
-                    torch.randn(shape, device="cuda", dtype=dtype) * 2.0,  # Normal distribution for logits
-                    dim
+                "seed": seed,
+                "create_inputs": lambda shape=shape, dim=dim, seed=seed, dist=dist, dtype=dtype: (
+                    (lambda g: (
+                        torch.randn(shape, device="cuda", dtype=dtype, generator=g) * 2.0
+                        if dist == "normal" else
+                        (torch.rand(shape, device="cuda", dtype=dtype, generator=g) - 0.5) * 6.0
+                    ))(torch.Generator(device="cuda").manual_seed(seed)),
+                    dim,
                 )
-            }
-            for shape, dim in test_configs
-        ]
+            })
+        return test_cases
 
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
         """

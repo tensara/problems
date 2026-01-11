@@ -23,19 +23,24 @@ class array_sort(Problem):
 
         test_cases = []
         for size in sizes:
+            name = f"size_{size}"
+            seed = Problem.get_seed(f"{self.name}_{name}_{(size,)}")
             test_cases.append(
                 {
-                    "name": f"size_{size}",
+                    "name": name,
                     "size": size,
                     "create_inputs": (
-                        lambda s=size: (
-                            torch.randint(
-                                low=1,
-                                high=int(1e9),
-                                size=(s,),
-                                device="cuda",
-                                dtype=torch.int32,
-                            ),
+                        lambda s=size, seed=seed: (
+                            *(lambda g: (
+                                torch.randint(
+                                    low=1,
+                                    high=int(1e9),
+                                    size=(s,),
+                                    device="cuda",
+                                    dtype=torch.int32,
+                                    generator=g,
+                                ),
+                            ))(torch.Generator(device="cuda").manual_seed(seed)),
                         )
                     ),
                 }

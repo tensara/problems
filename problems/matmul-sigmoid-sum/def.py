@@ -55,17 +55,20 @@ class matmul_sigmoid_sum(Problem):
             }
         ]
         
-        return [
-            {
+        test_cases = []
+        for matrix in test_matrices:
+            seed = Problem.get_seed(f"{self.name}_{matrix['name']}")
+            test_cases.append({
                 "name": matrix["name"],
                 "dims": matrix["dims"],
-                "create_inputs": lambda m=matrix["dims"]: (
-                    torch.rand(m[0], m[2], device="cuda", dtype=dtype) * 2 - 1,  # uniform [-1, 1]
-                    torch.rand(m[2], m[1], device="cuda", dtype=dtype) * 2 - 1   # uniform [-1, 1]
+                "create_inputs": lambda m=matrix["dims"], seed=seed, dtype=dtype: (
+                    *(lambda g: (
+                        torch.rand(m[0], m[2], device="cuda", dtype=dtype, generator=g) * 2 - 1,  # uniform [-1, 1]
+                        torch.rand(m[2], m[1], device="cuda", dtype=dtype, generator=g) * 2 - 1   # uniform [-1, 1]
+                    ))(torch.Generator(device="cuda").manual_seed(seed)),
                 )
-            }
-            for matrix in test_matrices
-        ]
+            })
+        return test_cases
     
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> Dict[str, Any]:
         """

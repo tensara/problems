@@ -63,20 +63,23 @@ class conv_2d(Problem):
             (4096, 4096, 127, 127)
         ]
         
-        return [
-            {
+        test_cases = []
+        for h, w, kh, kw in test_configs:
+            seed = Problem.get_seed(f"{self.name}_H={h}_W={w}_Kh={kh}_Kw={kw}")
+            test_cases.append({
                 "name": f"H={h}, W={w}, Kh={kh}, Kw={kw}",
                 "height": h,
                 "width": w,
                 "kernel_height": kh,
                 "kernel_width": kw,
-                "create_inputs": lambda h=h, w=w, kh=kh, kw=kw: (
-                    torch.rand((h, w), device="cuda", dtype=dtype) * 10.0 - 5.0,  # uniform [-5, 5]
-                    torch.rand((kh, kw), device="cuda", dtype=dtype) * 2.0 - 1.0  # uniform [-1, 1]
+                "create_inputs": lambda h=h, w=w, kh=kh, kw=kw, seed=seed, dtype=dtype: (
+                    *(lambda g: (
+                        torch.rand((h, w), device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0,  # uniform [-5, 5]
+                        torch.rand((kh, kw), device="cuda", dtype=dtype, generator=g) * 2.0 - 1.0  # uniform [-1, 1]
+                    ))(torch.Generator(device="cuda").manual_seed(seed)),
                 )
-            }
-            for h, w, kh, kw in test_configs
-        ]
+            })
+        return test_cases
     
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
         """

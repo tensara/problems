@@ -53,20 +53,23 @@ class gemm_relu(Problem):
             (1024, 4096, 4096)
         ]
         
-        return [
-            {
+        test_cases = []
+        for batch_size, in_features, out_features in test_configs:
+            seed = Problem.get_seed(f"{self.name}_B={batch_size}_N={in_features}_M={out_features}")
+            test_cases.append({
                 "name": f"B={batch_size}, N={in_features}, M={out_features}",
                 "batch_size": batch_size,
                 "in_features": in_features,
                 "out_features": out_features,
-                "create_inputs": lambda b=batch_size, n=in_features, m=out_features: (
-                    torch.rand((b, n), device="cuda", dtype=dtype) * 2 - 1,
-                    torch.rand((m, n), device="cuda", dtype=dtype) * 2 - 1,  
-                    torch.rand((m), device="cuda", dtype=dtype) * 2 - 1  
+                "create_inputs": lambda b=batch_size, n=in_features, m=out_features, seed=seed, dtype=dtype: (
+                    (lambda g: (
+                        torch.rand((b, n), device="cuda", dtype=dtype, generator=g) * 2 - 1,
+                        torch.rand((m, n), device="cuda", dtype=dtype, generator=g) * 2 - 1,  
+                        torch.rand((m), device="cuda", dtype=dtype, generator=g) * 2 - 1  
+                    ))(torch.Generator(device="cuda").manual_seed(seed))
                 )
-            }
-            for batch_size, in_features, out_features in test_configs
-        ]
+            })
+        return test_cases
     
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
         """

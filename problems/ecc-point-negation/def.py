@@ -55,29 +55,27 @@ class ecc_point_negation(Problem):
 
         test_cases = []
         for name, N in sizes:
-            xs, ys = self._create_inputs(N)
-
-            def create_inputs_closure(_xs=xs, _ys=ys, _p=self.p):
-                # Inputs passed to ctypes in the same order as get_function_signature
-                # return (_xs, _ys, torch.tensor(_p, device="cuda", dtype=torch.int64))
-                return (_xs, _ys, int(_p))
-
+            seed = Problem.get_seed(f"{self.name}_{name}_{(N,)}")
 
             test_cases.append({
                 "name": name,
                 "dims": (N,),  # batch length
-                "create_inputs": create_inputs_closure
+                "create_inputs": lambda N=N, seed=seed, p=self.p, create_inputs=self._create_inputs: (
+                    (lambda g: (
+                        (lambda xs, ys: (xs, ys, int(p)))(*create_inputs(N, g))
+                    ))(torch.Generator(device="cuda").manual_seed(seed))
+                )
             })
         return test_cases
 
-    def _create_inputs(self, N: int):
+    def _create_inputs(self, N: int, generator: torch.Generator):
         """
         Create random field elements modulo p as int64 (to match uint64_t).
         """
         device = "cuda"
         p = self.p
-        xs = torch.randint(low=0, high=p, size=(N,), device=device, dtype=torch.int64)
-        ys = torch.randint(low=0, high=p, size=(N,), device=device, dtype=torch.int64)
+        xs = torch.randint(low=0, high=p, size=(N,), device=device, dtype=torch.int64, generator=generator)
+        ys = torch.randint(low=0, high=p, size=(N,), device=device, dtype=torch.int64, generator=generator)
         return xs, ys
 
     # ---------------------------

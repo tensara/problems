@@ -37,20 +37,24 @@ class matrix_power(Problem):
         matrix_sizes = [512, 1024, 2048]
         powers = [2, 4, 8]
         
-        return [
-            {
-                "name": f"{size}x{size} power={power}",
-                "size": size,
-                "power": power,
-                "create_inputs": lambda size=size, power=power: (
-                    # Generate well-conditioned matrix with small values
-                    torch.randn((size, size), device="cuda", dtype=dtype) * 0.01 + torch.eye(size, device="cuda", dtype=dtype) * 0.1,
-                    power
-                )
-            }
-            for size in matrix_sizes
-            for power in powers
-        ]
+        test_cases = []
+        for size in matrix_sizes:
+            for power in powers:
+                name = f"{size}x{size} power={power}"
+                seed = Problem.get_seed(f"{self.name}_{name}_{(size, power)}")
+                test_cases.append({
+                    "name": name,
+                    "size": size,
+                    "power": power,
+                    "create_inputs": lambda size=size, power=power, seed=seed, dtype=dtype: (
+                        (lambda g: (
+                            # Generate well-conditioned matrix with small values
+                            torch.randn((size, size), device="cuda", dtype=dtype, generator=g) * 0.01 + torch.eye(size, device="cuda", dtype=dtype) * 0.1,
+                        ))(torch.Generator(device="cuda").manual_seed(seed)),
+                        power,
+                    )
+                })
+        return test_cases
     
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> Dict[str, Any]:
         """

@@ -75,10 +75,10 @@ class min_spanning_tree(Problem):
         
         test_cases = []
         for name, size in sizes:
-            adj_matrix = self._create_graph_inputs(size, dtype)
+            seed = Problem.get_seed(f"{self.name}_{name}")
             
-            def create_inputs_closure(adj=adj_matrix):
-                return (adj,)
+            def create_inputs_closure(size=size, seed=seed, dtype=dtype, self_ref=self):
+                return (self_ref._create_graph_inputs(size, dtype, seed),)
             
             test_cases.append({
                 "name": name,
@@ -88,13 +88,14 @@ class min_spanning_tree(Problem):
         
         return test_cases
     
-    def _create_graph_inputs(self, size: int, dtype: torch.dtype) -> torch.Tensor:
+    def _create_graph_inputs(self, size: int, dtype: torch.dtype, seed: int = None) -> torch.Tensor:
         """Create a connected undirected graph."""
+        gen = torch.Generator(device="cuda").manual_seed(seed) if seed is not None else None
         adj_matrix = torch.zeros((size, size), device="cuda", dtype=dtype)
         
         for i in range(1, size):
-            parent = torch.randint(0, i, (1,), device="cuda").item()
-            weight = torch.randint(1, 11, (1,), device="cuda", dtype=dtype).item()
+            parent = torch.randint(0, i, (1,), device="cuda", generator=gen).item()
+            weight = torch.randint(1, 11, (1,), device="cuda", dtype=dtype, generator=gen).item()
             adj_matrix[parent, i] = weight
             adj_matrix[i, parent] = weight
         
@@ -105,11 +106,11 @@ class min_spanning_tree(Problem):
         if available_positions.any():
             num_additional = min(size * 2, available_positions.sum().item())
             available_indices = torch.where(available_positions)
-            perm = torch.randperm(len(available_indices[0]), device="cuda")[:num_additional]
+            perm = torch.randperm(len(available_indices[0]), device="cuda", generator=gen)[:num_additional]
             
             u_add = available_indices[0][perm]
             v_add = available_indices[1][perm]
-            weights_add = torch.randint(1, 21, (num_additional,), device="cuda", dtype=dtype)
+            weights_add = torch.randint(1, 21, (num_additional,), device="cuda", dtype=dtype, generator=gen)
             
             adj_matrix[u_add, v_add] = weights_add
             adj_matrix[v_add, u_add] = weights_add

@@ -55,19 +55,22 @@ class triplet_margin(Problem):
             (1024, 1024)     
         ]
 
-        return [
-            {
+        test_cases = []
+        for batch, embedding_dim in test_configs:
+            seed = Problem.get_seed(f"{self.name}_batch={batch}_dim={embedding_dim}")
+            test_cases.append({
                 "name": f"batch={batch}, embedding_dim={embedding_dim}",
                 "batch": batch,
                 "embedding_dim": embedding_dim,
-                "create_inputs": lambda batch=batch, embedding_dim=embedding_dim: (
-                    torch.randn(batch, embedding_dim, device="cuda", dtype=dtype),  # Anchor
-                    torch.randn(batch, embedding_dim, device="cuda", dtype=dtype),  # Positive
-                    torch.randn(batch, embedding_dim, device="cuda", dtype=dtype)   # Negative
+                "create_inputs": lambda batch=batch, embedding_dim=embedding_dim, seed=seed, dtype=dtype: (
+                    *(lambda g: (
+                        torch.randn(batch, embedding_dim, device="cuda", dtype=dtype, generator=g),  # Anchor
+                        torch.randn(batch, embedding_dim, device="cuda", dtype=dtype, generator=g),  # Positive
+                        torch.randn(batch, embedding_dim, device="cuda", dtype=dtype, generator=g)   # Negative
+                    ))(torch.Generator(device="cuda").manual_seed(seed)),
                 )
-            }
-            for batch, embedding_dim in test_configs
-        ]
+            })
+        return test_cases
 
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
         """

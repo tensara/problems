@@ -50,19 +50,23 @@ class batch_norm(Problem):
             (4, 32, 512, 512),   # Small batch, large spatial
         ]
 
-        return [
-            {
-                "name": f"B={B}, F={F}, D1={D1}, D2={D2}",
+        test_cases = []
+        for B, F, D1, D2 in test_configs:
+            name = f"B={B}, F={F}, D1={D1}, D2={D2}"
+            seed = Problem.get_seed(f"{self.name}_{name}_{(B, F, D1, D2)}")
+            test_cases.append({
+                "name": name,
                 "B": B,
                 "F": F,
                 "D1": D1,
                 "D2": D2,
-                "create_inputs": lambda B=B, F=F, D1=D1, D2=D2: (
-                    torch.randn(B, F, D1, D2, device="cuda", dtype=dtype), # Input X
+                "create_inputs": lambda B=B, F=F, D1=D1, D2=D2, seed=seed, dtype=dtype: (
+                    *(lambda g: (
+                        torch.randn(B, F, D1, D2, device="cuda", dtype=dtype, generator=g), # Input X
+                    ))(torch.Generator(device="cuda").manual_seed(seed)),
                 )
-            }
-            for B, F, D1, D2 in test_configs
-        ]
+            })
+        return test_cases
 
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
         """

@@ -41,17 +41,20 @@ class soft_plus(Problem):
             ("8192x8192", 8192, 8192)
         ]
         
-        return [
-            {
+        test_cases = []
+        for name, m, n in test_configs:
+            seed = Problem.get_seed(f"{self.name}_{name}_{(m, n)}")
+            test_cases.append({
                 "name": name,
                 "rows": m,
                 "cols": n,
-                "create_inputs": lambda m=m, n=n: (
-                    torch.rand((m, n), device="cuda", dtype=dtype) * 10.0 - 5.0,  # uniform [-5, 5]
+                "create_inputs": lambda m=m, n=n, seed=seed, dtype=dtype: (
+                    *(lambda g: (
+                        torch.rand((m, n), device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0,  # uniform [-5, 5]
+                    ))(torch.Generator(device="cuda").manual_seed(seed)),
                 )
-            }
-            for name, m, n in test_configs
-        ]
+            })
+        return test_cases
     
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
         """

@@ -43,18 +43,22 @@ class argmax(Problem):
             ((128, 64, 64, 64), 3)
         ]
         
-        return [
-            {
-                "name": f"shape={shape}, dim={dim}",
+        test_cases = []
+        for shape, dim in test_configs:
+            name = f"shape={shape}, dim={dim}"
+            seed = Problem.get_seed(f"{self.name}_{name}_{(shape, dim)}")
+            test_cases.append({
+                "name": name,
                 "shape": shape,
                 "dim": dim,
-                "create_inputs": lambda shape=shape, dim=dim: (
-                    torch.rand(shape, device="cuda", dtype=dtype) * 10.0 - 5.0,  # uniform [-5, 5]
-                    dim
+                "create_inputs": lambda shape=shape, dim=dim, seed=seed, dtype=dtype: (
+                    *(lambda g: (
+                        torch.rand(shape, device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0,  # uniform [-5, 5]
+                    ))(torch.Generator(device="cuda").manual_seed(seed)),
+                    dim,
                 )
-            }
-            for shape, dim in test_configs
-        ]
+            })
+        return test_cases
     
     def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
         """

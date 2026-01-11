@@ -45,14 +45,18 @@ class leaky_relu(Problem):
         test_cases = []
         for m, n in matrix_sizes:
             for alpha in alpha_values:
+                name = f"{m}x{n}, alpha={alpha}"
+                seed = Problem.get_seed(f"{self.name}_{name}_{(m, n)}")
                 test_cases.append({
-                    "name": f"{m}x{n}, alpha={alpha}",
+                    "name": name,
                     "rows": m,
                     "cols": n,
                     "alpha": alpha,
-                    "create_inputs": lambda m=m, n=n, alpha=alpha: (
-                        torch.rand((m, n), device="cuda", dtype=dtype) * 10.0 - 5.0,  # uniform [-5, 5]
-                        alpha
+                    "create_inputs": lambda m=m, n=n, alpha=alpha, seed=seed, dtype=dtype: (
+                        *(lambda g: (
+                            torch.rand((m, n), device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0,  # uniform [-5, 5]
+                        ))(torch.Generator(device="cuda").manual_seed(seed)),
+                        alpha,
                     )
                 })
         

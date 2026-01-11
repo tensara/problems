@@ -48,13 +48,16 @@ class histogram(Problem):
         test_cases = []
         for height, width in image_sizes:
             for num_bins in bin_counts:
+                seed = Problem.get_seed(f"{self.name}_H={height}_W={width}_bins={num_bins}")
                 test_cases.append({
                     "name": f"{height}x{width}, bins={num_bins}",
                     "height": height,
                     "width": width,
                     "num_bins": num_bins,
-                    "create_inputs": lambda h=height, w=width, b=num_bins: (
-                        torch.randint(0, b, (h, w), device="cuda", dtype=dtype),
+                    "create_inputs": lambda h=height, w=width, b=num_bins, seed=seed, dtype=dtype: (
+                        (lambda g: (
+                            torch.randint(0, b, (h, w), device="cuda", dtype=dtype, generator=g),
+                        ))(torch.Generator(device="cuda").manual_seed(seed)),
                         b
                     )
                 })
