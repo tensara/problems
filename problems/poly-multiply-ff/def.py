@@ -10,6 +10,8 @@ P = (1 << 31) - 1  # 2147483647
 class poly_multiply_ff(Problem):
     """Polynomial multiplication over F_p with p = 2^31 - 1 (Mersenne), using uint32 coefficients."""
 
+    numeric_category = "EXACT"
+
     def __init__(self):
         super().__init__(name="poly-multiply-ff")
 

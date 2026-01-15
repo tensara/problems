@@ -6,6 +6,8 @@ from problem import Problem
 
 class argmin(Problem):
     """Argmin over dimension problem."""
+
+    numeric_category = "EXACT"
     
     def __init__(self):
         super().__init__(
