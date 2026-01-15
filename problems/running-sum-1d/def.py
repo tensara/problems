@@ -8,7 +8,7 @@ from tolerances import tol_for
 class running_sum_1d(Problem):
     """1D running sum problem with fix sized sliding window. """
 
-    numeric_category = "LOCAL"
+    numeric_category = "REDUCTION"
     
     def __init__(self):
         super().__init__(
