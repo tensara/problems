@@ -3,10 +3,13 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from tolerances import tol_for
 
 
 class min_dim(Problem):
     """Min over dimension problem."""
+
+    numeric_category = "EXACT"
     
     def __init__(self):
         super().__init__(
@@ -90,7 +93,11 @@ class min_dim(Problem):
         Returns:
             Tuple of (is_correct, debug_info)
         """
-        is_close = torch.allclose(actual_output, expected_output, rtol=1e-3, atol=1e-3)
+        tol = tol_for(dtype, self.numeric_category)
+        if tol is None:
+            is_close = torch.equal(actual_output, expected_output)
+        else:
+            is_close = torch.allclose(actual_output, expected_output, rtol=tol.rtol, atol=tol.atol)
         
         debug_info = {}
         if not is_close:

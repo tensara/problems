@@ -5,6 +5,7 @@ from typing import List, Dict, Tuple, Any
 from problem import Problem
 
 class ecc_point_negation(Problem):
+    numeric_category = "EXACT"
     """
     Batched ECC point negation over F_p with p = 2^61 - 1 (fits in uint64_t).
 

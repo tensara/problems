@@ -3,10 +3,13 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from tolerances import tol_for
 
 
 class upper_trig_matmul(Problem):
     """Upper triangular matrix multiplication problem."""
+
+    numeric_category = "GEMM_CONV"
     
     def __init__(self):
         super().__init__(
@@ -113,7 +116,11 @@ class upper_trig_matmul(Problem):
         # Ensure the actual output is also upper triangular (optional check)
         is_upper_triangular = torch.all(torch.tril(actual_output, diagonal=-1) == 0)
         
-        is_close = torch.allclose(actual_output, expected_output, rtol=1e-3, atol=1e-3) # Relaxed tolerance slightly
+        tol = tol_for(dtype, self.numeric_category)
+        if tol is None:
+            is_close = torch.equal(actual_output, expected_output)
+        else:
+            is_close = torch.allclose(actual_output, expected_output, rtol=tol.rtol, atol=tol.atol)
         
         debug_info = {}
         if not is_close:

@@ -7,6 +7,8 @@ from problem import Problem
 
 class histogram(Problem):
     """Histogram computation problem."""
+
+    numeric_category = "EXACT"
     
     def __init__(self):
         super().__init__(

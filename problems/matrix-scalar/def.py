@@ -3,10 +3,13 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from tolerances import tol_for
 
 
 class matrix_scalar(Problem):
     """Matrix scalar multiplication problem."""
+
+    numeric_category = "ELEMENTWISE"
     
     def __init__(self):
         super().__init__(
@@ -81,7 +84,11 @@ class matrix_scalar(Problem):
         Returns:
             Tuple of (is_correct, debug_info)
         """
-        is_close = torch.allclose(actual_output, expected_output, rtol=1e-4, atol=1e-3)
+        tol = tol_for(dtype, self.numeric_category)
+        if tol is None:
+            is_close = torch.equal(actual_output, expected_output)
+        else:
+            is_close = torch.allclose(actual_output, expected_output, rtol=tol.rtol, atol=tol.atol)
         
         debug_info = {}
         if not is_close:

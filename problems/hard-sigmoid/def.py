@@ -3,9 +3,12 @@ import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
+from tolerances import tol_for
 
 class hard_sigmoid(Problem):
     """Hard Sigmoid activation function problem."""
+
+    numeric_category = "ELEMENTWISE"
     
     def __init__(self):
         super().__init__(
@@ -89,7 +92,11 @@ class hard_sigmoid(Problem):
         Returns:
             Tuple of (is_correct, debug_info)
         """
-        is_close = torch.allclose(actual_output, expected_output, rtol=1e-5, atol=1e-5)
+        tol = tol_for(dtype, self.numeric_category)
+        if tol is None:
+            is_close = torch.equal(actual_output, expected_output)
+        else:
+            is_close = torch.allclose(actual_output, expected_output, rtol=tol.rtol, atol=tol.atol)
         
         debug_info = {}
         if not is_close:
@@ -117,6 +124,8 @@ class hard_sigmoid(Problem):
                 "max_difference": max_diff,
                 "mean_difference": mean_diff,
                 "sample_differences": sample_diffs,
+                "rtol": None if tol is None else tol.rtol,
+                "atol": None if tol is None else tol.atol,
             }
         
         return is_close, debug_info
