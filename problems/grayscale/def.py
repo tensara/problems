@@ -164,6 +164,24 @@ class grayscale(Problem):
         # Total: 5 FLOPs per pixel
         return height * width * 5
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        height = test_case["height"]
+        width = test_case["width"]
+        
+        # Input: RGB image (height*width*3)
+        # Output: grayscale image (height*width)
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (height * width * 3 + height * width) * dtype_bytes
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

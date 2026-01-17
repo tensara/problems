@@ -168,6 +168,23 @@ class matrix_multiplication(Problem):
         M, N, K = test_case["dims"]
         return 2 * M * N * K
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        M, N, K = test_case["dims"]
+        
+        # Input: A (M*K) + B (K*N)
+        # Output: C (M*N)
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (M * K + K * N + M * N) * dtype_bytes
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

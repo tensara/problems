@@ -221,6 +221,37 @@ class scaled_dot_attention(Problem):
         
         return (4 * b * h * s * s * e) + (5 * b * h * s * s)
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        b = test_case["batch"]
+        h = test_case["heads"]
+        s = test_case["seq_len"]
+        e = test_case["embed_dim"]
+        
+        # Naive scaled dot-product attention:
+        # 1. Read Q, K for QK^T → 2 * b*h*s*e
+        # 2. Write QK^T → b*h*s*s
+        # 3. Read QK^T (scaling) → b*h*s*s
+        # 4. Write scaled → b*h*s*s
+        # 5. Softmax: read scaled (max) → b*h*s*s, read scaled (exp) → b*h*s*s, write exp → b*h*s*s, 
+        #    read exp (norm) → b*h*s*s, write softmax → b*h*s*s = 5 * b*h*s*s
+        # 6. Read softmax, V for matmul → b*h*s*s + b*h*s*e
+        # 7. Write output → b*h*s*e
+        
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (2 * b * h * s * e +  # Q, K reads
+                8 * b * h * s * s +  # QK^T, scaled, softmax intermediates (1+1+5+1)
+                b * h * s * e +      # V read
+                b * h * s * e) * dtype_bytes  # output write
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

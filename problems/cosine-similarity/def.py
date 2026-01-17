@@ -173,6 +173,46 @@ class cosine_similarity(Problem):
         # Total per vector pair: approximately 5*D + 3 FLOPs
         return N * (5 * D + 3)
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        N = test_case["n"]
+        D = test_case["d"]
+        
+        N = test_case["n"]
+        D = test_case["d"]
+        
+        # Naive cosine similarity:
+        # 1. Read predictions → N*D
+        # 2. Read targets → N*D
+        # 3. Write dot_product = predictions · targets → N (materialized)
+        # 4. Read predictions → N*D (for norm)
+        # 5. Write norm_pred = ||predictions|| → N (materialized)
+        # 6. Read targets → N*D (for norm)
+        # 7. Write norm_targ = ||targets|| → N (materialized)
+        # 8. Read dot_product, norm_pred, norm_targ → 3*N
+        # 9. Write similarity = dot / (norm_pred * norm_targ) → N
+        # 10. Read similarity → N (if needed for output)
+        
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (2 * N * D +      # read predictions, targets (first time)
+                N * D +          # read predictions (for norm)
+                N * D +          # read targets (for norm)
+                N +              # write dot_product
+                N +              # read dot_product
+                N +              # write norm_pred
+                N +              # read norm_pred
+                N +              # write norm_targ
+                N +              # read norm_targ
+                N) * dtype_bytes  # write similarity (output)
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

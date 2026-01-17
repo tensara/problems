@@ -201,6 +201,50 @@ class triplet_margin(Problem):
         
         return int(total_flops)
 
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        batch = test_case["batch"]
+        embedding_dim = test_case["embedding_dim"]
+        
+        batch = test_case["batch"]
+        embedding_dim = test_case["embedding_dim"]
+        total_elements = batch * embedding_dim
+        
+        # Naive triplet margin loss:
+        # 1. Read anchor → batch*embedding_dim
+        # 2. Read positive → batch*embedding_dim
+        # 3. Write dist_pos → batch (materialized)
+        # 4. Read anchor → batch*embedding_dim (for negative distance)
+        # 5. Read negative → batch*embedding_dim
+        # 6. Write dist_neg → batch (materialized)
+        # 7. Read dist_pos, dist_neg → 2*batch
+        # 8. Write margin_loss = dist_pos - dist_neg + margin → batch (materialized)
+        # 9. Read margin_loss → batch
+        # 10. Write max(0, margin_loss) → batch
+        # 11. Read max → batch
+        # 12. Write sum → 1
+        
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (2 * total_elements +      # read anchor (twice) + positive
+                total_elements +          # read negative
+                batch +                   # write dist_pos
+                batch +                   # read dist_pos
+                batch +                   # write dist_neg
+                batch +                   # read dist_neg
+                batch +                   # write margin_loss
+                batch +                   # read margin_loss
+                batch +                   # write max
+                batch +                   # read max
+                1) * dtype_bytes           # write sum (output)
+
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

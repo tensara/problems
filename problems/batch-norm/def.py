@@ -195,6 +195,39 @@ class batch_norm(Problem):
         
         return int(total_flops)
 
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        B = test_case["B"]
+        F = test_case["F"]
+        D1 = test_case["D1"]
+        D2 = test_case["D2"]
+        
+        total_elements = B * F * D1 * D2
+        num_features = F * D1 * D2
+        
+        # Naive batch normalization:
+        # 1. Read x to compute mean → B*F*D1*D2
+        # 2. Write mean → F*D1*D2
+        # 3. Read x to compute variance → B*F*D1*D2
+        # 4. Write variance → F*D1*D2
+        # 5. Read x to normalize → B*F*D1*D2
+        # 6. Read mean → F*D1*D2
+        # 7. Read variance → F*D1*D2
+        # 8. Write output → B*F*D1*D2
+        
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (3 * total_elements +      # 3 reads of x
+                3 * num_features +        # mean write + variance write + mean read + variance read
+                total_elements) * dtype_bytes  # output write
+
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters (dimensions) to pass to the CUDA solution.

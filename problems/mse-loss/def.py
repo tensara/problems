@@ -157,6 +157,40 @@ class mse_loss(Problem):
         
         return flops
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        shape = test_case["shape"]
+        
+        # Total elements in the tensor
+        total_elements = 1
+        for s in shape:
+            total_elements *= s
+        
+        # Naive MSE loss:
+        # 1. Read predictions → total_elements
+        # 2. Read targets → total_elements
+        # 3. Write diff = predictions - targets → total_elements (materialized)
+        # 4. Read diff → total_elements
+        # 5. Write squared = diff^2 → total_elements (materialized)
+        # 6. Read squared → total_elements
+        # 7. Write sum → 1 (materialized)
+        # 8. Read sum → 1
+        # 9. Write mean → 1
+        
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (2 * total_elements +      # read predictions, targets
+                2 * total_elements +      # write and read diff
+                2 * total_elements +      # write and read squared
+                2) * dtype_bytes           # write and read sum, write mean
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

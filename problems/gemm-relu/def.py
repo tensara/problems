@@ -195,6 +195,36 @@ class gemm_relu(Problem):
         # - Each of the B*M output elements requires 1 addition
         return 2 * B * N * M + B * M
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        B = test_case["batch_size"]
+        N = test_case["in_features"]
+        M = test_case["out_features"]
+        
+        # Naive gemm-relu:
+        # 1. Read input → B*N
+        # 2. Read weights → M*N
+        # 3. Read bias → M
+        # 4. Write matmul_output → B*M (materialized)
+        # 5. Read matmul_output → B*M
+        # 6. Write relu_output → B*M
+        
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (B * N +            # read input
+                M * N +            # read weights
+                M +                # read bias
+                B * M +            # write matmul_output
+                B * M +            # read matmul_output
+                B * M) * dtype_bytes  # write relu_output
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

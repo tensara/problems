@@ -190,6 +190,35 @@ class rms_norm(Problem):
         
         return int(total_flops)
 
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        shape = test_case["shape"]
+        batch_size = shape[0]
+        num_features = shape[1]
+        
+        total_elements = batch_size * num_features
+        
+        # Naive RMS normalization per batch item:
+        # 1. Read x to compute RMS (sum of squares) → batch_size*num_features
+        # 2. Write RMS → batch_size elements
+        # 3. Read x to normalize → batch_size*num_features
+        # 4. Read RMS → batch_size elements
+        # 5. Write output → batch_size*num_features
+        
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (2 * total_elements +      # 2 reads of x
+                batch_size +              # RMS write
+                batch_size +              # RMS read
+                total_elements) * dtype_bytes  # output write
+
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

@@ -153,6 +153,37 @@ class hinge_loss(Problem):
         # 3. max(0, sub)                        (1 FLOP, comparison)
         return N * 3
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        N = test_case["n"]
+        
+        # Naive hinge loss:
+        # 1. Read predictions → N
+        # 2. Read targets → N
+        # 3. Write mult = predictions * targets → N (materialized)
+        # 4. Read mult → N
+        # 5. Write sub = 1 - mult → N (materialized)
+        # 6. Read sub → N
+        # 7. Write max(0, sub) → N
+        # 8. Read max → N
+        # 9. Write sum → 1 (if summing, otherwise skip)
+        # Total: 4 reads, 4 writes = 8N element-moves (or 7N if no sum)
+        # Actually output is N, so final write is N, not 1
+        
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (N + N +          # read predictions, targets
+                N + N +          # write and read mult
+                N + N +          # write and read sub
+                N + N) * dtype_bytes  # write and read max (output)
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.
