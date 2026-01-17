@@ -191,6 +191,42 @@ class matmul_swish(Problem):
         # Total FLOPs for all elements
         return B * O * flops_per_element
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        B = test_case["batch_size"]
+        I = test_case["in_features"]
+        O = test_case["out_features"]
+        
+        # Naive matmul-swish:
+        # 1. Read input → B*I
+        # 2. Read weight → O*I
+        # 3. Read bias → O
+        # 4. Write matmul_output → B*O (materialized)
+        # 5. Read matmul_output → B*O
+        # 6. Write sigmoid_output → B*O (materialized)
+        # 7. Read sigmoid_output → B*O
+        # 8. Read matmul_output → B*O (for swish multiply)
+        # 9. Write swish_output → B*O
+        
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (B * I +            # read input
+                O * I +            # read weight
+                O +                # read bias
+                B * O +            # write matmul_output
+                B * O +            # read matmul_output
+                B * O +            # write sigmoid_output
+                B * O +            # read sigmoid_output
+                B * O +            # read matmul_output (again)
+                B * O) * dtype_bytes  # write swish_output
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

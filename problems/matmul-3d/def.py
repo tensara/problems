@@ -158,6 +158,23 @@ class matmul_3d(Problem):
         N, M, K, L = test_case["dims"]
         return 2 * N * M * K * L
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        N, M, K, L = test_case["dims"]
+        
+        # Input: A (N*M*K) + B (K*L)
+        # Output: C (N*M*L)
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (N * M * K + K * L + N * M * L) * dtype_bytes
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

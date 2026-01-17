@@ -189,6 +189,27 @@ class conv_2d(Problem):
         # This is slightly different from our detailed calculation but aligns with the test code
         return 2 * H * W * Kh * Kw
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        H = test_case["height"]
+        W = test_case["width"]
+        Kh = test_case["kernel_height"]
+        Kw = test_case["kernel_width"]
+        
+        # Input image: H*W elements
+        # Kernel: Kh*Kw elements (typically small and reused)
+        # Output: H*W elements (same size as input due to padding)
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (H * W + Kh * Kw + H * W) * dtype_bytes
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

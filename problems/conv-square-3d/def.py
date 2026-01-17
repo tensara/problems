@@ -175,6 +175,25 @@ class conv_square_3d(Problem):
         # Following similar convention as 2D case, we use 2*size^3*K^3
         return 2 * size * size * size * K * K * K
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        size = test_case["size"]  # D=H=W
+        K = test_case["kernel_size"]
+        
+        # Input volume: size^3 elements
+        # Kernel: K^3 elements (typically small and reused)
+        # Output: size^3 elements (same size as input due to padding)
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (size * size * size + K * K * K + size * size * size) * dtype_bytes
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

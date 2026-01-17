@@ -192,6 +192,23 @@ class l2_norm(Problem):
         
         return int(total_flops) # Return as integer
 
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        B = test_case["B"]
+        D = test_case["D"]
+        
+        # Input: B*D elements, Output: B*D elements (same shape)
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (B * D + B * D) * dtype_bytes
+
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters (dimensions) to pass to the CUDA solution.

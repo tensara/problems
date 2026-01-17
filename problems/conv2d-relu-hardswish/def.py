@@ -191,6 +191,39 @@ class conv2d_relu_hardswish(Problem):
         
         return conv_flops + relu_flops + hardswish_flops
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        H = test_case["height"]
+        W = test_case["width"]
+        Kh = test_case["kernel_height"]
+        Kw = test_case["kernel_width"]
+        
+        # Naive conv2d-relu-hardswish:
+        # 1. Read input → H*W
+        # 2. Read kernel → Kh*Kw
+        # 3. Write conv_output → H*W (materialized)
+        # 4. Read conv_output → H*W
+        # 5. Write relu_output → H*W (materialized)
+        # 6. Read relu_output → H*W
+        # 7. Write hardswish_output → H*W
+        
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (H * W +              # read input
+                Kh * Kw +            # read kernel
+                H * W +              # write conv_output
+                H * W +              # read conv_output
+                H * W +              # write relu_output
+                H * W +              # read relu_output
+                H * W) * dtype_bytes  # write hardswish_output
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

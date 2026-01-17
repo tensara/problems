@@ -122,5 +122,22 @@ class poly_multiply_ff(Problem):
         n = test_case["dims"][0]
         return 2 * n * n  # one mul + one add per term
 
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        n = test_case["dims"][0]
+        
+        # Input: A (n) + B (n) - both uint32
+        # Output: C (2*n - 1) - uint32
+        dtype_bytes = 4  # 4 bytes per uint32 element
+        return (n + n + (2 * n - 1)) * dtype_bytes
+
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         return [test_case["dims"][0]]

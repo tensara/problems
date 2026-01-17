@@ -179,6 +179,14 @@ class upper_trig_matmul(Problem):
         flops = N * (N + 1) * (N + 2) // 3 
         return flops 
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        N = test_case["dims"][0]
+        
+        # Input: A (N*N) + B (N*N) - both upper triangular but stored as full matrices
+        # Output: C (N*N) - upper triangular but stored as full matrix
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (N * N + N * N + N * N) * dtype_bytes
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

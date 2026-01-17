@@ -188,6 +188,27 @@ class box_blur(Problem):
         flops_per_pixel = kernel_size * kernel_size
         return height * width * flops_per_pixel
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        height = test_case["height"]
+        width = test_case["width"]
+        kernel_size = test_case["kernel_size"]
+        
+        # Input image: height*width elements
+        # Kernel: kernel_size*kernel_size elements (but this is typically small and reused)
+        # Output: height*width elements
+        # For memory bandwidth, we count input + output (kernel is small and cached)
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (height * width + height * width) * dtype_bytes
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

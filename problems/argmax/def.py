@@ -172,6 +172,31 @@ class argmax(Problem):
         # Each reduction requires (reduce_size - 1) comparisons
         return num_reductions * (reduce_size - 1)
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        shape = test_case["shape"]
+        dim = test_case["dim"]
+        
+        # Total elements in the input tensor
+        total_elements = 1
+        for s in shape:
+            total_elements *= s
+        
+        # Output tensor has reduced dimension (one less dimension)
+        reduce_size = shape[dim]
+        output_elements = total_elements // reduce_size
+        
+        dtype_bytes = 4  # 4 bytes per float32 element (input) and int32 element (output)
+        return (total_elements + output_elements) * dtype_bytes
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

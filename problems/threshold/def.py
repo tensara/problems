@@ -163,6 +163,23 @@ class threshold(Problem):
         # Total: 1 FLOP per pixel
         return height * width
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        height = test_case["height"]
+        width = test_case["width"]
+        
+        # Input: height*width elements, Output: height*width elements (same size)
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (height * width + height * width) * dtype_bytes
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

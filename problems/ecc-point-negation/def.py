@@ -171,6 +171,23 @@ class ecc_point_negation(Problem):
         N = test_case["dims"][0]
         return 2 * N
 
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        N = test_case["dims"][0]
+        
+        # Input: xs (N) + ys (N) - both uint64_t (8 bytes)
+        # Output: out_xy (2*N) - uint64_t (8 bytes)
+        dtype_bytes = 8  # 8 bytes per uint64_t element
+        return (N + N + 2 * N) * dtype_bytes
+
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Provide N as the trailing scalar param to the CUDA solution.

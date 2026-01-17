@@ -144,6 +144,23 @@ class diagonal_matmul(Problem):
         N, M = test_case["dims"]
         return N * M
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        N, M = test_case["dims"]
+        
+        # Input: diagonal vector (N) + matrix B (N*M)
+        # Output: matrix C (N*M)
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (N + N * M + N * M) * dtype_bytes
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

@@ -157,6 +157,23 @@ class symmetric_matmul(Problem):
         # - There are N*N output elements
         return N * N * N * 2
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        N = test_case["size"]
+        
+        # Input: A (N*N) + B (N*N) - both symmetric but stored as full matrices
+        # Output: C (N*N)
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (N * N + N * N + N * N) * dtype_bytes
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.
