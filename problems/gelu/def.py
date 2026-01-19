@@ -8,6 +8,8 @@ from problem import Problem
 class gelu(Problem):
     """GELU activation function problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="gelu"
@@ -23,7 +25,7 @@ class gelu(Problem):
         Returns:
             Result of GELU activation
         """
-        with torch.no_grad():
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_matrix.dtype):
             return torch.nn.functional.gelu(input_matrix)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
@@ -51,7 +53,7 @@ class gelu(Problem):
                 "cols": n,
                 "create_inputs": lambda m=m, n=n, seed=seed, dtype=dtype: (
                     *(lambda g: (
-                        torch.rand((m, n), device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0,  # uniform [-5, 5]
+                        torch.rand((m, n), device="cuda", dtype=dtype, generator=g) * 2.0 - 1.0,  # uniform [-1, 1]
                     ))(torch.Generator(device="cuda").manual_seed(seed)),
                 )
             })

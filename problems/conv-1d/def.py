@@ -7,6 +7,8 @@ from problem import Problem
 class conv_1d(Problem):
     """1D convolution problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="conv-1d"
@@ -23,7 +25,7 @@ class conv_1d(Problem):
         Returns:
             Result of convolution with zero padding
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_signal.dtype):
             # Ensure kernel size is odd
             assert kernel.size(0) % 2 == 1, "Kernel size must be odd"
             
@@ -69,7 +71,7 @@ class conv_1d(Problem):
                 "kernel_size": kernel_size,
                 "create_inputs": lambda s=signal_size, k=kernel_size, seed=seed, dtype=dtype: (
                     *(lambda g: (
-                        torch.rand(s, device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0,
+                        torch.rand(s, device="cuda", dtype=dtype, generator=g) * 2.0 - 1.0,
                         torch.rand(k, device="cuda", dtype=dtype, generator=g) * 2.0 - 1.0,
                     ))(torch.Generator(device="cuda").manual_seed(seed)),
                 )

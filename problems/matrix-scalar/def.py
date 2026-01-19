@@ -8,6 +8,8 @@ from problem import Problem
 class matrix_scalar(Problem):
     """Matrix scalar multiplication problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="matrix-scalar"
@@ -24,7 +26,7 @@ class matrix_scalar(Problem):
         Returns:
             Result of matrix scalar multiplication of shape (N, N)
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=matrix_a.dtype):
             return matrix_a * scalar
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:

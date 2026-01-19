@@ -8,6 +8,8 @@ from problem import Problem
 class threshold(Problem):
     """Image thresholding problem."""
     
+    is_exact = True
+    
     def __init__(self):
         super().__init__(
             name="threshold"

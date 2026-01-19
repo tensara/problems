@@ -8,6 +8,8 @@ from problem import Problem
 class min_spanning_tree(Problem):
     """Minimum spanning tree problem using parallel Prim's algorithm."""
     
+    is_exact = True
+    
     def __init__(self):
         super().__init__(
             name="min-spanning-tree"
@@ -23,7 +25,7 @@ class min_spanning_tree(Problem):
         Returns:
             Total weight of minimum spanning tree as a scalar tensor
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=adj_matrix.dtype):
             N = adj_matrix.size(0)
             device = adj_matrix.device
             

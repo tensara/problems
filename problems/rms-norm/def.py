@@ -8,6 +8,8 @@ from problem import Problem
 class rms_norm(Problem):
     """RMS Normalization problem."""
 
+    is_exact = False
+
     def __init__(self):
         super().__init__(
             name="rms-norm"
@@ -24,7 +26,7 @@ class rms_norm(Problem):
         Returns:
             torch.Tensor: Output tensor with RMS Normalization applied, same shape as input.
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=x.dtype):
             # Calculate the RMS along the feature dimension
             # For 2D inputs (batch_size, num_features), this is along dim=1
             # For higher dimensional inputs, still use dim=1 (the feature dimension)

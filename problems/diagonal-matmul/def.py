@@ -7,6 +7,8 @@ from problem import Problem
 class diagonal_matmul(Problem):
     """Diagonal matrix multiplication problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="diagonal-matmul"
@@ -23,7 +25,7 @@ class diagonal_matmul(Problem):
         Returns:
             Result of diag(A) * B
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=A.dtype):
             return torch.diag(A) @ B
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:

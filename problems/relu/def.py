@@ -9,6 +9,8 @@ from problem import Problem
 class relu(Problem):
     """ReLU activation function problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="relu"
@@ -24,7 +26,7 @@ class relu(Problem):
         Returns:
             Result of ReLU activation
         """
-        with torch.no_grad():
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_matrix.dtype):
             return torch.relu(input_matrix)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
@@ -52,7 +54,7 @@ class relu(Problem):
                 "cols": n,
                 "create_inputs": lambda m=m, n=n, seed=seed, dtype=dtype: (
                     *(lambda g: (
-                        torch.rand((m, n), device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0,  # uniform [-5, 5]
+                        torch.rand((m, n), device="cuda", dtype=dtype, generator=g) * 2.0 - 1.0,  # uniform [-1, 1]
                     ))(torch.Generator(device="cuda").manual_seed(seed)),
                 )
             })

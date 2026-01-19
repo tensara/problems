@@ -8,6 +8,8 @@ from problem import Problem
 class matmul_swish_scaling(Problem):
     """Matrix multiplication followed by Swish activation followed by scaling fusion problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="matmul-swish-scaling"
@@ -25,7 +27,7 @@ class matmul_swish_scaling(Problem):
         Returns:
             Result of scale * swish(A * B)
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=A.dtype):
             matmul_result = torch.matmul(A, B)
             swish_result = matmul_result * torch.sigmoid(matmul_result)
             scaled_result = scale * swish_result

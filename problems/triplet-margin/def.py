@@ -8,6 +8,8 @@ from problem import Problem
 class triplet_margin(Problem):
     """Triplet Margin Loss problem."""
 
+    is_exact = False
+
     def __init__(self):
         super().__init__(
             name="triplet-margin"
@@ -26,7 +28,7 @@ class triplet_margin(Problem):
         Returns:
             torch.Tensor: Triplet loss value (scalar)
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=anchor.dtype):
             # Use PyTorch's built-in TripletMarginLoss
             loss_fn = nn.TripletMarginLoss(margin=self.margin)
             

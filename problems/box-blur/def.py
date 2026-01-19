@@ -8,6 +8,8 @@ from problem import Problem
 class box_blur(Problem):
     """Box blur problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="box-blur"
@@ -24,7 +26,7 @@ class box_blur(Problem):
         Returns:
             Blurred image of shape (height, width)
         """
-        with torch.no_grad():
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_image.dtype):
             h, w = input_image.shape
             pad = kernel_size // 2
             

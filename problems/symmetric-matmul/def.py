@@ -8,6 +8,8 @@ from problem import Problem
 class symmetric_matmul(Problem):
     """Symmetric matrix multiplication problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="symmetric-matmul"
@@ -24,7 +26,7 @@ class symmetric_matmul(Problem):
         Returns:
             Result of matrix multiplication of shape (N, N)
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=matrix_a.dtype):
             return torch.matmul(matrix_a, matrix_b)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:

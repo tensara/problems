@@ -8,6 +8,8 @@ from problem import Problem
 class batch_norm(Problem):
     """Batch Normalization problem."""
 
+    is_exact = False
+
     def __init__(self):
         super().__init__(
             name="batch-norm"
@@ -24,7 +26,7 @@ class batch_norm(Problem):
         Returns:
             torch.Tensor: Output tensor with Batch Normalization applied, same shape as input.
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=x.dtype):
             # Create BatchNorm2d layer with no affine parameters and no running stats
             bn = nn.BatchNorm2d(
                 num_features=x.size(1),  # F dimension

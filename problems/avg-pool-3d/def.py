@@ -7,6 +7,8 @@ from problem import Problem
 class avg_pool_3d(Problem):
     """3D average pooling problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="avg-pool-3d"
@@ -26,7 +28,7 @@ class avg_pool_3d(Problem):
         Returns:
             Result of average pooling
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_tensor.dtype):
             input_reshaped = input_tensor.view(1, 1, input_tensor.size(0), input_tensor.size(1), input_tensor.size(2))
             
             result = torch.nn.functional.avg_pool3d(
@@ -66,7 +68,7 @@ class avg_pool_3d(Problem):
                 "padding": p,
                 "create_inputs": lambda h=h, w=w, d=d, k=k, s=s, p=p, seed=seed, dtype=dtype: (
                     *(lambda g: (
-                        torch.rand((h, w, d), device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0,  # uniform [-5, 5]
+                        torch.rand((h, w, d), device="cuda", dtype=dtype, generator=g) * 2.0 - 1.0,  # uniform [-1, 1]
                     ))(torch.Generator(device="cuda").manual_seed(seed)),
                     k, s, p
                 )

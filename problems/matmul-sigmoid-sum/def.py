@@ -8,6 +8,8 @@ from problem import Problem
 class matmul_sigmoid_sum(Problem):
     """Matrix multiplication followed by sigmoid activation followed by summation problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="matmul-sigmoid-sum"
@@ -24,7 +26,7 @@ class matmul_sigmoid_sum(Problem):
         Returns:
             Sum of sigmoid(A * B)
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=A.dtype):
             matmul_result = torch.matmul(A, B)
             sigmoid_result = torch.sigmoid(matmul_result)
             return torch.sum(sigmoid_result)

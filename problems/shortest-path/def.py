@@ -8,6 +8,8 @@ from problem import Problem
 class shortest_path(Problem):
     """Single source shortest path problem using Dijkstra's algorithm."""
     
+    is_exact = True
+    
     def __init__(self):
         super().__init__(
             name="shortest-path"
@@ -24,7 +26,7 @@ class shortest_path(Problem):
         Returns:
             Shortest distances from source to all nodes
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=adj_matrix.dtype):
             N = adj_matrix.size(0)
             device = adj_matrix.device
 

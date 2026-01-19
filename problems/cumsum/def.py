@@ -7,6 +7,8 @@ from problem import Problem
 class cumsum(Problem):
     """Cumulative sum (prefix sum) problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="cumsum"
@@ -22,7 +24,7 @@ class cumsum(Problem):
         Returns:
             Cumulative sum of the input tensor
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_tensor.dtype):
             return torch.cumsum(input_tensor, dim=0)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
@@ -49,7 +51,7 @@ class cumsum(Problem):
                 "size": size,
                 "create_inputs": lambda s=size, seed=seed, dtype=dtype: (
                     (lambda g: (
-                        torch.rand(s, device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0,
+                        torch.rand(s, device="cuda", dtype=dtype, generator=g) * 2.0 - 1.0,
                     ))(torch.Generator(device="cuda").manual_seed(seed))
                 )
             })

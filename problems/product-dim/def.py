@@ -8,6 +8,8 @@ from problem import Problem
 class product_dim(Problem):
     """Product over dimension problem."""
 
+    is_exact = False
+
     def __init__(self):
         super().__init__(
             name="product-dim"
@@ -24,7 +26,7 @@ class product_dim(Problem):
         Returns:
             Result of product reduction with keepdim=True
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_tensor.dtype):
             return torch.prod(input_tensor, dim=dim, keepdim=True)
 
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:

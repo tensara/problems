@@ -8,6 +8,8 @@ from problem import Problem
 class matmul_swish(Problem):
     """Matrix multiplication with Swish activation problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="matmul-swish"
@@ -27,7 +29,7 @@ class matmul_swish(Problem):
         Returns:
             Result of matrix multiplication with Swish activation and scaling
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_matrix.dtype):
             # Linear transformation
             z = torch.matmul(input_matrix, weight_matrix.t()) + bias
             

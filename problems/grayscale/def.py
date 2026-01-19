@@ -8,6 +8,8 @@ from problem import Problem
 class grayscale(Problem):
     """Grayscale conversion problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="grayscale"
@@ -23,7 +25,7 @@ class grayscale(Problem):
         Returns:
             Grayscale image of shape (height, width)
         """
-        with torch.no_grad():
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=rgb_image.dtype):
             # Apply standard RGB to grayscale conversion weights
             # RGB image is in shape (height, width, 3)
             r, g, b = rgb_image[:, :, 0], rgb_image[:, :, 1], rgb_image[:, :, 2]

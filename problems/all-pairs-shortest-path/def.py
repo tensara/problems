@@ -8,6 +8,8 @@ from problem import Problem
 class all_pairs_shortest_path(Problem):
     """All-pairs shortest path problem using Floyd-Warshall algorithm."""
     
+    is_exact = True
+    
     def __init__(self):
         super().__init__(
             name="all-pairs-shortest-path"
@@ -23,7 +25,7 @@ class all_pairs_shortest_path(Problem):
         Returns:
             Distance matrix with shortest paths between all pairs of nodes
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=adj_matrix.dtype):
             N = adj_matrix.size(0)
             device = adj_matrix.device
 

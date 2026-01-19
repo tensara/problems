@@ -8,6 +8,8 @@ from problem import Problem
 class histogram(Problem):
     """Histogram computation problem."""
     
+    is_exact = True
+    
     def __init__(self):
         super().__init__(
             name="histogram"

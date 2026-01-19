@@ -8,6 +8,8 @@ from problem import Problem
 class l1_norm(Problem):
     """L1 Normalization problem."""
 
+    is_exact = False
+
     def __init__(self):
         super().__init__(
             name="l1-norm"
@@ -24,7 +26,7 @@ class l1_norm(Problem):
         Returns:
             torch.Tensor: Output tensor with L1 Normalization applied, same shape as input.
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=x.dtype):
             l1_norm = torch.sum(torch.abs(x), dim=1, keepdim=True)
             
             l1_norm = l1_norm + self.epsilon
