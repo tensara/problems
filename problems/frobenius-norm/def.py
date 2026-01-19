@@ -25,7 +25,7 @@ class frobenius_norm(Problem):
         Returns:
             torch.Tensor: Output tensor with Frobenius norm normalization applied, same shape as input.
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=x.dtype):
             # Calculate the Frobenius norm
             norm = torch.norm(x, p='fro')
             

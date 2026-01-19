@@ -26,7 +26,7 @@ class kl_loss(Problem):
         Returns:
             Element-wise KL divergence tensor of shape (N,)
         """
-        with torch.no_grad():
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=predictions.dtype):
             # Add small epsilon to avoid numerical issues with log(0)
             eps = 1e-10
             pred_safe = predictions.clamp(min=eps)
@@ -49,9 +49,6 @@ class kl_loss(Problem):
         Returns:
             List of test case dictionaries with varying sizes.
         """
-        batch_size = 128
-        input_shape = (4096, )
-        
         tensor_sizes = [
             1048576,      # 1M elements
             4194304,      # 4M elements

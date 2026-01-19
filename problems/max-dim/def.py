@@ -26,7 +26,7 @@ class max_dim(Problem):
         Returns:
             Result of max reduction with keepdim=True (values only)
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_tensor.dtype):
             # Get only the values, not the indices
             return torch.max(input_tensor, dim=dim, keepdim=True)[0]
 

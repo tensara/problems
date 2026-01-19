@@ -26,7 +26,7 @@ class matrix_power(Problem):
         Returns:
             Result of matrix^n of shape (N, N)
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=matrix_a.dtype):
             return torch.linalg.matrix_power(matrix_a, n)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:

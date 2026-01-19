@@ -22,7 +22,7 @@ class gemm_multiply_leakyrelu(Problem):
         Returns:
             Result of LeakyReLU(GEMM(A, B) * C)
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=A.dtype):
             gemm_result = torch.matmul(A, B)
             multiply_result = gemm_result * C
             leaky_relu_result = torch.nn.functional.leaky_relu(multiply_result, alpha)

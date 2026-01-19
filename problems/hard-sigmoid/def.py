@@ -24,7 +24,7 @@ class hard_sigmoid(Problem):
         Returns:
             Result of Hard Sigmoid activation
         """
-        with torch.no_grad():
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_matrix.dtype):
             return torch.nn.functional.hardsigmoid(input_matrix)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:

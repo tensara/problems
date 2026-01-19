@@ -28,7 +28,7 @@ class gemm_relu(Problem):
             Result of ReLU(input_matrix @ weights.T + bias)
         """
 
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_matrix.dtype):
             # Matrix multiplication: (B, N) @ (N, M) -> (B, M)
             result = torch.mm(input_matrix, weights.t())
             # Add bias: (B, M) + (M) -> (B, M)

@@ -24,7 +24,7 @@ class cumsum(Problem):
         Returns:
             Cumulative sum of the input tensor
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_tensor.dtype):
             return torch.cumsum(input_tensor, dim=0)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:

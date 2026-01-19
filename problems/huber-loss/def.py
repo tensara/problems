@@ -26,7 +26,7 @@ class huber_loss(Problem):
         Returns:
             Element-wise Huber loss tensor of shape (N,)
         """
-        with torch.no_grad():
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=predictions.dtype):
             # Use reduction='none' to get element-wise loss
             return torch.nn.functional.smooth_l1_loss(predictions, targets, reduction='none', beta=1.0)
     

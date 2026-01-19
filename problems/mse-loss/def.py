@@ -24,7 +24,7 @@ class mse_loss(Problem):
         Returns:
             Mean squared error loss as a scalar tensor
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=predictions.dtype):
             return torch.mean((predictions - targets) ** 2)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:

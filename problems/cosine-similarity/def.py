@@ -25,7 +25,7 @@ class cosine_similarity(Problem):
         Returns:
             Negative cosine similarity tensor of shape (N,)
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=predictions.dtype):
             return 1 - torch.nn.functional.cosine_similarity(predictions, targets, dim=1)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:

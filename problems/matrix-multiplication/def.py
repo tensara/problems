@@ -26,7 +26,7 @@ class matrix_multiplication(Problem):
         Returns:
             Result of A * B
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=A.dtype):
             return torch.matmul(A, B)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:

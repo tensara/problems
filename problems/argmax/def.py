@@ -25,7 +25,7 @@ class argmax(Problem):
         Returns:
             Result of argmax operation
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_tensor.dtype):
             return torch.argmax(input_tensor, dim=dim).to(torch.int32)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:

@@ -26,7 +26,7 @@ class sum_dim(Problem):
         Returns:
             Result of sum reduction with keepdim=True
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_tensor.dtype):
             return torch.sum(input_tensor, dim=dim, keepdim=True)
 
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:

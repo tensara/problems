@@ -26,7 +26,7 @@ class matmul_3d(Problem):
         Returns:
             Result of shape (N, M, L) from multiplying A and B along the last dimension of A
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=A.dtype):
             return torch.matmul(A, B)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:

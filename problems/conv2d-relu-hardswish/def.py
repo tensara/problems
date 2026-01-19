@@ -26,7 +26,7 @@ class conv2d_relu_hardswish(Problem):
         Returns:
             Result of conv2d -> ReLU -> HardSwish fusion
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_image.dtype):
             input_reshaped = input_image.view(1, 1, input_image.size(0), input_image.size(1))
             kernel_reshaped = kernel.view(1, 1, kernel.size(0), kernel.size(1))
             

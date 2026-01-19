@@ -25,7 +25,7 @@ class edge_detect(Problem):
         Returns:
             Edge detected image of shape (height, width)
         """
-        with torch.no_grad():
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_image.dtype):
             h, w = input_image.shape
             
             gx_kernel = torch.tensor([[-1, 0, 1]], device=input_image.device) / 2.0

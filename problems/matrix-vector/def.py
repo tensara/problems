@@ -26,7 +26,7 @@ class matrix_vector(Problem):
         Returns:
             Result of matrix-vector multiplication of shape (M)
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=matrix.dtype):
             return torch.matmul(matrix, vector)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:

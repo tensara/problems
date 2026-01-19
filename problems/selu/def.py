@@ -24,7 +24,7 @@ class selu(Problem):
         Returns:
             Result of SELU activation
         """
-        with torch.no_grad():
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_matrix.dtype):
             return torch.selu(input_matrix)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:

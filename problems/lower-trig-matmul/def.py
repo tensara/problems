@@ -27,7 +27,7 @@ class lower_trig_matmul(Problem):
         Returns:
             Result of A * B (which will also be lower triangular)
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=A.dtype):
             # Ensure inputs are lower triangular, although test generation should handle this.
             A_tril = torch.tril(A)
             B_tril = torch.tril(B)

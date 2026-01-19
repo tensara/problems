@@ -28,7 +28,7 @@ class layer_norm(Problem):
         Returns:
             torch.Tensor: Output tensor with Layer Normalization applied, same shape as input.
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=x.dtype):
             # Normalize over the last 3 dimensions (F, D1, D2)
             normalized_shape = x.shape[1:] 
             

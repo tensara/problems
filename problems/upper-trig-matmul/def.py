@@ -27,7 +27,7 @@ class upper_trig_matmul(Problem):
         Returns:
             Result of A * B (which will also be upper triangular)
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=A.dtype):
             # Ensure inputs are upper triangular, although test generation should handle this.
             A_triu = torch.triu(A)
             B_triu = torch.triu(B)

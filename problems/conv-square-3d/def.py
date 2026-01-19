@@ -25,7 +25,7 @@ class conv_square_3d(Problem):
         Returns:
             Result of convolution with zero padding
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_volume.dtype):
             assert kernel.size(0) == kernel.size(1) == kernel.size(2), "Kernel must be cubic (equal dimensions)"
             
             input_reshaped = input_volume.view(1, 1, input_volume.size(0), input_volume.size(1), input_volume.size(2))

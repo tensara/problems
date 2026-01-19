@@ -25,7 +25,7 @@ class all_pairs_shortest_path(Problem):
         Returns:
             Distance matrix with shortest paths between all pairs of nodes
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=adj_matrix.dtype):
             N = adj_matrix.size(0)
             device = adj_matrix.device
 

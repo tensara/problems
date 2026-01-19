@@ -26,7 +26,7 @@ class hinge_loss(Problem):
         Returns:
             Element-wise hinge loss tensor of shape (N,)
         """
-        with torch.no_grad():
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=predictions.dtype):
             return torch.clamp(1 - predictions * targets, min=0)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:

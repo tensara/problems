@@ -26,7 +26,7 @@ class mean_dim(Problem):
         Returns:
             Result of mean reduction with keepdim=True
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_tensor.dtype):
             return torch.mean(input_tensor, dim=dim, keepdim=True)
 
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:

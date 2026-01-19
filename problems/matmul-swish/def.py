@@ -29,7 +29,7 @@ class matmul_swish(Problem):
         Returns:
             Result of matrix multiplication with Swish activation and scaling
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_matrix.dtype):
             # Linear transformation
             z = torch.matmul(input_matrix, weight_matrix.t()) + bias
             

@@ -30,7 +30,7 @@ class max_pool_3d(Problem):
         Returns:
             Result of max pooling
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_tensor.dtype):
             input_reshaped = input_tensor.view(1, 1, input_tensor.size(0), input_tensor.size(1), input_tensor.size(2))
             
             result = torch.nn.functional.max_pool3d(

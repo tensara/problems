@@ -25,7 +25,7 @@ class running_sum_1d(Problem):
         Returns:
             Sums of the input tensor over the sliding window
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_tensor.dtype):
             
             # Perform 1D convolution using PyTorch's built-in function
             # using kernel of ones to compute the running sum

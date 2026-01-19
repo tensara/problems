@@ -26,7 +26,7 @@ class l2_norm(Problem):
         Returns:
             torch.Tensor: Output tensor with L2 Normalization applied, same shape as input.
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=torch.float32):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=x.dtype):
             l2_norm = torch.norm(x, p=2, dim=1, keepdim=True)
             
             l2_norm = l2_norm + self.epsilon
