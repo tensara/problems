@@ -9,6 +9,8 @@ from problem import Problem
 class array_sort(Problem):
     """General array sorting problem (integer arrays)."""
 
+    is_exact = True
+
     def __init__(self):
         super().__init__(name="array-sort")
 

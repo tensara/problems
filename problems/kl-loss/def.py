@@ -8,6 +8,8 @@ from problem import Problem
 class kl_loss(Problem):
     """Kullback-Leibler Divergence problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="kl-loss"

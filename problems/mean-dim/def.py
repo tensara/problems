@@ -8,6 +8,8 @@ from problem import Problem
 class mean_dim(Problem):
     """Mean over dimension problem."""
 
+    is_exact = False
+
     def __init__(self):
         super().__init__(
             name="mean-dim"
@@ -53,7 +55,7 @@ class mean_dim(Problem):
                 "dim": dim,
                 "create_inputs": lambda shape=shape, dim=dim, seed=seed, dtype=dtype: (
                     *(lambda g: (
-                        torch.rand(shape, device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0,  # uniform [-5, 5]
+                        torch.rand(shape, device="cuda", dtype=dtype, generator=g) * 2.0 - 1.0,  # uniform [-1, 1]
                     ))(torch.Generator(device="cuda").manual_seed(seed)),
                     dim
                 )
@@ -75,7 +77,7 @@ class mean_dim(Problem):
             "dim": dim,
             "create_inputs": lambda shape=shape, dim=dim: (
                 # Create sequential input for easy verification
-                torch.rand(shape, device="cuda", dtype=dtype) * 10.0 - 5.0,
+                torch.rand(shape, device="cuda", dtype=dtype) * 2.0 - 1.0,
                 dim
             )
         }

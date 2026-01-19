@@ -8,6 +8,8 @@ from problem import Problem
 class matmul_sigmoid_sum(Problem):
     """Matrix multiplication followed by sigmoid activation followed by summation problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="matmul-sigmoid-sum"

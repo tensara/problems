@@ -7,6 +7,8 @@ from problem import Problem
 class diagonal_matmul(Problem):
     """Diagonal matrix multiplication problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="diagonal-matmul"

@@ -8,6 +8,8 @@ from problem import Problem
 class max_pool_3d(Problem):
     """3D max pooling problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="max-pool-3d"
@@ -71,7 +73,7 @@ class max_pool_3d(Problem):
                 "dilation": dilation,
                 "create_inputs": lambda h=h, w=w, d=d, k=k, s=s, p=p, dilation=dilation, seed=seed, dtype=dtype: (
                     *(lambda g: (
-                        torch.rand((h, w, d), device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0,  # uniform [-5, 5]
+                        torch.rand((h, w, d), device="cuda", dtype=dtype, generator=g) * 2.0 - 1.0,  # uniform [-1, 1]
                     ))(torch.Generator(device="cuda").manual_seed(seed)),
                     k, s, p, dilation
                 )

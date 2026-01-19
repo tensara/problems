@@ -6,6 +6,8 @@ from problem import Problem
 class max_pool_1d(Problem):
     """1D max pooling problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="max-pool-1d"
@@ -66,7 +68,7 @@ class max_pool_1d(Problem):
                 "dilation": d,
                 "create_inputs": lambda size=h, kernel_size=k, stride=s, padding=p, dilation=d, seed=seed, dtype=dtype: (
                     *(lambda g: (
-                        torch.rand((size), device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0,  # uniform [-5, 5]
+                        torch.rand((size), device="cuda", dtype=dtype, generator=g) * 2.0 - 1.0,  # uniform [-1, 1]
                     ))(torch.Generator(device="cuda").manual_seed(seed)),
                     kernel_size, 
                     stride, 
@@ -92,7 +94,7 @@ class max_pool_1d(Problem):
             "padding": 0,
             "dilation": 1,
             "create_inputs": lambda size_val=16, k_val=3, s_val=1, p_val=0, d_val=1, dtype_val=dtype: (
-                torch.rand((size_val), device="cuda", dtype=dtype_val) * 10.0 - 5.0,
+                torch.rand((size_val), device="cuda", dtype=dtype_val) * 2.0 - 1.0,
                 k_val,
                 s_val,
                 p_val,

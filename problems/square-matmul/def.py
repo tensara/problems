@@ -8,6 +8,8 @@ from problem import Problem
 class square_matmul(Problem):
     """Square matrix multiplication problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="square-matmul"

@@ -8,6 +8,8 @@ from problem import Problem
 class batch_norm(Problem):
     """Batch Normalization problem."""
 
+    is_exact = False
+
     def __init__(self):
         super().__init__(
             name="batch-norm"

@@ -8,6 +8,8 @@ from problem import Problem
 class gemm_multiply_leakyrelu(Problem):
     """GEMM followed by element-wise multiplication followed by LeakyReLU activation fusion problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="gemm-multiply-leakyrelu"

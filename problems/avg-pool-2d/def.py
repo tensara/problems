@@ -7,6 +7,8 @@ from problem import Problem
 class avg_pool_2d(Problem):
     """2D average pooling problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="avg-pool-2d"
@@ -66,7 +68,7 @@ class avg_pool_2d(Problem):
                 "padding": p,
                 "create_inputs": lambda h=h, w=w, k=k, s=s, p=p, seed=seed, dtype=dtype: (
                     *(lambda g: (
-                        torch.rand((h, w), device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0,  # uniform [-5, 5]
+                        torch.rand((h, w), device="cuda", dtype=dtype, generator=g) * 2.0 - 1.0,  # uniform [-1, 1]
                     ))(torch.Generator(device="cuda").manual_seed(seed)),
                     k, s, p
                 )

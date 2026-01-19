@@ -8,6 +8,8 @@ from problem import Problem
 class gemm_relu(Problem):
     """GEMM with Bias and ReLU problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="gemm-relu"

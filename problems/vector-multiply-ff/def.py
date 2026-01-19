@@ -10,6 +10,8 @@ P = (1 << 31) - 1  # 2147483647
 class vector_multiply_ff(Problem):
     """Vector multiplication over F_p with p = 2^31 - 1 (Mersenne)."""
 
+    is_exact = True
+
     def __init__(self):
         super().__init__(name="vector-multiply-ff")
 

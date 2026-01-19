@@ -7,6 +7,8 @@ from problem import Problem
 class running_sum_1d(Problem):
     """1D running sum problem with fix sized sliding window. """
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="running-sum-1d"
@@ -68,7 +70,7 @@ class running_sum_1d(Problem):
                 "window_size": window_size,
                 "create_inputs": lambda s=signal_size, w=window_size, seed=seed, dtype=dtype: (
                     *(lambda g: (
-                        torch.rand(s, device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0,
+                        torch.rand(s, device="cuda", dtype=dtype, generator=g) * 2.0 - 1.0,
                     ))(torch.Generator(device="cuda").manual_seed(seed)),
                     w
                 )

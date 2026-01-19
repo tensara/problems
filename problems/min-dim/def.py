@@ -8,6 +8,8 @@ from problem import Problem
 class min_dim(Problem):
     """Min over dimension problem."""
     
+    is_exact = True
+    
     def __init__(self):
         super().__init__(
             name="min-dim"

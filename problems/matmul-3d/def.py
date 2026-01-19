@@ -8,6 +8,8 @@ from problem import Problem
 class matmul_3d(Problem):
     """3D matrix multiplication problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="matmul-3d"

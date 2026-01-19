@@ -8,6 +8,8 @@ from problem import Problem
 class min_spanning_tree(Problem):
     """Minimum spanning tree problem using parallel Prim's algorithm."""
     
+    is_exact = True
+    
     def __init__(self):
         super().__init__(
             name="min-spanning-tree"

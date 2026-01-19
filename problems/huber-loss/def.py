@@ -8,6 +8,8 @@ from problem import Problem
 class huber_loss(Problem):
     """Huber Loss (Smooth L1 Loss) problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="huber-loss"

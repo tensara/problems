@@ -7,6 +7,8 @@ from problem import Problem
 class vector_addition(Problem):
     """Vector addition problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="vector-addition"

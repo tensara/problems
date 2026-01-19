@@ -8,6 +8,8 @@ from problem import Problem
 class matmul_4d(Problem):
     """4D tensor-matrix multiplication problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="matmul-4d"

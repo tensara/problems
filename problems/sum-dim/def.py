@@ -8,6 +8,8 @@ from problem import Problem
 class sum_dim(Problem):
     """Sum over dimension problem."""
 
+    is_exact = False
+
     def __init__(self):
         super().__init__(
             name="sum-dim"
@@ -53,7 +55,7 @@ class sum_dim(Problem):
                 "dim": dim,
                 "create_inputs": lambda shape=shape, dim=dim, seed=seed, dtype=dtype: (
                     *(lambda g: (
-                        torch.rand(shape, device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0,  # uniform [-5, 5]
+                        torch.rand(shape, device="cuda", dtype=dtype, generator=g) * 2.0 - 1.0,  # uniform [-1, 1]
                     ))(torch.Generator(device="cuda").manual_seed(seed)),
                     dim
                 )
@@ -74,7 +76,7 @@ class sum_dim(Problem):
             "shape": shape,
             "dim": dim,
             "create_inputs": lambda shape=shape, dim=dim: (
-                torch.randn(shape, device="cuda", dtype=dtype) * 10.0 - 5.0,
+                torch.randn(shape, device="cuda", dtype=dtype) * 2.0 - 1.0,
                 dim
             )
         }

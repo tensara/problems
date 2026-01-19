@@ -7,6 +7,8 @@ from problem import Problem
 class cosine_similarity(Problem):
     """Cosine Similarity problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="cosine-similarity"

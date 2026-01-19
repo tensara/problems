@@ -8,6 +8,8 @@ from problem import Problem
 class rms_norm(Problem):
     """RMS Normalization problem."""
 
+    is_exact = False
+
     def __init__(self):
         super().__init__(
             name="rms-norm"

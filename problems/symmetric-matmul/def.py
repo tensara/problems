@@ -8,6 +8,8 @@ from problem import Problem
 class symmetric_matmul(Problem):
     """Symmetric matrix multiplication problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="symmetric-matmul"

@@ -8,6 +8,8 @@ from problem import Problem
 class max_dim(Problem):
     """Max over dimension problem."""
 
+    is_exact = True
+
     def __init__(self):
         super().__init__(
             name="max-dim"

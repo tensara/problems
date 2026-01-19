@@ -8,6 +8,8 @@ from problem import Problem
 class edge_detect(Problem):
     """Edge detection problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="edge-detect"

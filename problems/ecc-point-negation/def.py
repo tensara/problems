@@ -17,6 +17,8 @@ class ecc_point_negation(Problem):
       - Output is a single (N, 2) tensor to match a single output buffer in CUDA.
     """
 
+    is_exact = True
+
     def __init__(self):
         super().__init__(name="ecc-point-negation")
         self.p: int = (1 << 61) - 1  # 2^61 - 1 (Mersenne prime)

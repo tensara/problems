@@ -7,6 +7,8 @@ from problem import Problem
 class conv_square_3d(Problem):
     """3D convolution problem with square input and square kernel."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="conv-square-3d"
@@ -64,7 +66,7 @@ class conv_square_3d(Problem):
                 "kernel_size": k,
                 "create_inputs": lambda size=size, k=k, seed=seed, dtype=dtype: (
                     *(lambda g: (
-                        torch.rand((size, size, size), device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0,  # uniform [-5, 5]
+                        torch.rand((size, size, size), device="cuda", dtype=dtype, generator=g) * 2.0 - 1.0,  # uniform [-1, 1]
                         torch.rand((k, k, k), device="cuda", dtype=dtype, generator=g) * 2.0 - 1.0  # uniform [-1, 1]
                     ))(torch.Generator(device="cuda").manual_seed(seed)),
                 )

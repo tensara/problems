@@ -8,6 +8,8 @@ from problem import Problem
 class product_dim(Problem):
     """Product over dimension problem."""
 
+    is_exact = False
+
     def __init__(self):
         super().__init__(
             name="product-dim"

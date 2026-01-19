@@ -8,6 +8,8 @@ from problem import Problem
 class scaled_dot_attention(Problem):
     """Scaled Dot-Product Attention problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="scaled-dot-attention"

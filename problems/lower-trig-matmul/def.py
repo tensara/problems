@@ -8,6 +8,8 @@ from problem import Problem
 class lower_trig_matmul(Problem):
     """Lower triangular matrix multiplication problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="lower-trig-matmul"

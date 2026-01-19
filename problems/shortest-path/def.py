@@ -8,6 +8,8 @@ from problem import Problem
 class shortest_path(Problem):
     """Single source shortest path problem using Dijkstra's algorithm."""
     
+    is_exact = True
+    
     def __init__(self):
         super().__init__(
             name="shortest-path"

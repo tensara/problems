@@ -8,6 +8,8 @@ from problem import Problem
 class hinge_loss(Problem):
     """Hinge Loss problem for binary classification."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="hinge-loss"

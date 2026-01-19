@@ -7,6 +7,8 @@ from problem import Problem
 class argmax(Problem):
     """Argmax over dimension problem."""
     
+    is_exact = True
+    
     def __init__(self):
         super().__init__(
             name="argmax"

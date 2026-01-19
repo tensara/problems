@@ -8,6 +8,8 @@ from problem import Problem
 class matmul_swish_scaling(Problem):
     """Matrix multiplication followed by Swish activation followed by scaling fusion problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="matmul-swish-scaling"

@@ -6,6 +6,8 @@ from problem import Problem
 class mse_loss(Problem):
     """Mean Squared Error loss problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="mse_loss"

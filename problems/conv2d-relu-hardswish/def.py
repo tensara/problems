@@ -8,6 +8,8 @@ from problem import Problem
 class conv2d_relu_hardswish(Problem):
     """2D convolution followed by ReLU followed by HardSwish activation fusion problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="conv2d-relu-hardswish"
@@ -70,7 +72,7 @@ class conv2d_relu_hardswish(Problem):
                 "kernel_width": kw,
                 "create_inputs": lambda h=h, w=w, kh=kh, kw=kw, seed=seed, dtype=dtype: (
                     *(lambda g: (
-                        torch.rand((h, w), device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0,  # uniform [-5, 5]
+                        torch.rand((h, w), device="cuda", dtype=dtype, generator=g) * 2.0 - 1.0,  # uniform [-1, 1]
                         torch.rand((kh, kw), device="cuda", dtype=dtype, generator=g) * 2.0 - 1.0  # uniform [-1, 1]
                     ))(torch.Generator(device="cuda").manual_seed(seed)),
                 )

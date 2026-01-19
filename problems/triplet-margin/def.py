@@ -8,6 +8,8 @@ from problem import Problem
 class triplet_margin(Problem):
     """Triplet Margin Loss problem."""
 
+    is_exact = False
+
     def __init__(self):
         super().__init__(
             name="triplet-margin"

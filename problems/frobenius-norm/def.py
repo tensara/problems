@@ -8,6 +8,8 @@ from problem import Problem
 class frobenius_norm(Problem):
     """Frobenius Normalization problem."""
 
+    is_exact = False
+
     def __init__(self):
         super().__init__(
             name="frobenius-norm"

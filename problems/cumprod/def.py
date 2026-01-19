@@ -7,6 +7,8 @@ from problem import Problem
 class cumprod(Problem):
     """Cumulative product (prefix product) problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="cumprod"

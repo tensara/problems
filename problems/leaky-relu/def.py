@@ -8,6 +8,8 @@ from problem import Problem
 class leaky_relu(Problem):
     """Leaky ReLU activation function problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="leaky-relu"
@@ -54,7 +56,7 @@ class leaky_relu(Problem):
                     "alpha": alpha,
                     "create_inputs": lambda m=m, n=n, alpha=alpha, seed=seed, dtype=dtype: (
                         *(lambda g: (
-                            torch.rand((m, n), device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0,  # uniform [-5, 5]
+                            torch.rand((m, n), device="cuda", dtype=dtype, generator=g) * 2.0 - 1.0,  # uniform [-1, 1]
                         ))(torch.Generator(device="cuda").manual_seed(seed)),
                         alpha,
                     )

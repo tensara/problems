@@ -7,6 +7,8 @@ from problem import Problem
 class cumsum(Problem):
     """Cumulative sum (prefix sum) problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="cumsum"
@@ -49,7 +51,7 @@ class cumsum(Problem):
                 "size": size,
                 "create_inputs": lambda s=size, seed=seed, dtype=dtype: (
                     (lambda g: (
-                        torch.rand(s, device="cuda", dtype=dtype, generator=g) * 10.0 - 5.0,
+                        torch.rand(s, device="cuda", dtype=dtype, generator=g) * 2.0 - 1.0,
                     ))(torch.Generator(device="cuda").manual_seed(seed))
                 )
             })

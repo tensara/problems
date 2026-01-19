@@ -8,6 +8,8 @@ from problem import Problem
 class l1_norm(Problem):
     """L1 Normalization problem."""
 
+    is_exact = False
+
     def __init__(self):
         super().__init__(
             name="l1-norm"

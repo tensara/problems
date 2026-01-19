@@ -8,6 +8,8 @@ from problem import Problem
 class matrix_scalar(Problem):
     """Matrix scalar multiplication problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="matrix-scalar"

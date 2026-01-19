@@ -8,6 +8,8 @@ from problem import Problem
 class all_pairs_shortest_path(Problem):
     """All-pairs shortest path problem using Floyd-Warshall algorithm."""
     
+    is_exact = True
+    
     def __init__(self):
         super().__init__(
             name="all-pairs-shortest-path"

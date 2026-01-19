@@ -8,6 +8,8 @@ from problem import Problem
 class box_blur(Problem):
     """Box blur problem."""
     
+    is_exact = False
+    
     def __init__(self):
         super().__init__(
             name="box-blur"

@@ -8,6 +8,8 @@ from problem import Problem
 class layer_norm(Problem):
     """Layer Normalization problem."""
 
+    is_exact = False
+
     def __init__(self):
         super().__init__(
             name="layer-norm"
