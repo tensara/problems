@@ -55,7 +55,7 @@ class product_dim(Problem):
                 "dim": dim,
                 "create_inputs": lambda shape=shape, dim=dim, seed=seed, dtype=dtype: (
                     *(lambda g: (
-                        torch.rand(shape, device="cuda", dtype=dtype, generator=g) * 1.0 - 0.5,  # uniform [-0.5, 0.5]
+                        torch.rand(shape, device="cuda", dtype=dtype, generator=g) * 4.0 - 2.0,  # uniform [-2.0, 2.0]
                     ))(torch.Generator(device="cuda").manual_seed(seed)),
                     dim
                 )
