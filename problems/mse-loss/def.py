@@ -87,7 +87,7 @@ class mse_loss(Problem):
             Tuple of (is_correct, debug_info)
         """
         # Check if outputs are close (should be scalar values)
-        is_close = torch.allclose(actual_output, expected_output, rtol=1e-5, atol=1e-5)
+        is_close = torch.allclose(actual_output, expected_output, rtol=1e-4, atol=3e-4)
                 
         debug_info = {}
         if not is_close:

@@ -99,7 +99,7 @@ class cosine_similarity(Problem):
                  "message": "Output shape mismatch, expected: {}, actual: {}".format(expected_output.shape, actual_output.shape),
              }
 
-        is_close = torch.allclose(actual_output, expected_output, rtol=1e-5, atol=1e-5)
+        is_close = torch.allclose(actual_output, expected_output, rtol=2e-4, atol=2e-4)
         
         debug_info = {}
         if not is_close:

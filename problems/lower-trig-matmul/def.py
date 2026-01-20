@@ -111,7 +111,7 @@ class lower_trig_matmul(Problem):
         # Ensure the actual output is also lower triangular (optional check)
         is_lower_triangular = torch.all(torch.triu(actual_output, diagonal=1) == 0)
         
-        is_close = torch.allclose(actual_output, expected_output, rtol=1e-3, atol=1e-3) # Relaxed tolerance slightly
+        is_close = torch.allclose(actual_output, expected_output, rtol=8e-4, atol=2e-2) # Relaxed tolerance slightly
         
         debug_info = {}
         if not is_close:

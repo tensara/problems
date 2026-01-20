@@ -99,7 +99,7 @@ class softmax(Problem):
             Tuple of (is_correct, debug_info)
         """
         # Check if outputs are close
-        is_close = torch.allclose(actual_output, expected_output, rtol=1e-3, atol=1e-3)
+        is_close = torch.allclose(actual_output, expected_output, rtol=2e-3, atol=1e-4)
 
         debug_info = {}
         if not is_close:
