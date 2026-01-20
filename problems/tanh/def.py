@@ -94,7 +94,7 @@ class tanh(Problem):
         Returns:
             Tuple of (is_correct, debug_info)
         """
-        is_close = torch.allclose(actual_output, expected_output, rtol=7e-4, atol=7e-5)
+        is_close = torch.allclose(actual_output, expected_output, rtol=3e-4, atol=2e-4)
         
         debug_info = {}
         if not is_close:

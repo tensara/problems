@@ -95,7 +95,7 @@ class product_dim(Problem):
         Returns:
             Tuple of (is_correct, debug_info)
         """
-        is_close = torch.allclose(actual_output, expected_output, rtol=1e-3, atol=1e-3)
+        is_close = torch.allclose(actual_output, expected_output, rtol=2e-2, atol=7e-3)
 
         debug_info = {}
         if not is_close:

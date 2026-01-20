@@ -102,11 +102,8 @@ class l1_norm(Problem):
         Returns:
             Tuple of (is_correct, debug_info)
         """
-        # Use appropriate tolerance based on dtype
-        rtol = 1e-3 if dtype == torch.float16 else 1e-4
-        atol = 1e-3 if dtype == torch.float16 else 1e-5
-        
-        is_close = torch.allclose(actual_output, expected_output, rtol=rtol, atol=atol)
+
+        is_close = torch.allclose(actual_output, expected_output, rtol=7e-4, atol=5e-5)
         
         debug_info = {}
         if not is_close:

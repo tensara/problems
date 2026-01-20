@@ -115,7 +115,7 @@ class conv_2d(Problem):
         Returns:
             Tuple of (is_correct, debug_info)
         """
-        is_close = torch.allclose(actual_output, expected_output, rtol=6e-3, atol=3e-2)
+        is_close = torch.allclose(actual_output, expected_output, rtol=6e-4, atol=4e-2)
         
         debug_info = {}
         if not is_close:

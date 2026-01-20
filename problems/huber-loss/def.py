@@ -95,7 +95,7 @@ class huber_loss(Problem):
                  "message": "Output shape mismatch, expected: {}, actual: {}".format(expected_output.shape, actual_output.shape),
              }
 
-        is_close = torch.allclose(actual_output, expected_output, rtol=9e-3, atol=1e-4)
+        is_close = torch.allclose(actual_output, expected_output, rtol=8e-4, atol=1e-3)
         
         debug_info = {}
         if not is_close:
