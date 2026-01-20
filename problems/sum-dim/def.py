@@ -93,7 +93,7 @@ class sum_dim(Problem):
         Returns:
             Tuple of (is_correct, debug_info)
         """
-        is_close = torch.allclose(actual_output, expected_output, rtol=4e-4, atol=1e-2)
+        is_close = torch.allclose(actual_output, expected_output, rtol=2e-4, atol=9e-4)
 
         debug_info = {}
         if not is_close:
