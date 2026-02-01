@@ -26,7 +26,7 @@ class gelu(Problem):
             Result of GELU activation
         """
         with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_matrix.dtype):
-            return torch.nn.functional.gelu(input_matrix)
+            return torch.nn.functional.gelu(input_matrix, approximate="tanh")
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
         """
