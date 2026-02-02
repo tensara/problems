@@ -57,9 +57,12 @@ class histogram(Problem):
                     "width": width,
                     "num_bins": num_bins,
                     "create_inputs": lambda h=height, w=width, b=num_bins, seed=seed, dtype=dtype: (
-                        (lambda g: (
-                            torch.randint(0, b, (h, w), device="cuda", dtype=dtype, generator=g),
-                        ))(torch.Generator(device="cuda").manual_seed(seed)),
+                        torch.randint(
+                            0, b, (h, w),
+                            device="cuda",
+                            dtype=dtype,
+                            generator=torch.Generator(device="cuda").manual_seed(seed),
+                        ),
                         b
                     )
                 })
