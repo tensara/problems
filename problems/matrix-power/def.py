@@ -26,7 +26,7 @@ class matrix_power(Problem):
         Returns:
             Result of matrix^n of shape (N, N)
         """
-        with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=matrix_a.dtype):
+        with torch.no_grad(), torch.autocast("cuda", enabled=False):
             return torch.linalg.matrix_power(matrix_a, n)
     
     def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
@@ -48,13 +48,13 @@ class matrix_power(Problem):
                     "name": name,
                     "size": size,
                     "power": power,
-                    "create_inputs": lambda size=size, power=power, seed=seed, dtype=dtype: (
-                        (lambda g: (
-                            # Generate well-conditioned matrix with small values
-                            torch.randn((size, size), device="cuda", dtype=dtype, generator=g) * 0.01 + torch.eye(size, device="cuda", dtype=dtype) * 0.1,
-                        ))(torch.Generator(device="cuda").manual_seed(seed)),
+                   "create_inputs": lambda size=size, power=power, seed=seed, dtype=dtype: (
+                        torch.randn((size, size), device="cuda", dtype=dtype,
+                                    generator=torch.Generator(device="cuda").manual_seed(seed)) * 0.01
+                        + torch.eye(size, device="cuda", dtype=dtype) * 0.1,
                         power,
                     )
+ 
                 })
         return test_cases
     
