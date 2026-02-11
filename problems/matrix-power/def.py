@@ -171,6 +171,24 @@ class matrix_power(Problem):
         
         return (power - 1) * 2 * (N ** 3)
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        N = test_case["size"]
+        
+        # Input: matrix (N*N)
+        # Output: matrix^n (N*N)
+        # Note: Intermediate results may be stored, but we count input + final output
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (N * N + N * N) * dtype_bytes
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

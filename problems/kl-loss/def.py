@@ -198,6 +198,41 @@ class kl_loss(Problem):
         # Conservatively estimate as 7 FLOPs per element
         return N * 7 
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        N = test_case["n"]
+        
+        # Naive KL divergence loss:
+        # 1. Read predictions → N
+        # 2. Read targets → N
+        # 3. Write pred_eps = predictions + eps → N (materialized)
+        # 4. Write targ_eps = targets + eps → N (materialized)
+        # 5. Read pred_eps → N
+        # 6. Write log_pred = log(pred_eps) → N (materialized)
+        # 7. Read targ_eps → N
+        # 8. Write log_targ = log(targ_eps) → N (materialized)
+        # 9. Read log_pred, log_targ → 2*N
+        # 10. Write log_diff = log_targ - log_pred → N (materialized)
+        # 11. Read log_diff, targets → 2*N
+        # 12. Write loss = targets * log_diff → N
+        
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (N + N +          # read predictions, targets
+                N + N +          # write pred_eps, targ_eps
+                N + N +          # read pred_eps, write log_pred
+                N + N +          # read targ_eps, write log_targ
+                N + N +          # read log_pred, log_targ
+                N + N +          # write and read log_diff
+                N + N) * dtype_bytes  # read targets, write loss (output)
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

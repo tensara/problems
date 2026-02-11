@@ -116,5 +116,13 @@ class vector_multiply_ff(Problem):
         # One multiply + one modular reduction per element (approximate as 2 ops)
         return 2 * test_case["dims"][0]
 
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        n = test_case["dims"][0]
+        
+        # Input: A (n) + B (n) - both uint32
+        # Output: C (n) - uint32
+        dtype_bytes = 4  # 4 bytes per uint32 element
+        return (n + n + n) * dtype_bytes
+
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         return [test_case["dims"][0]]

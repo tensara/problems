@@ -168,6 +168,34 @@ class histogram(Problem):
         # Total: 4 operations per pixel
         return height * width * 4
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        height = test_case["height"]
+        width = test_case["width"]
+        num_bins = test_case["num_bins"]
+        
+        # Naive histogram:
+        # 1. Read input image → height*width
+        # 2. Read histogram bins (for each pixel, read current bin value) → height*width (reads to bins)
+        # 3. Write histogram bins (increment) → height*width (writes to bins)
+        # 4. Read histogram bins (final read) → num_bins
+        # 5. Write output histogram → num_bins
+        
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (height * width +        # read input
+                height * width +        # read bins during increment
+                height * width +        # write bins during increment
+                num_bins +              # read final bins
+                num_bins) * dtype_bytes  # write output
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

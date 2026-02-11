@@ -193,6 +193,34 @@ class softmax(Problem):
 
         return num_slices * flops_per_slice
 
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        shape = test_case["shape"]
+        
+        # Total elements in the input tensor
+        total_elements = 1
+        for s in shape:
+            total_elements *= s
+        
+        # Naive stable softmax that materializes the exponential buffer:
+        # 1. Read x to compute max → N
+        # 2. Read x to compute exp and sum → N
+        # 3. Write e = exp(x-m) → N
+        # 4. Read e to normalize → N
+        # 5. Write y → N
+        # Total: 5N element-moves
+        
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return 5 * total_elements * dtype_bytes
+
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

@@ -166,6 +166,34 @@ class huber_loss(Problem):
         # Conservatively estimate as 5 FLOPs per element.
         return N * 5 
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        N = test_case["n"]
+        
+        # Naive huber loss:
+        # 1. Read predictions → N
+        # 2. Read targets → N
+        # 3. Write diff = predictions - targets → N (materialized)
+        # 4. Read diff → N
+        # 5. Write abs_diff = |diff| → N (materialized)
+        # 6. Read abs_diff → N
+        # 7. Write loss (based on condition) → N
+        # 8. Read loss → N (if needed)
+        
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (N + N +          # read predictions, targets
+                N + N +          # write and read diff
+                N + N +          # write and read abs_diff
+                N + N) * dtype_bytes  # write and read loss (output)
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

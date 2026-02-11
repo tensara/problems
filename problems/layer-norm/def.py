@@ -216,6 +216,44 @@ class layer_norm(Problem):
         
         return int(total_flops) # Return as integer
 
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        B = test_case["B"]
+        F = test_case["F"]
+        D1 = test_case["D1"]
+        D2 = test_case["D2"]
+        
+        total_elements = B * F * D1 * D2
+        param_elements = F * D1 * D2
+        
+        # Naive layer normalization per batch item:
+        # 1. Read x to compute mean → B*F*D1*D2
+        # 2. Write mean → B elements
+        # 3. Read x to compute variance → B*F*D1*D2
+        # 4. Write variance → B elements
+        # 5. Read x to normalize → B*F*D1*D2
+        # 6. Read mean → B elements
+        # 7. Read variance → B elements
+        # 8. Read gamma → F*D1*D2
+        # 9. Read beta → F*D1*D2
+        # 10. Write output → B*F*D1*D2
+        
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (3 * total_elements +      # 3 reads of x
+                2 * B +                    # mean write + variance write
+                2 * B +                    # mean read + variance read
+                param_elements +          # gamma read
+                param_elements +          # beta read
+                total_elements) * dtype_bytes  # output write
+
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters (dimensions) to pass to the CUDA solution.

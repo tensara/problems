@@ -161,6 +161,23 @@ class matmul_4d(Problem):
         b, i, j, l, k = test_case["dims"]
         return 2 * b * i * j * l * k
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        b, i, j, l, k = test_case["dims"]
+        
+        # Input: A (b*i*j*l) + B (l*k)
+        # Output: C (b*i*j*k)
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (b * i * j * l + l * k + b * i * j * k) * dtype_bytes
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

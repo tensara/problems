@@ -197,6 +197,36 @@ class matmul_swish_scaling(Problem):
         scaling_flops = M * N
         return matmul_flops + swish_flops + scaling_flops
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        M, N, K = test_case["dims"]
+        
+        # Naive matmul-swish-scaling:
+        # 1. Read A → M*K
+        # 2. Read B → K*N
+        # 3. Write matmul_output → M*N (materialized)
+        # 4. Read matmul_output → M*N
+        # 5. Write swish_output → M*N (materialized)
+        # 6. Read swish_output → M*N
+        # 7. Write scaled_output → M*N
+        
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (M * K +            # read A
+                K * N +            # read B
+                M * N +            # write matmul_output
+                M * N +            # read matmul_output
+                M * N +            # write swish_output
+                M * N +            # read swish_output
+                M * N) * dtype_bytes  # write scaled_output
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

@@ -136,6 +136,11 @@ class vector_addition(Problem):
         N = test_case["dims"][0]
         return N
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        N = test_case["dims"][0]
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return 3 * N * dtype_bytes
+
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

@@ -191,6 +191,29 @@ class max_pool_1d(Problem):
         # Total FLOPs (comparisons) for the entire output
         return H_out * comparisons_per_output
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        H = test_case["size"]
+        K = test_case["kernel_size"]
+        S = test_case["stride"]
+        P = test_case["padding"]
+        D = test_case["dilation"]
+        
+        # Calculate output dimensions
+        H_out = ((H + 2 * P - D * (K - 1) - 1) // S) + 1
+        
+        # Input: H elements, Output: H_out elements
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (H + H_out) * dtype_bytes
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

@@ -155,6 +155,23 @@ class matrix_scalar(Problem):
         # - There are N*N elements in the matrix
         return N * N
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        N = test_case["size"]
+        
+        # Input: matrix (N*N)
+        # Output: matrix (N*N) (same size)
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (N * N + N * N) * dtype_bytes
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

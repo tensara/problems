@@ -166,6 +166,23 @@ class selu(Problem):
         # - We count this as 3 FLOPs per element for the SELU calculation
         return M * N * 3
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        M = test_case["rows"]
+        N = test_case["cols"]
+        
+        # Input: M*N elements, Output: M*N elements (same size)
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (M * N + M * N) * dtype_bytes
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

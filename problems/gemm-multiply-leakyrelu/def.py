@@ -199,6 +199,38 @@ class gemm_multiply_leakyrelu(Problem):
         leaky_relu_flops = M * N
         return gemm_flops + multiply_flops + leaky_relu_flops
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        M, N, K = test_case["dims"]
+        
+        # Naive gemm-multiply-leakyrelu:
+        # 1. Read A → M*K
+        # 2. Read B → K*N
+        # 3. Write gemm_output → M*N (materialized)
+        # 4. Read gemm_output → M*N
+        # 5. Read C → M*N
+        # 6. Write multiply_output → M*N (materialized)
+        # 7. Read multiply_output → M*N
+        # 8. Write leakyrelu_output → M*N
+        
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (M * K +            # read A
+                K * N +            # read B
+                M * N +            # write gemm_output
+                M * N +            # read gemm_output
+                M * N +            # read C
+                M * N +            # write multiply_output
+                M * N +            # read multiply_output
+                M * N) * dtype_bytes  # write leakyrelu_output
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

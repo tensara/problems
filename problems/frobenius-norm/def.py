@@ -194,6 +194,25 @@ class frobenius_norm(Problem):
         
         return int(total_flops)
 
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        shape = test_case["shape"]
+        total_elements = 1
+        for dim in shape:
+            total_elements *= dim
+        
+        # Input: total_elements, Output: total_elements (same shape)
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (total_elements + total_elements) * dtype_bytes
+
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.

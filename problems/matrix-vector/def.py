@@ -158,6 +158,24 @@ class matrix_vector(Problem):
         # - Each MAD (Multiply-Add) counts as 2 FLOPs
         return M * K * 2
     
+    def get_mem(self, test_case: Dict[str, Any]) -> int:
+        """
+        Get the memory usage for the problem. Assumed to be all in DRAM
+        
+        Args:
+            test_case: The test case dictionary
+            
+        Returns:
+            Memory usage in bytes
+        """
+        M = test_case["rows"]
+        K = test_case["cols"]
+        
+        # Input: matrix (M*K) + vector (K)
+        # Output: vector (M)
+        dtype_bytes = 4  # 4 bytes per float32 element
+        return (M * K + K + M) * dtype_bytes
+    
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
         Get extra parameters to pass to the CUDA solution.
