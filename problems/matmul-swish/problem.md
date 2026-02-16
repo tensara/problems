@@ -6,17 +6,17 @@ author: "sarthak"
 tags: ["matmul", "activation-function", "fused"]
 parameters:
   - name: "input_matrix"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
 
   - name: "weight_matrix"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
     
   - name: "bias"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
 
@@ -26,7 +26,7 @@ parameters:
     constant: "true"
 
   - name: "output" 
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "false"
 

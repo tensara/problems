@@ -6,17 +6,17 @@ author: "sarthak"
 tags: ["matmul", "scalar"]
 parameters:
   - name: "input_matrix"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
   
   - name: "scalar"
-    type: "[VAR]"
+    type: "float"
     pointer: "false"
     const: "true"
 
   - name: "output_matrix" 
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "false"
 

@@ -6,12 +6,12 @@ author: "sarthak"
 tags: ["graphics"]
 parameters:
   - name: "input_image"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
   
   - name: "output_image" 
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "false"
 

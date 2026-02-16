@@ -6,12 +6,12 @@ author: "sarthak"
 tags: ["graphics"]
 parameters:
   - name: "rgb_image"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
   
   - name: "grayscale_output" 
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "false"
 

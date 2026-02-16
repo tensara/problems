@@ -6,17 +6,17 @@ author: "sarthak"
 tags: ["convolution", "activation-function", "fused"]
 parameters:
   - name: "image"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
   
   - name: "kernel"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
 
   - name: "output" 
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "false"
 

@@ -6,22 +6,22 @@ author: "sarthak"
 tags: ["matmul", "activation-function", "fused"]
 parameters:
   - name: "A"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
 
   - name: "W" 
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
 
   - name: "b" 
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
 
   - name: "C" 
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "false"
 

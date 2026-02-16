@@ -6,12 +6,12 @@ author: "sarthak"
 tags: ["graphs"]
 parameters:
   - name: "adj_matrix"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
   
   - name: "output"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "false"
 

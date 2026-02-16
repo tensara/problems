@@ -6,17 +6,17 @@ author: "sarthak"
 tags: ["matmul", "reduction", "fused"]
 parameters:
   - name: "A"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
   
   - name: "B"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
 
   - name: "output" 
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "false"
 

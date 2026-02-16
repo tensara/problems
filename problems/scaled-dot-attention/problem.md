@@ -6,22 +6,22 @@ author: "sarthak"
 tags: ["attention"]
 parameters:
   - name: "Q"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
 
   - name: "K" 
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
 
   - name: "V" 
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
 
   - name: "output" 
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "false"
 

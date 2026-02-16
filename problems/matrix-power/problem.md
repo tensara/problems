@@ -6,7 +6,7 @@ author: "nnarek"
 tags: ["matmul"]
 parameters:
   - name: "input_matrix"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
   
@@ -16,7 +16,7 @@ parameters:
     const: "true"
 
   - name: "output_matrix" 
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "false"
 

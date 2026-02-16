@@ -6,12 +6,12 @@ author: "sarthak"
 tags: ["graphs"]
 parameters:
   - name: "A"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
   
   - name: "min_weight"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "false"
 

@@ -6,22 +6,22 @@ author: "sarthak"
 tags: ["loss-function", "reduction"]
 parameters:
   - name: "anchor"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
   
   - name: "positive"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
     
   - name: "negative"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
     
   - name: "loss"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "false"
 

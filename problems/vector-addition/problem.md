@@ -6,17 +6,17 @@ author: "someshkar"
 tags: ["vector"]
 parameters:
   - name: "d_input1"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
   
   - name: "d_input2"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
 
   - name: "d_output" 
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "false"
 

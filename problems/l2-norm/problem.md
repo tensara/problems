@@ -6,12 +6,12 @@ author: "sarthak"
 tags: ["normalization"]
 parameters:
   - name: "X"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
 
   - name: "Y"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "false"
 

@@ -6,7 +6,7 @@ author: "sarthak"
 tags: ["reduction"]
 parameters:
   - name: "input"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
 

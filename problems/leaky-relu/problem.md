@@ -6,17 +6,17 @@ author: "sarthak"
 tags: ["activation-function"]
 parameters:
   - name: "input"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
   
   - name: "alpha"
-    type: "[VAR]"
+    type: "float"
     pointer: "false"
     constant: "false"
 
   - name: "output" 
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "false"
 

@@ -6,17 +6,17 @@ author: "sarthak"
 tags: ["matmul"]
 parameters:
   - name: "input_a"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
   
   - name: "input_b"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
 
   - name: "output_c" 
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "false"
 

@@ -6,7 +6,7 @@ author: "sarthak"
 tags: ["graphs"]
 parameters:
   - name: "d_adj_matrix"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
   
@@ -16,7 +16,7 @@ parameters:
     constant: "false"
   
   - name: "d_distances"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "false"
 

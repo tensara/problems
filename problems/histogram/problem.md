@@ -6,7 +6,7 @@ author: "sarthak"
 tags: ["graphics", "statistics"]
 parameters:
   - name: "image"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
 
@@ -16,7 +16,7 @@ parameters:
     constant: "false"
   
   - name: "histogram" 
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "false"
 

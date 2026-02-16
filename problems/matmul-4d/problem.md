@@ -6,17 +6,17 @@ author: "sarthak"
 tags: ["matmul"]
 parameters:
   - name: "A"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
   
   - name: "B"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
 
   - name: "C" 
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "false"
 

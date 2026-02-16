@@ -6,12 +6,12 @@ author: "harmya"
 tags: ["activation-function"]
 parameters:
   - name: "input"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
   
   - name: "output"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "false"
 

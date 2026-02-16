@@ -6,7 +6,7 @@ author: "sarthak"
 tags: ["pooling"]
 parameters:
   - name: "input"
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "true"
 
@@ -31,7 +31,7 @@ parameters:
     constant: "false"
 
   - name: "output" 
-    type: "[VAR]"
+    type: "float"
     pointer: "true"
     const: "false"
 
