@@ -4,21 +4,6 @@ title: "Array Sorting"
 difficulty: "EASY"
 author: "sarthak"
 tags: ["sorting"]
-parameters:
-  - name: "a"
-    type: "int"
-    pointer: "true"
-    const: "true"
-
-  - name: "b"
-    type: "int"
-    pointer: "true"
-    const: "false"
-
-  - name: "n"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
 ---
 
 Sort an array of integers in ascending order.

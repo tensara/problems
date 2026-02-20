@@ -4,27 +4,6 @@ title: "Square Matrix Multiplication"
 difficulty: "MEDIUM"
 author: "sarthak"
 tags: ["matmul"]
-parameters:
-  - name: "input_a"
-    type: "float"
-    pointer: "true"
-    const: "true"
-  
-  - name: "input_b"
-    type: "float"
-    pointer: "true"
-    const: "true"
-  
-  - name: "output_c"
-    type: "float"
-    pointer: "true"
-    const: "false"
-
-  - name: "n" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
 ---
 
 Perform multiplication of two square matrices:

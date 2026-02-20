@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem 
@@ -9,6 +8,13 @@ class l2_norm(Problem):
     """L2 Normalization problem."""
 
     is_exact = False
+
+    parameters = [
+        {"name": "X", "type": "float", "pointer": True, "const": True},
+        {"name": "Y", "type": "float", "pointer": True, "const": False},
+        {"name": "B", "type": "size_t", "pointer": False, "const": False},
+        {"name": "D", "type": "size_t", "pointer": False, "const": False},
+    ]
 
     def __init__(self):
         super().__init__(
@@ -35,7 +41,7 @@ class l2_norm(Problem):
             
             return output
 
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for L2 Normalization.
 
@@ -43,6 +49,8 @@ class l2_norm(Problem):
             List of test case dictionaries with varying sizes
         """
         
+        dtype = self.param_dtype(0)
+
         test_configs = [
             (128, 4096),     # Medium example
             (256, 4096),     # Medium example
@@ -66,13 +74,15 @@ class l2_norm(Problem):
             })
         return test_cases
 
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A list containing a single test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         B, D = (8, 8)
         return {
             "name": f"Sample B={B}, D={D}",
@@ -91,7 +101,7 @@ class l2_norm(Problem):
         }
 
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the L2 Normalization result is correct.
 
@@ -142,24 +152,6 @@ class l2_norm(Problem):
             }
         
         return is_close, debug_info
-
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the L2 Normalization solution.
-
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            # Corresponds to parameters in problem.md
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # X (input)
-                ctypes.POINTER(ctypes.c_float),  # Y (output)
-                ctypes.c_size_t,                 # B (batch size)
-                ctypes.c_size_t,                 # D (dimension)
-            ],
-            "restype": None
-        }
 
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

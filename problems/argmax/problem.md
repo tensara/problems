@@ -4,31 +4,6 @@ title: "Argmax Over Dimension"
 difficulty: "EASY" 
 author: "sarthak"
 tags: ["reduction"]
-parameters:
-  - name: "input"
-    type: "float"
-    pointer: "true"
-    const: "true"
-
-  - name: "dim"
-    type: "int"
-    pointer: "false"
-    constant: "false"
-
-  - name: "output"
-    type: "int"
-    pointer: "true"
-    const: "false"
-
-  - name: "shape"
-    type: "int"
-    pointer: "true"
-    constant: "true"
-
-  - name: "ndim"
-    type: "int"
-    pointer: "false"
-    constant: "false"
 ---
 
 Find the indices of maximum values along a specified dimension of an input tensor:

@@ -4,31 +4,6 @@ title: "Softmax"
 difficulty: "MEDIUM" 
 author: "sarthak"
 tags: ["activation-function", "normalization"]
-parameters:
-  - name: "input"
-    type: "float"
-    pointer: "true"
-    const: "true"
-
-  - name: "dim"
-    type: "int"
-    pointer: "false"
-    constant: "false"
-
-  - name: "output"
-    type: "float"
-    pointer: "true"
-    const: "false"
-
-  - name: "shape"
-    type: "size_t"
-    pointer: "true"
-    constant: "true"
-
-  - name: "ndim"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
 ---
 
 Compute the softmax function over a specified dimension of an input tensor:

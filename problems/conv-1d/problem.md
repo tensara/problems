@@ -4,31 +4,6 @@ title: "1D Convolution"
 difficulty: "EASY"
 author: "sarthak"
 tags: ["convolution"]
-parameters:
-  - name: "A"
-    type: "float"
-    pointer: "true"
-    const: "true"
-
-  - name: "B"
-    type: "float"
-    pointer: "true"
-    const: "true"
-
-  - name: "C"
-    type: "float"
-    pointer: "true"
-    const: "false"
-
-  - name: "N"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
-  - name: "K"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
 ---
 
 Perform 1D convolution between an input signal and a kernel with zero padding and centered kernel.

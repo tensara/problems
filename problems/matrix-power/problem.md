@@ -4,27 +4,6 @@ title: "Matrix Nth Power"
 difficulty: "MEDIUM"
 author: "nnarek"
 tags: ["matmul"]
-parameters:
-  - name: "input_matrix"
-    type: "float"
-    pointer: "true"
-    const: "true"
-  
-  - name: "n"
-    type: "size_t"
-    pointer: "false"
-    const: "true"
-
-  - name: "output_matrix" 
-    type: "float"
-    pointer: "true"
-    const: "false"
-
-  - name: "size" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
 ---
 
 Compute the $n$th power of a square matrix:

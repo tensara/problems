@@ -1,14 +1,23 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
-
 
 class conv2d_relu_hardswish(Problem):
     """2D convolution followed by ReLU followed by HardSwish activation fusion problem."""
     
     is_exact = False
+
+    parameters = [
+        {"name": "image", "type": "float", "pointer": True, "const": True},
+        {"name": "kernel", "type": "float", "pointer": True, "const": True},
+        {"name": "output", "type": "float", "pointer": True, "const": False},
+        {"name": "H", "type": "size_t", "pointer": False, "const": False},
+        {"name": "W", "type": "size_t", "pointer": False, "const": False},
+        {"name": "Kh", "type": "size_t", "pointer": False, "const": False},
+        {"name": "Kw", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -45,13 +54,15 @@ class conv2d_relu_hardswish(Problem):
             
             return hardswish_result
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for conv2d-relu-hardswish fusion.
         
         Returns:
             List of test case dictionaries with varying sizes
         """
+        dtype = self.param_dtype(0)
+
         test_configs = [
             (512, 512, 3, 3),
             (1024, 1024, 5, 5),
@@ -79,13 +90,15 @@ class conv2d_relu_hardswish(Problem):
             })
         return test_cases
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> Dict[str, Any]:
+    def generate_sample(self) -> Dict[str, Any]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         h, w, kh, kw = (4, 4, 3, 3)
         return {
             "name": f"H={h}, W={w}, Kh={kh}, Kw={kw}",
@@ -109,7 +122,7 @@ class conv2d_relu_hardswish(Problem):
         }
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the conv2d-relu-hardswish result is correct.
         
@@ -151,26 +164,6 @@ class conv2d_relu_hardswish(Problem):
             }
         
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the conv2d-relu-hardswish solution.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # input_image
-                ctypes.POINTER(ctypes.c_float),  # kernel
-                ctypes.POINTER(ctypes.c_float),  # output
-                ctypes.c_size_t,                 # height (H)
-                ctypes.c_size_t,                 # width (W)
-                ctypes.c_size_t,                 # kernel_height (Kh)
-                ctypes.c_size_t                  # kernel_width (Kw)
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

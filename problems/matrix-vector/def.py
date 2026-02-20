@@ -1,14 +1,21 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
-
 
 class matrix_vector(Problem):
     """Matrix vector multiplication problem."""
     
     is_exact = False
+
+    parameters = [
+        {"name": "input_a", "type": "float", "pointer": True, "const": True},
+        {"name": "input_b", "type": "float", "pointer": True, "const": True},
+        {"name": "output_c", "type": "float", "pointer": True, "const": False},
+        {"name": "m", "type": "size_t", "pointer": False, "const": False},
+        {"name": "k", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -29,13 +36,15 @@ class matrix_vector(Problem):
         with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=matrix.dtype):
             return torch.matmul(matrix, vector)
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for matrix-vector multiplication.
         
         Returns:
             List of test case dictionaries with varying sizes
         """
+        dtype = self.param_dtype(0)
+
         # Test case configurations with specific matrix and vector sizes
         test_configs = [
             (4096, 4096),
@@ -61,13 +70,15 @@ class matrix_vector(Problem):
             })
         return test_cases
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate sample test cases for matrix-vector multiplication with predictable inputs.
 
         Returns:
             List of sample test case dictionaries.
         """
+        dtype = self.param_dtype(0)
+
         shape = (8, 8)  # Sample 2D tensor shape
         return {
             "name": f"shape={shape}",
@@ -81,7 +92,7 @@ class matrix_vector(Problem):
 
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the matrix-vector multiplication result is correct.
         
@@ -118,24 +129,6 @@ class matrix_vector(Problem):
             }
         
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the matrix-vector multiplication solution.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # matrix
-                ctypes.POINTER(ctypes.c_float),  # vector
-                ctypes.POINTER(ctypes.c_float),  # output
-                ctypes.c_size_t,                 # rows (M)
-                ctypes.c_size_t                  # columns (K)
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

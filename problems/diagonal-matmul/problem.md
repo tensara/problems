@@ -4,31 +4,6 @@ title: "Diagonal Matrix Multiplication"
 difficulty: "EASY"
 author: "sarthak"
 tags: ["matmul"]
-parameters:
-  - name: "diagonal_a"
-    type: "float"
-    pointer: "true"
-    const: "true"
-  
-  - name: "input_b"
-    type: "float"
-    pointer: "true"
-    const: "true"
-
-  - name: "output_c" 
-    type: "float"
-    pointer: "true"
-    const: "false"
-
-  - name: "n"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "m" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
 ---
 
 Perform matrix multiplication of a diagonal matrix with another matrix:

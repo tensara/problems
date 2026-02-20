@@ -1,14 +1,20 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
-
 
 class edge_detect(Problem):
     """Edge detection problem."""
     
     is_exact = False
+
+    parameters = [
+        {"name": "input_image", "type": "float", "pointer": True, "const": True},
+        {"name": "output_image", "type": "float", "pointer": True, "const": False},
+        {"name": "height", "type": "size_t", "pointer": False, "const": False},
+        {"name": "width", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -50,13 +56,15 @@ class edge_detect(Problem):
             
             return magnitude
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for edge detection.
         
         Returns:
             List of test case dictionaries with varying image sizes
         """
+        dtype = self.param_dtype(0)
+
         image_sizes = [
             (1024, 768),    
             (1920, 1080),
@@ -82,13 +90,15 @@ class edge_detect(Problem):
         
         return test_cases
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A list containing a single test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         image_size = (16, 16)
         return {
             "name": "Sample (h=16, w=16)",
@@ -100,7 +110,7 @@ class edge_detect(Problem):
         }
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the edge detection result is correct.
         
@@ -142,23 +152,6 @@ class edge_detect(Problem):
             }
         
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the edge detection solution.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # input_image
-                ctypes.POINTER(ctypes.c_float),  # output_image
-                ctypes.c_size_t,                 # height
-                ctypes.c_size_t,                 # width
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

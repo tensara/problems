@@ -1,14 +1,24 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
-
 
 class matmul_4d(Problem):
     """4D tensor-matrix multiplication problem."""
     
     is_exact = False
+
+    parameters = [
+        {"name": "A", "type": "float", "pointer": True, "const": True},
+        {"name": "B", "type": "float", "pointer": True, "const": True},
+        {"name": "C", "type": "float", "pointer": True, "const": False},
+        {"name": "b", "type": "size_t", "pointer": False, "const": False},
+        {"name": "i", "type": "size_t", "pointer": False, "const": False},
+        {"name": "j", "type": "size_t", "pointer": False, "const": False},
+        {"name": "l", "type": "size_t", "pointer": False, "const": False},
+        {"name": "k", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -29,13 +39,15 @@ class matmul_4d(Problem):
         with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=A.dtype):
             return torch.einsum("bijl,lk->bijk", A, B)
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for 4D tensor-matrix multiplication.
         
         Returns:
             List of test case dictionaries with varying dimensions
         """
+        dtype = self.param_dtype(0)
+
         # Tensor dimensions: (b, i, j, l) × (l, k) = (b, i, j, k)
         # dims represents (b, i, j, l, k)
         test_matrices = [
@@ -72,13 +84,15 @@ class matmul_4d(Problem):
             })
         return test_cases
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A list containing a single test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         b, i, j, l, k = (4, 4, 4, 4, 4) # Sample dimensions
         return {
             "name": f"Sample ({b}x{i}x{j}x{l} * {l}x{k})",
@@ -90,7 +104,7 @@ class matmul_4d(Problem):
         }
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the tensor-matrix multiplication result is correct.
         
@@ -115,36 +129,6 @@ class matmul_4d(Problem):
             }
         
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for 4D tensor-matrix multiplication.
-        
-        IMPORTANT: Comments are required. Outline the FLOPs calculation.
-        
-        For 4D tensor-matrix multiplication:
-        - Input A has shape (b, i, j, l)
-        - Input B has shape (l, k)
-        - Output C has shape (b, i, j, k)
-        - For each of the b*i*j output elements, we perform l multiply-adds
-        - Total FLOPs = 2 * b * i * j * l * k
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # tensor_a (b, i, j, l)
-                ctypes.POINTER(ctypes.c_float),  # matrix_b (l, k)
-                ctypes.POINTER(ctypes.c_float),  # tensor_c (output) (b, i, j, k)
-                ctypes.c_size_t,                 # b (first dim of A)
-                ctypes.c_size_t,                 # i (second dim of A)
-                ctypes.c_size_t,                 # j (third dim of A)
-                ctypes.c_size_t,                 # l (fourth dim of A, first dim of B)
-                ctypes.c_size_t                  # k (second dim of B)
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

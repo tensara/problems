@@ -1,14 +1,20 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
-
 
 class sum_dim(Problem):
     """Sum over dimension problem."""
 
     is_exact = False
+
+    parameters = [
+        {"name": "input", "type": "float", "pointer": True, "const": True},
+        {"name": "dim", "type": "int", "pointer": False, "const": False},
+        {"name": "output", "type": "float", "pointer": True, "const": False},
+        {"name": "shape", "type": "size_t", "pointer": True, "const": True},
+        {"name": "ndim", "type": "size_t", "pointer": False, "const": False},
+    ]
 
     def __init__(self):
         super().__init__(
@@ -29,13 +35,15 @@ class sum_dim(Problem):
         with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_tensor.dtype):
             return torch.sum(input_tensor, dim=dim, keepdim=True)
 
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for sum over dimension.
 
         Returns:
             List of test case dictionaries with varying sizes and dimensions
         """
+        dtype = self.param_dtype(0)
+
         test_configs = [
             # (shape, dim)
             ((16, 128, 256), 1),
@@ -62,13 +70,15 @@ class sum_dim(Problem):
             })
         return test_cases
 
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate a single sample test case for debugging or interactive runs.
 
         Returns:
             A list containing a single test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         shape = (4, 4, 4)
         dim = 1
         return {
@@ -82,7 +92,7 @@ class sum_dim(Problem):
         }
 
     def verify_result(self, expected_output: torch.Tensor,
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the sum reduction result is correct.
 
@@ -121,24 +131,6 @@ class sum_dim(Problem):
             }
 
         return is_close, debug_info
-
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the sum over dimension solution.
-
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # input_tensor
-                ctypes.c_int,                    # dim
-                ctypes.POINTER(ctypes.c_float),  # output
-                ctypes.POINTER(ctypes.c_size_t), # shape
-                ctypes.c_size_t,                 # ndim
-            ],
-            "restype": None
-        }
 
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

@@ -1,15 +1,20 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
-
-
 
 class tanh(Problem):
     """Tanh activation function problem."""
     
     is_exact = False
+
+    parameters = [
+        {"name": "input", "type": "float", "pointer": True, "const": True},
+        {"name": "output", "type": "float", "pointer": True, "const": False},
+        {"name": "n", "type": "size_t", "pointer": False, "const": False},
+        {"name": "m", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -29,13 +34,15 @@ class tanh(Problem):
         with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=input_matrix.dtype):
             return torch.tanh(input_matrix)
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for Tanh.
         
         Returns:
             List of test case dictionaries with varying sizes
         """
+        dtype = self.param_dtype(0)
+
         # Test case configurations with specific matrix sizes
         test_configs = [
             ("4096x4096", 4096, 4096),
@@ -60,13 +67,15 @@ class tanh(Problem):
             })
         return test_cases
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A list containing a single test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         m, n = (4, 4)  # Sample dimensions
         return {
             "name": f"{m}x{n}",
@@ -83,7 +92,7 @@ class tanh(Problem):
 
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the Sigmoid result is correct.
         
@@ -126,23 +135,6 @@ class tanh(Problem):
             }
         
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the Sigmoid solution.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # input_matrix
-                ctypes.POINTER(ctypes.c_float),  # output_matrix
-                ctypes.c_size_t,                 # rows (M)
-                ctypes.c_size_t                  # columns (N)
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

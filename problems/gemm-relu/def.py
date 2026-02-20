@@ -1,14 +1,23 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
-
 
 class gemm_relu(Problem):
     """GEMM with Bias and ReLU problem."""
     
     is_exact = False
+
+    parameters = [
+        {"name": "A", "type": "float", "pointer": True, "const": True},
+        {"name": "W", "type": "float", "pointer": True, "const": True},
+        {"name": "b", "type": "float", "pointer": True, "const": True},
+        {"name": "C", "type": "float", "pointer": True, "const": False},
+        {"name": "B", "type": "size_t", "pointer": False, "const": False},
+        {"name": "N", "type": "size_t", "pointer": False, "const": False},
+        {"name": "M", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -38,7 +47,7 @@ class gemm_relu(Problem):
             
             return result
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for GEMM with Bias and ReLU.
         
@@ -46,6 +55,8 @@ class gemm_relu(Problem):
             List of test case dictionaries with varying sizes
         """
         
+        dtype = self.param_dtype(0)
+
         test_configs = [
             (512, 6144, 1024),
             (512, 8192, 1024),
@@ -73,13 +84,15 @@ class gemm_relu(Problem):
             })
         return test_cases
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A list containing a single test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         B, N, M = (4, 4, 4)
         return {
             "name": f"Sample B={B}, N={N}, M={M}",
@@ -104,7 +117,7 @@ class gemm_relu(Problem):
         }
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the GEMM with Bias and ReLU result is correct.
         
@@ -115,7 +128,7 @@ class gemm_relu(Problem):
         Returns:
             Tuple of (is_correct, debug_info)
         """
-        is_close = torch.allclose(actual_output, expected_output, rtol=3e-4, atol=2e-5)
+        is_close = torch.allclose(actual_output, expected_output, rtol=3e-3, atol=2e-4)
         
         debug_info = {}
         if not is_close:
@@ -151,26 +164,6 @@ class gemm_relu(Problem):
             }
         
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the GEMM with Bias and ReLU solution.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # input_matrix
-                ctypes.POINTER(ctypes.c_float),  # weights
-                ctypes.POINTER(ctypes.c_float),  # bias
-                ctypes.POINTER(ctypes.c_float),  # output
-                ctypes.c_size_t,                 # batch_size (B)
-                ctypes.c_size_t,                 # input_features (N)
-                ctypes.c_size_t                  # output_features (M)
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

@@ -1,15 +1,19 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 import math
 
 from problem import Problem
 
-
 class array_sort(Problem):
     """General array sorting problem (integer arrays)."""
 
     is_exact = True
+
+    parameters = [
+        {"name": "a", "type": "int", "pointer": True, "const": True},
+        {"name": "b", "type": "int", "pointer": True, "const": False},
+        {"name": "n", "type": "size_t", "pointer": False, "const": False},
+    ]
 
     def __init__(self):
         super().__init__(name="array-sort")
@@ -20,7 +24,9 @@ class array_sort(Problem):
             sorted_array, _ = torch.sort(input_array)
             return sorted_array
 
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
+        dtype = self.param_dtype(0)
+
         sizes = [16384, 32768, 65536, 131072, 262144]
 
         test_cases = []
@@ -49,10 +55,12 @@ class array_sort(Problem):
             )
         return test_cases
 
-    def generate_sample(self, dtype: torch.dtype = torch.int32) -> Dict[str, Any]:
+    def generate_sample(self) -> Dict[str, Any]:
         """
         Small sample (integers).
         """
+        dtype = self.param_dtype(0)
+
         size = 16
         return {
             "name": "Sample (size=16)",
@@ -68,7 +76,6 @@ class array_sort(Problem):
         self,
         expected_output: torch.Tensor,
         actual_output: torch.Tensor,
-        dtype: torch.dtype,
     ) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify correctness with exact integer equality.
@@ -96,19 +103,6 @@ class array_sort(Problem):
         }
         return False, debug_info
 
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        C signature:
-            void sort_kernel(const int32_t* input, int32_t* output, size_t size);
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_int32),  # input_array
-                ctypes.POINTER(ctypes.c_int32),  # output_array
-                ctypes.c_size_t,  # size
-            ],
-            "restype": None,
-        }
 
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """Extra parameters for CUDA call (just the size)."""

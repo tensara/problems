@@ -4,29 +4,6 @@ title: "1D Running Sum"
 difficulty: "EASY" 
 author: "nnarek"
 tags: ["convolution"]
-parameters:
-  - name: "input"
-    type: "float"
-    pointer: "true"
-    const: "true"
-
-  - name: "W" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
-  - name: "output" 
-    type: "float"
-    pointer: "true"
-    const: "false"
-
-  - name: "N"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-
-    
 ---
 
 Calculate 1D running sum with fix sized sliding window:

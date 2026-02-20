@@ -4,41 +4,6 @@ title: "2D Convolution"
 difficulty: "MEDIUM" 
 author: "sarthak"
 tags: ["convolution"]
-parameters:
-  - name: "A"
-    type: "float"
-    pointer: "true"
-    const: "true"
-
-  - name: "B" 
-    type: "float"
-    pointer: "true"
-    const: "true"
-
-  - name: "C" 
-    type: "float"
-    pointer: "true"
-    const: "false"
-
-  - name: "H"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "W" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-  
-  - name: "Kh"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "Kw" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
 ---
 
 Perform 2D convolution between an input image and a kernel:

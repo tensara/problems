@@ -4,21 +4,6 @@ title: "Frobenius Normalization"
 difficulty: "EASY"
 author: "sarthak"
 tags: ["normalization"]
-parameters:
-  - name: "X"
-    type: "float"
-    pointer: "true"
-    const: "true"
-  
-  - name: "Y"
-    type: "float"
-    pointer: "true"
-    const: "false"
-
-  - name: "size"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
 ---
 
 Implement Frobenius Normalization for a tensor of arbitrary shape.

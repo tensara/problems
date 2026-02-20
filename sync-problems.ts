@@ -62,6 +62,54 @@ const extractReferenceSolution = (pythonCode: string): string | null => {
   return dedentedLines.join("\n");
 };
 
+const extractParameters = (
+  pythonCode: string
+): Array<Record<string, unknown>> | null => {
+  if (!pythonCode) return null;
+
+  const startMarker = "parameters";
+  const idx = pythonCode.indexOf(startMarker);
+  if (idx === -1) return null;
+
+  const afterMarker = pythonCode.indexOf("[", idx);
+  if (afterMarker === -1) return null;
+
+  let depth = 0;
+  let endIdx = -1;
+  for (let i = afterMarker; i < pythonCode.length; i++) {
+    if (pythonCode[i] === "[") depth++;
+    else if (pythonCode[i] === "]") {
+      depth--;
+      if (depth === 0) {
+        endIdx = i;
+        break;
+      }
+    }
+  }
+  if (endIdx === -1) return null;
+
+  let literal = pythonCode.slice(afterMarker, endIdx + 1);
+
+  literal = literal.replace(/\bTrue\b/g, "true");
+  literal = literal.replace(/\bFalse\b/g, "false");
+  literal = literal.replace(/\bNone\b/g, "null");
+  literal = literal.replace(/'/g, '"');
+  literal = literal.replace(/,\s*([}\]])/g, "$1");
+
+  try {
+    const parsed = JSON.parse(literal) as Array<Record<string, unknown>>;
+    if (!Array.isArray(parsed)) return null;
+    return parsed.map((p) => ({
+      ...p,
+      pointer:
+        typeof p.pointer === "boolean" ? String(p.pointer) : p.pointer,
+      const: typeof p.const === "boolean" ? String(p.const) : p.const,
+    }));
+  } catch {
+    return null;
+  }
+};
+
 const extractGetFlops = (pythonCode: string): string | null => {
   if (!pythonCode) return null;
 
@@ -104,9 +152,20 @@ const extractGetFlops = (pythonCode: string): string | null => {
 
 async function main() {
   const problemsDir = getProblemsDir();
-  const problemSlugs = readdirSync(problemsDir).filter(
+  let problemSlugs = readdirSync(problemsDir).filter(
     (slug) => slug !== ".DS_Store" && slug !== "__pycache__"
   );
+
+  const filterSlugs = process.argv.slice(2).filter((arg) => !arg.startsWith("-"));
+  if (filterSlugs.length > 0) {
+    const valid = new Set(filterSlugs);
+    const invalid = filterSlugs.filter((s) => !problemSlugs.includes(s));
+    if (invalid.length > 0) {
+      console.warn(`Warning: Unknown problem slug(s), skipping: ${invalid.join(", ")}`);
+    }
+    problemSlugs = problemSlugs.filter((slug) => valid.has(slug));
+    console.log(`Syncing ${problemSlugs.length} problem(s): ${problemSlugs.join(", ")}\n`);
+  }
 
   for (const slug of problemSlugs) {
     const problemPath = getProblemPath(slug);
@@ -119,7 +178,6 @@ async function main() {
       "title",
       "difficulty",
       "author",
-      "parameters",
     ];
     const missingFields = requiredFields.filter((field) => !frontmatter[field]);
     if (missingFields.length > 0) {
@@ -138,6 +196,13 @@ async function main() {
       ? extractGetFlops(definition)
       : null;
 
+    const defParameters = definition ? extractParameters(definition) : null;
+    const parameters = defParameters ?? frontmatter.parameters ?? [];
+
+    if (!parameters || (Array.isArray(parameters) && parameters.length === 0)) {
+      console.warn(`  Warning: No parameters found for ${slug} in def.py or problem.md`);
+    }
+
     // Upsert problem in database
     const problem = await prisma.problem.upsert({
       where: { slug },
@@ -149,7 +214,7 @@ async function main() {
         definition: definition,
         referenceSolution: referenceSolution,
         getFlops: getFlops,
-        parameters: frontmatter.parameters,
+        parameters: parameters,
         tags: frontmatter.tags,
       },
       create: {
@@ -161,15 +226,16 @@ async function main() {
         definition: definition,
         referenceSolution: referenceSolution,
         getFlops: getFlops,
-        parameters: frontmatter.parameters,
+        parameters: parameters,
         tags: frontmatter.tags,
       },
     });
 
+    const paramSource = defParameters ? "def.py" : (frontmatter.parameters ? "problem.md" : "none");
     console.log(`Synced problem: ${slug}`);
     console.log(`  - Title: ${frontmatter.title ? "✓" : "✗"}`);
     console.log(`  - Difficulty: ${frontmatter.difficulty ? "✓" : "✗"}`);
-    console.log(`  - Parameters: ${frontmatter.parameters ? "✓" : "✗"}`);
+    console.log(`  - Parameters: ${parameters.length > 0 ? "✓" : "✗"} (source: ${paramSource})`);
     console.log(`  - Definition: ${definition ? "✓" : "✗"}`);
     console.log(`  - Reference Solution: ${referenceSolution ? "✓" : "✗"}`);
     console.log(`  - Get Flops: ${getFlops ? "✓" : "✗"}`);

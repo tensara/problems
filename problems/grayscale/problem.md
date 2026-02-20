@@ -4,32 +4,6 @@ title: "Grayscale Conversion"
 difficulty: "EASY"
 author: "sarthak"
 tags: ["graphics"]
-parameters:
-  - name: "rgb_image"
-    type: "float"
-    pointer: "true"
-    const: "true"
-  
-  - name: "grayscale_output" 
-    type: "float"
-    pointer: "true"
-    const: "false"
-
-  - name: "height"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "width" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
-  - name: "channels" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
 ---
 
 Perform RGB to grayscale conversion on an input image using the weighted method:

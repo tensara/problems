@@ -4,32 +4,6 @@ title: "Image Histogram"
 difficulty: "EASY"
 author: "sarthak"
 tags: ["graphics", "statistics"]
-parameters:
-  - name: "image"
-    type: "float"
-    pointer: "true"
-    const: "true"
-
-  - name: "num_bins" 
-    type: "int"
-    pointer: "false"
-    constant: "false"
-  
-  - name: "histogram" 
-    type: "float"
-    pointer: "true"
-    const: "false"
-
-  - name: "height"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "width" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
 ---
 
 Compute the histogram of a grayscale image by counting the frequency of each pixel intensity:

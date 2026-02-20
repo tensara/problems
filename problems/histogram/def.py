@@ -1,14 +1,21 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
-
 
 class histogram(Problem):
     """Histogram computation problem."""
     
     is_exact = True
+
+    parameters = [
+        {"name": "image", "type": "float", "pointer": True, "const": True},
+        {"name": "num_bins", "type": "int", "pointer": False, "const": False},
+        {"name": "histogram", "type": "float", "pointer": True, "const": False},
+        {"name": "height", "type": "size_t", "pointer": False, "const": False},
+        {"name": "width", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -32,13 +39,15 @@ class histogram(Problem):
             histogram = torch.bincount(indices, minlength=num_bins).float()
             return histogram
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for histogram computation.
         
         Returns:
             List of test case dictionaries with varying image sizes and bin counts
         """
+        dtype = self.param_dtype(0)
+
         image_sizes = [
             (2560, 1440),
             (2048, 2048),
@@ -69,13 +78,15 @@ class histogram(Problem):
         
         return test_cases
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A list containing a single test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         image_size = (8, 8)
         num_bins = 256
         return {
@@ -90,7 +101,7 @@ class histogram(Problem):
         }
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the histogram result is correct.
         
@@ -127,24 +138,6 @@ class histogram(Problem):
             }
         
         return is_equal, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the histogram solution.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # image
-                ctypes.c_int,                    # num_bins
-                ctypes.POINTER(ctypes.c_float),  # histogram
-                ctypes.c_size_t,                 # height
-                ctypes.c_size_t                  # width
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

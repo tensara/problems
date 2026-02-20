@@ -1,14 +1,20 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
-
 
 class symmetric_matmul(Problem):
     """Symmetric matrix multiplication problem."""
     
     is_exact = False
+
+    parameters = [
+        {"name": "input_a", "type": "float", "pointer": True, "const": True},
+        {"name": "input_b", "type": "float", "pointer": True, "const": True},
+        {"name": "output_c", "type": "float", "pointer": True, "const": False},
+        {"name": "n", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -29,13 +35,15 @@ class symmetric_matmul(Problem):
         with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=matrix_a.dtype):
             return torch.matmul(matrix_a, matrix_b)
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for symmetric matrix multiplication.
         
         Returns:
             List of test case dictionaries with varying sizes
         """
+        dtype = self.param_dtype(0)
+
         matrix_sizes = [4096, 6144, 7168, 8192, 9216]
         
         test_cases = []
@@ -53,13 +61,15 @@ class symmetric_matmul(Problem):
             })
         return test_cases
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A list containing a single test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         n = 4
         return {
             "name": f"{n}x{n}",
@@ -78,7 +88,7 @@ class symmetric_matmul(Problem):
         }
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the matrix multiplication result is correct.
         
@@ -120,23 +130,6 @@ class symmetric_matmul(Problem):
             }
         
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the symmetric matrix multiplication solution.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # matrix_a
-                ctypes.POINTER(ctypes.c_float),  # matrix_b
-                ctypes.POINTER(ctypes.c_float),  # output
-                ctypes.c_size_t                  # size (N)
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

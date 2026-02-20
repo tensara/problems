@@ -1,14 +1,21 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
-
 
 class grayscale(Problem):
     """Grayscale conversion problem."""
     
     is_exact = False
+
+    parameters = [
+        {"name": "rgb_image", "type": "float", "pointer": True, "const": True},
+        {"name": "grayscale_output", "type": "float", "pointer": True, "const": False},
+        {"name": "height", "type": "size_t", "pointer": False, "const": False},
+        {"name": "width", "type": "size_t", "pointer": False, "const": False},
+        {"name": "channels", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -32,13 +39,15 @@ class grayscale(Problem):
             grayscale = 0.299 * r + 0.587 * g + 0.114 * b
             return grayscale
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for grayscale conversion.
         
         Returns:
             List of test case dictionaries with varying image sizes
         """
+        dtype = self.param_dtype(0)
+
         image_sizes = [
             (512, 512),    
             (1024, 768),    
@@ -63,13 +72,15 @@ class grayscale(Problem):
         
         return test_cases
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A list containing a single test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         name = "Sample (h=8, w=8)"
         height = 8
         width = 8
@@ -84,7 +95,7 @@ class grayscale(Problem):
         }
 
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the grayscale conversion result is correct.
         
@@ -126,24 +137,6 @@ class grayscale(Problem):
             }
         
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the grayscale conversion solution.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # rgb_image
-                ctypes.POINTER(ctypes.c_float),  # grayscale_output
-                ctypes.c_size_t,                 # height
-                ctypes.c_size_t,                 # width
-                ctypes.c_size_t                  # channels
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

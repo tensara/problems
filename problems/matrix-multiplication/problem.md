@@ -4,36 +4,6 @@ title: "Matrix Multiplication"
 difficulty: "MEDIUM"
 author: "sarthak"
 tags: ["matmul"]
-parameters:
-  - name: "input_a"
-    type: "float"
-    pointer: "true"
-    const: "true"
-  
-  - name: "input_b"
-    type: "float"
-    pointer: "true"
-    const: "true"
-
-  - name: "output_c" 
-    type: "float"
-    pointer: "true"
-    const: "false"
-
-  - name: "m"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "n" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "k"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
 ---
 
 Perform matrix multiplication of two matrices:

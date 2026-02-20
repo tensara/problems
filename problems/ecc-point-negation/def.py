@@ -1,5 +1,5 @@
+
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
@@ -18,6 +18,14 @@ class ecc_point_negation(Problem):
     """
 
     is_exact = True
+
+    parameters = [
+        {"name": "xs", "type": "uint64_t", "pointer": True, "const": True},
+        {"name": "ys", "type": "uint64_t", "pointer": True, "const": True},
+        {"name": "p", "type": "uint64_t", "pointer": False, "const": True},
+        {"name": "out_xy", "type": "uint64_t", "pointer": True, "const": False},
+        {"name": "n", "type": "size_t", "pointer": False, "const": False},
+    ]
 
     def __init__(self):
         super().__init__(name="ecc-point-negation")
@@ -39,12 +47,11 @@ class ecc_point_negation(Problem):
             neg_y = (p64 - (ys % p64)) % p64
             out = torch.stack((xs, neg_y), dim=1)
             return out
- 
 
     # ---------------------------
     # Test-case generation
     # ---------------------------
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate increasingly large batches to stress memory bandwidth.
         """
@@ -83,13 +90,14 @@ class ecc_point_negation(Problem):
     # ---------------------------
     # Sample (small) for debugging
     # ---------------------------
-    def generate_sample(self, dtype: torch.dtype = torch.int64) -> Dict[str, Any]:
+    def generate_sample(self) -> Dict[str, Any]:
+        dtype = self.param_dtype(0)
+
         name = "Sample (N = 8)"
         device = "cuda"
         p = self.p
         assert isinstance(p, int), f"type(p)={type(p)}"
         assert p == (1 << 61) - 1, f"p corrupted: {p}"
-    
 
         xs = torch.tensor([1, 2, 3, 4, 5, 6, 7, 8], device=device, dtype=torch.int64)
         ys = torch.tensor([0, 1, 2, 3, 4, 5, 6, 7], device=device, dtype=torch.int64)
@@ -99,7 +107,6 @@ class ecc_point_negation(Problem):
 
         def create_sample_inputs():
             return (xs, ys, int(p))
- 
 
         return {
             "name": name,
@@ -114,7 +121,6 @@ class ecc_point_negation(Problem):
         self,
         expected_output: torch.Tensor,   # shape (N, 2), int64
         actual_output: torch.Tensor,     # shape (N, 2), int64 (from single output buffer)
-        dtype: torch.dtype
     ) -> Tuple[bool, Dict[str, Any]]:
         # strict equality — integer ops
         ok = torch.equal(expected_output, actual_output)
@@ -138,29 +144,6 @@ class ecc_point_negation(Problem):
     # ---------------------------
     # C ABI for CUDA solution
     # ---------------------------
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        CUDA signature (single interleaved output: length = 2*N):
-
-          void solution(
-              const uint64_t* xs,     // length N
-              const uint64_t* ys,     // length N
-              const uint64_t  p,      // scalar
-              uint64_t*       out_xy, // length 2*N (pairs: x, neg_y)
-              size_t          N
-          );
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_uint64),  # xs
-                ctypes.POINTER(ctypes.c_uint64),  # ys
-                ctypes.c_uint64,                  # p
-                ctypes.POINTER(ctypes.c_uint64),  # out_xy
-                ctypes.c_size_t,                  # N
-            ],
-            "restype": None,
-        }
-
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """
         Count integer-ops equivalent.

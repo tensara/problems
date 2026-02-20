@@ -4,31 +4,6 @@ title: "Mean Squared Error Loss"
 difficulty: "EASY" 
 author: "harmya"
 tags: ["loss-function"]
-parameters:
-  - name: "predictions"
-    type: "float"
-    pointer: "true"
-    const: "true"
-
-  - name: "targets"
-    type: "float"
-    pointer: "true"
-    const: "true"
-
-  - name: "output"
-    type: "float"
-    pointer: "true"
-    const: "false"
-
-  - name: "shape"
-    type: "size_t"
-    pointer: "true"
-    constant: "true"
-
-  - name: "ndim"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
 ---
 
 Compute the Mean Squared Error (MSE) loss between predictions and targets:

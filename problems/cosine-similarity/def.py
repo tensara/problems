@@ -1,5 +1,4 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
@@ -8,6 +7,15 @@ class cosine_similarity(Problem):
     """Cosine Similarity problem."""
     
     is_exact = False
+
+    parameters = [
+        {"name": "predictions", "type": "float", "pointer": True, "const": True},
+        {"name": "targets", "type": "float", "pointer": True, "const": True},
+        {"name": "output", "type": "float", "pointer": True, "const": False},
+        {"name": "n", "type": "size_t", "pointer": False, "const": False},
+        {"name": "d", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -28,13 +36,15 @@ class cosine_similarity(Problem):
         with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=predictions.dtype):
             return 1 - torch.nn.functional.cosine_similarity(predictions, targets, dim=1)
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for Cosine Similarity.
         
         Returns:
             List of test case dictionaries with varying sizes.
         """
+        dtype = self.param_dtype(0)
+
         batch_size = 128
         input_shape = (4096, )
         
@@ -63,13 +73,15 @@ class cosine_similarity(Problem):
         
         return test_cases
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A list containing a single test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         n, d = (8, 8)
         return {
             "name": f"N={n}, D={d}",
@@ -82,7 +94,7 @@ class cosine_similarity(Problem):
         }
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the Cosine Similarity result is correct.
         
@@ -127,25 +139,6 @@ class cosine_similarity(Problem):
             }
         
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the Cosine Similarity solution.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        # Corresponds to parameters in problem.md
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # predictions
-                ctypes.POINTER(ctypes.c_float),  # targets
-                ctypes.POINTER(ctypes.c_float),  # output
-                ctypes.c_size_t,                 # n (number of vectors)
-                ctypes.c_size_t                  # d (dimension of each vector)
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

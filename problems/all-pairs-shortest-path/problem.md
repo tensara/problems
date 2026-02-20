@@ -4,22 +4,6 @@ title: "All-Pairs Shortest Path"
 difficulty: "MEDIUM"
 author: "sarthak"
 tags: ["graphs"]
-parameters:
-  - name: "adj_matrix"
-    type: "float"
-    pointer: "true"
-    const: "true"
-  
-  - name: "output"
-    type: "float"
-    pointer: "true"
-    const: "false"
-
-  - name: "n" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
 ---
 
 Given a weighted directed graph represented as an adjacency matrix, compute the shortest distances between all pairs of vertices using the Floyd-Warshall algorithm.

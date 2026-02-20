@@ -4,26 +4,6 @@ title: "GELU"
 difficulty: "EASY"
 author: "harmya"
 tags: ["activation-function"]
-parameters:
-  - name: "input"
-    type: "float"
-    pointer: "true"
-    const: "true"
-  
-  - name: "output"
-    type: "float"
-    pointer: "true"
-    const: "false"
-
-  - name: "n" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "m"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
 ---
 
 Perform the GELU (Gaussian Error Linear Unit) activation function on an input matrix:

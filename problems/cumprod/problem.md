@@ -4,21 +4,6 @@ title: "Cumulative Product"
 difficulty: "MEDIUM"
 author: "sarthak"
 tags: ["scan"]
-parameters:
-  - name: "input"
-    type: "float"
-    pointer: "true"
-    const: "true"
-
-  - name: "output" 
-    type: "float"
-    pointer: "true"
-    const: "false"
-
-  - name: "N"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
 ---
 
 Compute the cumulative product (also known as prefix product or scan) of an input array:

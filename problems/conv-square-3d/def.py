@@ -1,5 +1,4 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
@@ -8,6 +7,15 @@ class conv_square_3d(Problem):
     """3D convolution problem with square input and square kernel."""
     
     is_exact = False
+
+    parameters = [
+        {"name": "A", "type": "float", "pointer": True, "const": True},
+        {"name": "B", "type": "float", "pointer": True, "const": True},
+        {"name": "C", "type": "float", "pointer": True, "const": False},
+        {"name": "size", "type": "size_t", "pointer": False, "const": False},
+        {"name": "K", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -41,13 +49,15 @@ class conv_square_3d(Problem):
             
             return result.view(input_volume.size(0), input_volume.size(1), input_volume.size(2))
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for 3D convolution.
         
         Returns:
             List of test case dictionaries with varying sizes
         """
+        dtype = self.param_dtype(0)
+
         test_configs = [
             (64, 64, 64, 3),    # Small volume, small kernel
             (32, 32, 32, 9),     # Small volume, large kernel
@@ -73,13 +83,15 @@ class conv_square_3d(Problem):
             })
         return test_cases
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A list containing a single test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         size, k = (4, 3) # Sample configuration (kernel size must be odd)
         return {
             "name": f"D=H=W={size}, K={k}",
@@ -92,7 +104,7 @@ class conv_square_3d(Problem):
         }
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the convolution result is correct.
         
@@ -136,24 +148,6 @@ class conv_square_3d(Problem):
             }
         
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the 3D convolution solution.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # input_volume
-                ctypes.POINTER(ctypes.c_float),  # kernel
-                ctypes.POINTER(ctypes.c_float),  # output
-                ctypes.c_size_t,                 # size (D=H=W)
-                ctypes.c_size_t,                 # kernel_size (K)
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

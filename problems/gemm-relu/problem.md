@@ -4,42 +4,6 @@ title: "GEMM with Bias and ReLU"
 difficulty: "MEDIUM"
 author: "sarthak"
 tags: ["matmul", "activation-function", "fused"]
-parameters:
-  - name: "A"
-    type: "float"
-    pointer: "true"
-    const: "true"
-
-  - name: "W" 
-    type: "float"
-    pointer: "true"
-    const: "true"
-
-  - name: "b" 
-    type: "float"
-    pointer: "true"
-    const: "true"
-
-  - name: "C" 
-    type: "float"
-    pointer: "true"
-    const: "false"
-
-  - name: "B"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
-  - name: "N"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "M" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-  
 ---
 
 Perform a matrix multiplication followed by bias addition and ReLU activation:

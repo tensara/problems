@@ -1,14 +1,23 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
-
 
 class matmul_swish_scaling(Problem):
     """Matrix multiplication followed by Swish activation followed by scaling fusion problem."""
     
     is_exact = False
+
+    parameters = [
+        {"name": "A", "type": "float", "pointer": True, "const": True},
+        {"name": "B", "type": "float", "pointer": True, "const": True},
+        {"name": "scale", "type": "float", "pointer": False, "const": False},
+        {"name": "output", "type": "float", "pointer": True, "const": False},
+        {"name": "M", "type": "size_t", "pointer": False, "const": False},
+        {"name": "N", "type": "size_t", "pointer": False, "const": False},
+        {"name": "K", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -33,13 +42,15 @@ class matmul_swish_scaling(Problem):
             scaled_result = scale * swish_result
             return scaled_result
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for matmul-swish-scaling fusion.
         
         Returns:
             List of test case dictionaries with varying matrix dimensions
         """
+        dtype = self.param_dtype(0)
+
         # Matrix dimensions: (M, K) × (K, N) = (M, N)
         # dims represents (M, N, K)
         test_matrices = [
@@ -82,13 +93,15 @@ class matmul_swish_scaling(Problem):
             })
         return test_cases
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> Dict[str, Any]:
+    def generate_sample(self) -> Dict[str, Any]:
         """
         Generate sample test case for matmul-swish-scaling with predictable inputs.
 
         Returns:
             Dictionary containing the sample test case.
         """
+        dtype = self.param_dtype(0)
+
         m_dims = (4, 4, 4)  # M, N, K dimensions
         scale = 1.5
         return {
@@ -113,7 +126,7 @@ class matmul_swish_scaling(Problem):
         }
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the matmul-swish-scaling result is correct.
         
@@ -155,28 +168,6 @@ class matmul_swish_scaling(Problem):
             }
         
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the matmul-swish-scaling solution.
-        
-        IMPORTANT: Comments are required. Outline the FLOPs calculation.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # matrix_a
-                ctypes.POINTER(ctypes.c_float),  # matrix_b
-                ctypes.c_float,                  # scale factor
-                ctypes.POINTER(ctypes.c_float),  # output_matrix
-                ctypes.c_size_t,                 # M (rows in A)
-                ctypes.c_size_t,                 # N (columns in B)
-                ctypes.c_size_t                  # K (columns in A, rows in B)
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem 
@@ -9,6 +8,13 @@ class rms_norm(Problem):
     """RMS Normalization problem."""
 
     is_exact = False
+
+    parameters = [
+        {"name": "X", "type": "float", "pointer": True, "const": True},
+        {"name": "Y", "type": "float", "pointer": True, "const": False},
+        {"name": "B", "type": "size_t", "pointer": False, "const": False},
+        {"name": "N", "type": "size_t", "pointer": False, "const": False},
+    ]
 
     def __init__(self):
         super().__init__(
@@ -37,7 +43,7 @@ class rms_norm(Problem):
             
             return output
 
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for RMS Normalization.
 
@@ -45,6 +51,8 @@ class rms_norm(Problem):
             List of test case dictionaries with varying sizes
         """
         
+        dtype = self.param_dtype(0)
+
         # Define configurations: (batch_size, features, *dims)
         test_configs = [
             (1024, 1024),                   # 2D tensor (batch, features)
@@ -67,13 +75,15 @@ class rms_norm(Problem):
             })
         return test_cases
 
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A list containing a single test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         shape = (4, 4)  # Sample shape (batch_size, num_features)
         return {
             "name": f"shape={shape}",
@@ -84,7 +94,7 @@ class rms_norm(Problem):
         }
 
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the RMS Normalization result is correct.
 
@@ -135,23 +145,6 @@ class rms_norm(Problem):
             }
         
         return is_close, debug_info
-
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the RMS Normalization solution.
-
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # X (input)
-                ctypes.POINTER(ctypes.c_float),  # Y (output)
-                ctypes.c_size_t,                 # batch_size
-                ctypes.c_size_t,                 # num_features
-            ],
-            "restype": None
-        }
 
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem 
@@ -9,6 +8,12 @@ class frobenius_norm(Problem):
     """Frobenius Normalization problem."""
 
     is_exact = False
+
+    parameters = [
+        {"name": "X", "type": "float", "pointer": True, "const": True},
+        {"name": "Y", "type": "float", "pointer": True, "const": False},
+        {"name": "size", "type": "size_t", "pointer": False, "const": False},
+    ]
 
     def __init__(self):
         super().__init__(
@@ -34,7 +39,7 @@ class frobenius_norm(Problem):
             
             return output
 
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for Frobenius Normalization.
 
@@ -42,6 +47,8 @@ class frobenius_norm(Problem):
             List of test case dictionaries with varying sizes
         """
         
+        dtype = self.param_dtype(0)
+
         # Define shapes for different test cases
         test_configs = [
             (4, 1024, 1024),       # 3D tensor
@@ -64,13 +71,15 @@ class frobenius_norm(Problem):
             })
         return test_cases
 
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A list containing a single test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         shape = (4, 4, 4)
         return {
             "name": f"Sample shape={shape}",
@@ -101,7 +110,7 @@ class frobenius_norm(Problem):
         }
 
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the Frobenius Normalization result is correct.
 
@@ -151,22 +160,6 @@ class frobenius_norm(Problem):
             }
         
         return is_close, debug_info
-
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the Frobenius Normalization solution.
-
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # X (input)
-                ctypes.POINTER(ctypes.c_float),  # Y (output)
-                ctypes.c_size_t,                 # size (total number of elements)
-            ],
-            "restype": None
-        }
 
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

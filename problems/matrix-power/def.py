@@ -1,14 +1,20 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
-
 
 class matrix_power(Problem):
     """Matrix nth power problem."""
     
     is_exact = False
+
+    parameters = [
+        {"name": "input_matrix", "type": "float", "pointer": True, "const": True},
+        {"name": "n", "type": "size_t", "pointer": False, "const": True},
+        {"name": "output_matrix", "type": "float", "pointer": True, "const": False},
+        {"name": "size", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -29,13 +35,15 @@ class matrix_power(Problem):
         with torch.no_grad(), torch.autocast("cuda", enabled=False):
             return torch.linalg.matrix_power(matrix_a, n)
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for matrix nth power.
         
         Returns:
             List of test case dictionaries with varying sizes and powers
         """
+        dtype = self.param_dtype(0)
+
         matrix_sizes = [512, 1024, 2048]
         powers = [2, 4, 8]
         
@@ -58,13 +66,15 @@ class matrix_power(Problem):
                 })
         return test_cases
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> Dict[str, Any]:
+    def generate_sample(self) -> Dict[str, Any]:
         """
         Generate sample test cases for matrix nth power with predictable inputs.
 
         Returns:
             Sample test case dictionary.
         """
+        dtype = self.param_dtype(0)
+
         size = 4
         power = 3
         return {
@@ -82,7 +92,7 @@ class matrix_power(Problem):
         }
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the matrix nth power result is correct.
         
@@ -124,23 +134,6 @@ class matrix_power(Problem):
             }
         
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the matrix nth power solution.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # matrix_a
-                ctypes.c_size_t,                 # power 
-                ctypes.POINTER(ctypes.c_float), # output
-                ctypes.c_size_t                 # size (N)
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

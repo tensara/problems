@@ -1,5 +1,4 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
@@ -8,6 +7,17 @@ class conv_2d(Problem):
     """2D convolution problem."""
     
     is_exact = False
+
+    parameters = [
+        {"name": "A", "type": "float", "pointer": True, "const": True},
+        {"name": "B", "type": "float", "pointer": True, "const": True},
+        {"name": "C", "type": "float", "pointer": True, "const": False},
+        {"name": "H", "type": "size_t", "pointer": False, "const": False},
+        {"name": "W", "type": "size_t", "pointer": False, "const": False},
+        {"name": "Kh", "type": "size_t", "pointer": False, "const": False},
+        {"name": "Kw", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -49,13 +59,15 @@ class conv_2d(Problem):
             # Reshape back to original dimensions
             return result.view(input_image.size(0), input_image.size(1))
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for 2D convolution.
         
         Returns:
             List of test case dictionaries with varying sizes
         """
+        dtype = self.param_dtype(0)
+
         test_configs = [
             (4096, 4096, 9, 9),
             (8192, 8192, 11, 11),
@@ -83,13 +95,15 @@ class conv_2d(Problem):
             })
         return test_cases
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A list containing a single test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         h, w, kh, kw = (8, 8, 3, 3) # Sample configuration (kernel dims must be odd)
         return {
             "name": f"H={h}, W={w}, Kh={kh}, Kw={kw}",
@@ -104,7 +118,7 @@ class conv_2d(Problem):
         }
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the convolution result is correct.
         
@@ -146,26 +160,6 @@ class conv_2d(Problem):
             }
         
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the 2D convolution solution.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # input_image
-                ctypes.POINTER(ctypes.c_float),  # kernel
-                ctypes.POINTER(ctypes.c_float),  # output
-                ctypes.c_size_t,                 # height (H)
-                ctypes.c_size_t,                 # width (W)
-                ctypes.c_size_t,                 # kernel_height (Kh)
-                ctypes.c_size_t                  # kernel_width (Kw)
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

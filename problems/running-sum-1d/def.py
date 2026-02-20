@@ -1,5 +1,4 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
@@ -8,6 +7,14 @@ class running_sum_1d(Problem):
     """1D running sum problem with fix sized sliding window. """
     
     is_exact = False
+
+    parameters = [
+        {"name": "input", "type": "float", "pointer": True, "const": True},
+        {"name": "W", "type": "size_t", "pointer": False, "const": False},
+        {"name": "output", "type": "float", "pointer": True, "const": False},
+        {"name": "N", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -46,7 +53,7 @@ class running_sum_1d(Problem):
             # Reshape back to original dimensions
             return result.view(-1)
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for 1D running sum problem.
         
@@ -54,6 +61,8 @@ class running_sum_1d(Problem):
             List of test case dictionaries with varying sizes
         """
         
+        dtype = self.param_dtype(0)
+
         test_configs = [
             (65536, 8191),
             (32768, 8191),
@@ -77,13 +86,15 @@ class running_sum_1d(Problem):
             })
         return test_cases
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A list containing a single test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         signal_size, window_size = (16, 3)
         return {
             "name": f"N={signal_size}, W={window_size}",
@@ -96,7 +107,7 @@ class running_sum_1d(Problem):
         }
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the test result is correct.
         
@@ -134,24 +145,6 @@ class running_sum_1d(Problem):
             }
         
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the 1D running sum problem solution.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # input_signal
-                ctypes.c_size_t,                 # window_size (W)
-                ctypes.POINTER(ctypes.c_float),  # output
-                ctypes.c_size_t                  # signal_size (N)
-
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

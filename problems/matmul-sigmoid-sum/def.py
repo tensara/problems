@@ -1,14 +1,22 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
-
 
 class matmul_sigmoid_sum(Problem):
     """Matrix multiplication followed by sigmoid activation followed by summation problem."""
     
     is_exact = False
+
+    parameters = [
+        {"name": "A", "type": "float", "pointer": True, "const": True},
+        {"name": "B", "type": "float", "pointer": True, "const": True},
+        {"name": "output", "type": "float", "pointer": True, "const": False},
+        {"name": "M", "type": "size_t", "pointer": False, "const": False},
+        {"name": "N", "type": "size_t", "pointer": False, "const": False},
+        {"name": "K", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -31,13 +39,15 @@ class matmul_sigmoid_sum(Problem):
             sigmoid_result = torch.sigmoid(matmul_result)
             return torch.sum(sigmoid_result)
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for matmul-sigmoid-sum.
         
         Returns:
             List of test case dictionaries with varying matrix dimensions
         """
+        dtype = self.param_dtype(0)
+
         test_matrices = [
             {
                 "name": "512x512 x 512x512",
@@ -72,13 +82,15 @@ class matmul_sigmoid_sum(Problem):
             })
         return test_cases
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> Dict[str, Any]:
+    def generate_sample(self) -> Dict[str, Any]:
         """
         Generate sample test case for matmul-sigmoid-sum with predictable inputs.
 
         Returns:
             Dictionary containing the sample test case.
         """
+        dtype = self.param_dtype(0)
+
         m_dims = (4, 4, 4) 
         return {
             "name": "4x4_square",
@@ -100,7 +112,7 @@ class matmul_sigmoid_sum(Problem):
         }
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the matmul-sigmoid-sum result is correct.
         
@@ -125,27 +137,6 @@ class matmul_sigmoid_sum(Problem):
             }
         
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the matmul-sigmoid-sum solution.
-        
-        IMPORTANT: Comments are required. Outline the FLOPs calculation.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # matrix_a
-                ctypes.POINTER(ctypes.c_float),  # matrix_b
-                ctypes.POINTER(ctypes.c_float),  # result (output scalar)
-                ctypes.c_size_t,                 # M (rows in A)
-                ctypes.c_size_t,                 # N (columns in B)
-                ctypes.c_size_t                  # K (columns in A, rows in B)
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

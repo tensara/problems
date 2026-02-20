@@ -4,42 +4,6 @@ title: "2D Average Pooling"
 difficulty: "MEDIUM" 
 author: "sarthak"
 tags: ["pooling"]
-parameters:
-  - name: "input"
-    type: "float"
-    pointer: "true"
-    const: "true"
-
-  - name: "kernel_size"
-    type: "int"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "stride" 
-    type: "int"
-    pointer: "false"
-    constant: "false"
-
-  - name: "padding"
-    type: "int"
-    pointer: "false"
-    constant: "false"
-
-  - name: "output" 
-    type: "float"
-    pointer: "true"
-    const: "false"
-
-  - name: "H"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "W" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-  
 ---
 
 Perform 2D average pooling on an input tensor:

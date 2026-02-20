@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem 
@@ -9,6 +8,17 @@ class layer_norm(Problem):
     """Layer Normalization problem."""
 
     is_exact = False
+
+    parameters = [
+        {"name": "X", "type": "float", "pointer": True, "const": True},
+        {"name": "gamma", "type": "float", "pointer": True, "const": True},
+        {"name": "beta", "type": "float", "pointer": True, "const": True},
+        {"name": "Y", "type": "float", "pointer": True, "const": False},
+        {"name": "B", "type": "size_t", "pointer": False, "const": False},
+        {"name": "F", "type": "size_t", "pointer": False, "const": False},
+        {"name": "D1", "type": "size_t", "pointer": False, "const": False},
+        {"name": "D2", "type": "size_t", "pointer": False, "const": False},
+    ]
 
     def __init__(self):
         super().__init__(
@@ -42,7 +52,7 @@ class layer_norm(Problem):
             )
             return output
 
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for Layer Normalization.
 
@@ -50,6 +60,8 @@ class layer_norm(Problem):
             List of test case dictionaries with varying sizes
         """
         
+        dtype = self.param_dtype(0)
+
         # Define shapes: (B, F, D1, D2)
         test_configs = [
             (16, 64, 32, 32),   # Smaller example
@@ -77,13 +89,15 @@ class layer_norm(Problem):
             })
         return test_cases
 
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A list containing a single test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         B, F, D1, D2 = (2, 4, 4, 4)
         return {
             "name": f"Sample B={B}, F={F}, D1={D1}, D2={D2}",
@@ -110,7 +124,7 @@ class layer_norm(Problem):
         }
 
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the Layer Normalization result is correct.
 
@@ -160,29 +174,6 @@ class layer_norm(Problem):
             }
         
         return is_close, debug_info
-
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the Layer Normalization solution.
-
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            # Corresponds to parameters in problem.md
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # X (input)
-                ctypes.POINTER(ctypes.c_float),  # gamma (scale)
-                ctypes.POINTER(ctypes.c_float),  # beta (shift)
-                ctypes.POINTER(ctypes.c_float),  # Y (output)
-                ctypes.c_size_t,                 # B (batch size)
-                ctypes.c_size_t,                 # F (features)
-                ctypes.c_size_t,                 # D1 (dim1)
-                ctypes.c_size_t                  # D2 (dim2)
-                # Epsilon is handled internally or passed differently if needed by CUDA kernel
-            ],
-            "restype": None
-        }
 
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

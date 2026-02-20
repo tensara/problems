@@ -4,33 +4,6 @@ title: "Image Thresholding"
 difficulty: "EASY"
 author: "sarthak"
 tags: ["graphics"]
-parameters:
-  - name: "input_image"
-    type: "float"
-    pointer: "true"
-    const: "true"
-  
-  - name: "threshold_value" 
-    type: "float"
-    pointer: "false"
-    constant: "false"
-  
-  - name: "output_image" 
-    type: "float"
-    pointer: "true"
-    const: "false"
-
-  - name: "height"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "width" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
-
 ---
 
 Perform binary thresholding on an input grayscale image:

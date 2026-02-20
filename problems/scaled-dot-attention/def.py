@@ -1,14 +1,24 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
-
 
 class scaled_dot_attention(Problem):
     """Scaled Dot-Product Attention problem."""
     
     is_exact = False
+
+    parameters = [
+        {"name": "Q", "type": "float", "pointer": True, "const": True},
+        {"name": "K", "type": "float", "pointer": True, "const": True},
+        {"name": "V", "type": "float", "pointer": True, "const": True},
+        {"name": "output", "type": "float", "pointer": True, "const": False},
+        {"name": "B", "type": "size_t", "pointer": False, "const": False},
+        {"name": "H", "type": "size_t", "pointer": False, "const": False},
+        {"name": "S", "type": "size_t", "pointer": False, "const": False},
+        {"name": "E", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -33,13 +43,15 @@ class scaled_dot_attention(Problem):
                 query, key, value, attn_mask=None, dropout_p=0.0, is_causal=False
             )
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for scaled dot-product attention.
         
         Returns:
             List of test case dictionaries with varying sizes
         """
+        dtype = self.param_dtype(0)
+
         test_configs = [
             (8, 16, 512, 64),  
             (16, 32, 256, 64), 
@@ -69,13 +81,15 @@ class scaled_dot_attention(Problem):
             })
         return test_cases
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> Dict[str, Any]:
+    def generate_sample(self) -> Dict[str, Any]:
         """
         Generate sample test case for scaled dot-product attention with predictable inputs.
 
         Returns:
             Dictionary containing the sample test case.
         """
+        dtype = self.param_dtype(0)
+
         batch, heads, seq_len, embed_dim = 1, 2, 2, 2
         return {
             "name": "1x2x2x2_sample",
@@ -124,7 +138,7 @@ class scaled_dot_attention(Problem):
         }
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the attention result is correct.
         
@@ -167,27 +181,6 @@ class scaled_dot_attention(Problem):
             }
         
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the scaled dot-product attention solution.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # query
-                ctypes.POINTER(ctypes.c_float),  # key
-                ctypes.POINTER(ctypes.c_float),  # value
-                ctypes.POINTER(ctypes.c_float),  # output
-                ctypes.c_size_t,                 # batch
-                ctypes.c_size_t,                 # heads
-                ctypes.c_size_t,                 # seq_len
-                ctypes.c_size_t                  # embed_dim
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

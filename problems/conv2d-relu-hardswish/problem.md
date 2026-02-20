@@ -4,41 +4,6 @@ title: "2D Convolution with ReLU and HardSwish"
 difficulty: "MEDIUM"
 author: "sarthak"
 tags: ["convolution", "activation-function", "fused"]
-parameters:
-  - name: "image"
-    type: "float"
-    pointer: "true"
-    const: "true"
-  
-  - name: "kernel"
-    type: "float"
-    pointer: "true"
-    const: "true"
-
-  - name: "output" 
-    type: "float"
-    pointer: "true"
-    const: "false"
-
-  - name: "H"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "W" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "Kh"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "Kw"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
 ---
 
 Perform a 2D convolution followed by ReLU activation followed by HardSwish activation:

@@ -4,41 +4,6 @@ title: "Triplet Margin Loss"
 difficulty: "MEDIUM"
 author: "sarthak"
 tags: ["loss-function", "reduction"]
-parameters:
-  - name: "anchor"
-    type: "float"
-    pointer: "true"
-    const: "true"
-  
-  - name: "positive"
-    type: "float"
-    pointer: "true"
-    const: "true"
-    
-  - name: "negative"
-    type: "float"
-    pointer: "true"
-    const: "true"
-    
-  - name: "loss"
-    type: "float"
-    pointer: "true"
-    const: "false"
-
-  - name: "B"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
-  - name: "E"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "margin"
-    type: "float"
-    pointer: "false"
-    constant: "false"
 ---
 
 Implement Triplet Margin Loss:

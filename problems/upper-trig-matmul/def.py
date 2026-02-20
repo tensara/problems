@@ -1,14 +1,20 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
-
 
 class upper_trig_matmul(Problem):
     """Upper triangular matrix multiplication problem."""
     
     is_exact = False
+
+    parameters = [
+        {"name": "input_a", "type": "float", "pointer": True, "const": True},
+        {"name": "input_b", "type": "float", "pointer": True, "const": True},
+        {"name": "output_c", "type": "float", "pointer": True, "const": False},
+        {"name": "n", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -35,13 +41,15 @@ class upper_trig_matmul(Problem):
             # No need for an extra torch.tril on the result.
             return torch.matmul(A_triu, B_triu)
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for upper triangular matrix multiplication.
         
         Returns:
             List of test case dictionaries with varying square matrix dimensions (N x N)
         """
+        dtype = self.param_dtype(0)
+
         # Matrix dimensions: (N, N) × (N, N) = (N, N)
         test_matrices = [
             {
@@ -78,13 +86,15 @@ class upper_trig_matmul(Problem):
             })
         return test_cases
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A list containing a single test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         n = 4
         return {
             "name": f"{n}x{n}",
@@ -103,7 +113,7 @@ class upper_trig_matmul(Problem):
         }
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the upper triangular matrix multiplication result is correct.
         
@@ -136,25 +146,6 @@ class upper_trig_matmul(Problem):
             
 
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the upper triangular matrix multiplication solution.
-        
-        IMPORTANT: Comments are required. Outline the FLOPs calculation.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # matrix_a (upper triangular)
-                ctypes.POINTER(ctypes.c_float),  # matrix_b (upper triangular)
-                ctypes.POINTER(ctypes.c_float),  # matrix_c (output, upper triangular)
-                ctypes.c_size_t,                 # N (dimension of square matrices)
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

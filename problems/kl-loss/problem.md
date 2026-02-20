@@ -4,27 +4,6 @@ title: "Kullback-Leibler Divergence"
 difficulty: "MEDIUM"
 author: "sarthak"
 tags: ["loss-function"]
-parameters:
-  - name: "predictions"
-    type: "float"
-    pointer: "true"
-    const: "true"
-  
-  - name: "targets"
-    type: "float"
-    pointer: "true"
-    const: "true"
-
-  - name: "output" 
-    type: "float"
-    pointer: "true"
-    const: "false"
-
-  - name: "n"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
 ---
 
 Compute the element-wise Kullback-Leibler Divergence between two probability distributions, `predictions` and `targets`.

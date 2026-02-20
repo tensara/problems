@@ -4,26 +4,6 @@ title: "Vector Multiplication over Finite Field"
 difficulty: "MEDIUM"
 author: "soham"
 tags: ["crypto"]
-parameters:
-  - name: "d_input1"
-    type: "uint32_t"
-    pointer: true
-    const: true
-
-  - name: "d_input2"
-    type: "uint32_t"
-    pointer: true
-    const: true
-
-  - name: "d_output"
-    type: "uint32_t"
-    pointer: true
-    const: false
-
-  - name: "n"
-    type: "size_t"
-    pointer: false
-    constant: false
 ---
 
 Perform element-wise multiplication of two vectors in the finite field:

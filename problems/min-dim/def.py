@@ -1,14 +1,21 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
-
 
 class min_dim(Problem):
     """Min over dimension problem."""
     
     is_exact = True
+
+    parameters = [
+        {"name": "input", "type": "float", "pointer": True, "const": True},
+        {"name": "dim", "type": "int", "pointer": False, "const": False},
+        {"name": "output", "type": "float", "pointer": True, "const": False},
+        {"name": "shape", "type": "size_t", "pointer": True, "const": True},
+        {"name": "ndim", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -30,13 +37,15 @@ class min_dim(Problem):
             # Get only the values, not the indices
             return torch.min(input_tensor, dim=dim, keepdim=True)[0]
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for min over dimension.
         
         Returns:
             List of test case dictionaries with varying sizes and dimensions
         """
+        dtype = self.param_dtype(0)
+
         test_configs = [
             # (shape, dim)
             ((16, 128, 256), 1),
@@ -63,13 +72,15 @@ class min_dim(Problem):
             })
         return test_cases
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A list containing a single test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         shape = (4, 4, 4)  # Sample 3D tensor shape
         dim = 1  # Reduce along middle dimension
         return {
@@ -84,7 +95,7 @@ class min_dim(Problem):
         }
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the min reduction result is correct.
         
@@ -123,24 +134,6 @@ class min_dim(Problem):
             }
         
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the min over dimension solution.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # input_tensor
-                ctypes.c_int,                    # dim
-                ctypes.POINTER(ctypes.c_float),  # output values
-                ctypes.POINTER(ctypes.c_size_t), # shape
-                ctypes.c_size_t,                 # ndim
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

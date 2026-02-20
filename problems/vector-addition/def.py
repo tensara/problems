@@ -1,5 +1,4 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
@@ -8,6 +7,14 @@ class vector_addition(Problem):
     """Vector addition problem."""
     
     is_exact = False
+
+    parameters = [
+        {"name": "d_input1", "type": "float", "pointer": True, "const": True},
+        {"name": "d_input2", "type": "float", "pointer": True, "const": True},
+        {"name": "d_output", "type": "float", "pointer": True, "const": False},
+        {"name": "n", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -28,13 +35,15 @@ class vector_addition(Problem):
         with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=A.dtype):
             return A + B
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for vector addition.
         
         Returns:
             List of test case dictionaries with varying sizes
         """
+        dtype = self.param_dtype(0)
+
         sizes = [
             ("n = 2^20", 1048576),
             ("n = 2^22", 4194304),
@@ -60,13 +69,15 @@ class vector_addition(Problem):
             })
         return test_cases
 
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A list containing a single test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         name = "Sample (n = 8)"
         size = 8 
         return {
@@ -79,7 +90,7 @@ class vector_addition(Problem):
         }
  
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the vector addition result is correct.
         
@@ -104,23 +115,6 @@ class vector_addition(Problem):
             }
         
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the vector addition solution.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # input_a
-                ctypes.POINTER(ctypes.c_float),  # input_b
-                ctypes.POINTER(ctypes.c_float),  # output
-                ctypes.c_size_t                  # N
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

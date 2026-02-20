@@ -1,5 +1,4 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 import math
 
@@ -9,6 +8,13 @@ class all_pairs_shortest_path(Problem):
     """All-pairs shortest path problem using Floyd-Warshall algorithm."""
     
     is_exact = True
+
+    parameters = [
+        {"name": "adj_matrix", "type": "float", "pointer": True, "const": True},
+        {"name": "output", "type": "float", "pointer": True, "const": False},
+        {"name": "n", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -43,13 +49,15 @@ class all_pairs_shortest_path(Problem):
             
             return dist
 
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for all-pairs shortest path.
         
         Returns:
             List of test case dictionaries with varying graph sizes
         """
+        dtype = self.param_dtype(0)
+
         sizes = [
             ("n = 512" , 512),
             ("n = 1024", 1024),
@@ -100,13 +108,15 @@ class all_pairs_shortest_path(Problem):
         
         return (adj_matrix,)
 
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> Dict[str, Any]:
+    def generate_sample(self) -> Dict[str, Any]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         name = "Sample (n = 4)"
         size = 4
         
@@ -126,7 +136,7 @@ class all_pairs_shortest_path(Problem):
         }
 
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the all-pairs shortest path result is correct.
         
@@ -153,24 +163,6 @@ class all_pairs_shortest_path(Problem):
             }
         
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the all-pairs shortest path solution.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # input adjacency matrix
-                ctypes.POINTER(ctypes.c_float),  # output distance matrix
-                ctypes.c_size_t,                 # N (number of nodes)
-            ],
-            "restype": None
-        }
-    
-
     
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """
