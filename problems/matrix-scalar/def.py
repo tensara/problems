@@ -1,14 +1,20 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
-
 
 class matrix_scalar(Problem):
     """Matrix scalar multiplication problem."""
     
     is_exact = False
+
+    parameters = [
+        {"name": "input_matrix", "type": "float", "pointer": True, "const": True},
+        {"name": "scalar", "type": "float", "pointer": False, "const": True},
+        {"name": "output_matrix", "type": "float", "pointer": True, "const": False},
+        {"name": "n", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -29,13 +35,15 @@ class matrix_scalar(Problem):
         with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=matrix_a.dtype):
             return matrix_a * scalar
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for matrix scalar multiplication.
         
         Returns:
             List of test case dictionaries with varying sizes
         """
+        dtype = self.param_dtype(0)
+
         matrix_sizes = [8192, 9216]
         scalars = [0.1, 0.2, -0.3, 0.4, -0.5]
         
@@ -55,13 +63,15 @@ class matrix_scalar(Problem):
                 })
         return test_cases
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate sample test cases for matrix scalar multiplication with predictable inputs.
 
         Returns:
             List of sample test case dictionaries.
         """
+        dtype = self.param_dtype(0)
+
         shape = (8, 8)
         scalar = -0.5
         return {
@@ -75,7 +85,7 @@ class matrix_scalar(Problem):
         }
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the matrix multiplication result is correct.
         
@@ -117,23 +127,6 @@ class matrix_scalar(Problem):
             }
         
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the matrix scalar multiplication solution.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # matrix_a
-                ctypes.c_float,                 # scalar
-                ctypes.POINTER(ctypes.c_float), # output
-                ctypes.c_size_t                 # size (N)
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

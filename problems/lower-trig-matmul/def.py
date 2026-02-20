@@ -1,14 +1,20 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
-
 
 class lower_trig_matmul(Problem):
     """Lower triangular matrix multiplication problem."""
     
     is_exact = False
+
+    parameters = [
+        {"name": "input_a", "type": "float", "pointer": True, "const": True},
+        {"name": "input_b", "type": "float", "pointer": True, "const": True},
+        {"name": "output_c", "type": "float", "pointer": True, "const": False},
+        {"name": "n", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -35,13 +41,15 @@ class lower_trig_matmul(Problem):
             # No need for an extra torch.tril on the result.
             return torch.matmul(A_tril, B_tril)
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for lower triangular matrix multiplication.
         
         Returns:
             List of test case dictionaries with varying square matrix dimensions (N x N)
         """
+        dtype = self.param_dtype(0)
+
         # Matrix dimensions: (N, N) × (N, N) = (N, N)
         test_matrices = [
             {
@@ -78,13 +86,15 @@ class lower_trig_matmul(Problem):
             })
         return test_cases
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A list containing a single test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         N = 8 # Sample dimension
         return {
             "name": f"Sample {N}x{N}",
@@ -96,7 +106,7 @@ class lower_trig_matmul(Problem):
         }
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the lower triangular matrix multiplication result is correct.
         
@@ -129,25 +139,6 @@ class lower_trig_matmul(Problem):
             
 
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the lower triangular matrix multiplication solution.
-        
-        IMPORTANT: Comments are required. Outline the FLOPs calculation.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # matrix_a (lower triangular)
-                ctypes.POINTER(ctypes.c_float),  # matrix_b (lower triangular)
-                ctypes.POINTER(ctypes.c_float),  # matrix_c (output, lower triangular)
-                ctypes.c_size_t,                 # N (dimension of square matrices)
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

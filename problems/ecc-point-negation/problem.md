@@ -4,31 +4,6 @@ title: "ECC Point Negation (Batched)"
 difficulty: "EASY"
 author: "soham"
 tags: ["crypto"]
-parameters:
-  - name: "xs"
-    type: "uint64_t"
-    pointer: "true"
-    const: "true"
-
-  - name: "ys"
-    type: "uint64_t"
-    pointer: "true"
-    const: "true"
-
-  - name: "p"
-    type: "uint64_t"
-    pointer: "false"
-    constant: "true"
-
-  - name: "out_xy"
-    type: "uint64_t"
-    pointer: "true"
-    const: "false"
-
-  - name: "n"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
 ---
 
 Negate **N** elliptic curve points in parallel over the curve:

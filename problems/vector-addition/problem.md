@@ -4,27 +4,6 @@ title: "Vector Addition"
 difficulty: "EASY"
 author: "someshkar"
 tags: ["vector"]
-parameters:
-  - name: "d_input1"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-  
-  - name: "d_input2"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-
-  - name: "d_output" 
-    type: "[VAR]"
-    pointer: "true"
-    const: "false"
-
-  - name: "n" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
 ---
 
 Perform element-wise addition of two vectors:

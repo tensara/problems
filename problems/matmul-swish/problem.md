@@ -4,46 +4,6 @@ title: "Matrix Multiplication with Swish Activation"
 difficulty: "MEDIUM" 
 author: "sarthak"
 tags: ["matmul", "activation-function", "fused"]
-parameters:
-  - name: "input_matrix"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-
-  - name: "weight_matrix"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-    
-  - name: "bias"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-
-  - name: "scaling_factor"
-    type: "float"
-    pointer: "false"
-    constant: "true"
-
-  - name: "output" 
-    type: "[VAR]"
-    pointer: "true"
-    const: "false"
-
-  - name: "batch_size"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "in_features" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
-  - name: "out_features" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
 ---
 
 Perform matrix multiplication followed by Swish activation and scaling:

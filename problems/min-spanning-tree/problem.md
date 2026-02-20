@@ -4,22 +4,6 @@ title: "Minimum Spanning Tree"
 difficulty: "MEDIUM"
 author: "sarthak"
 tags: ["graphs"]
-parameters:
-  - name: "A"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-  
-  - name: "min_weight"
-    type: "[VAR]"
-    pointer: "true"
-    const: "false"
-
-  - name: "n" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
 ---
 
 Find the minimum spanning tree of a weighted undirected graph.

@@ -4,32 +4,6 @@ title: "Max Over Dimension"
 difficulty: "EASY" 
 author: "sarthak"
 tags: ["reduction"]
-parameters:
-  - name: "input"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-
-  - name: "dim"
-    type: "int"
-    pointer: "false"
-    constant: "false"
-
-  - name: "output"
-    type: "[VAR]"
-    pointer: "true"
-    const: "false"
-
-
-  - name: "shape"
-    type: "size_t"
-    pointer: "true"
-    constant: "true"
-
-  - name: "ndim"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
 ---
 
 Perform max reduction over a specified dimension of an input tensor:

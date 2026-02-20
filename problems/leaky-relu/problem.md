@@ -4,32 +4,6 @@ title: "Leaky ReLU"
 difficulty: "EASY"
 author: "sarthak"
 tags: ["activation-function"]
-parameters:
-  - name: "input"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-  
-  - name: "alpha"
-    type: "[VAR]"
-    pointer: "false"
-    constant: "false"
-
-  - name: "output" 
-    type: "[VAR]"
-    pointer: "true"
-    const: "false"
-
-  - name: "n"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "m" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
 ---
 
 Perform the Leaky ReLU (Leaky Rectified Linear Unit) activation function on an input matrix:

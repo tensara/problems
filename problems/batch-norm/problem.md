@@ -4,37 +4,6 @@ title: "Batch Normalization"
 difficulty: "MEDIUM"
 author: "sarthak"
 tags: ["normalization"]
-parameters:
-  - name: "X"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-
-  - name: "Y"
-    type: "[VAR]"
-    pointer: "true"
-    const: "false"
-
-  - name: "B"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
-  - name: "F"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
-  - name: "D1"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
-  - name: "D2"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
 ---
 
 Implement Batch Normalization over the batch dimension (B) for each feature channel in a 4D tensor.

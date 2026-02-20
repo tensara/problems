@@ -1,14 +1,24 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
-
 
 class matmul_swish(Problem):
     """Matrix multiplication with Swish activation problem."""
     
     is_exact = False
+
+    parameters = [
+        {"name": "input_matrix", "type": "float", "pointer": True, "const": True},
+        {"name": "weight_matrix", "type": "float", "pointer": True, "const": True},
+        {"name": "bias", "type": "float", "pointer": True, "const": True},
+        {"name": "scaling_factor", "type": "float", "pointer": False, "const": True},
+        {"name": "output", "type": "float", "pointer": True, "const": False},
+        {"name": "batch_size", "type": "size_t", "pointer": False, "const": False},
+        {"name": "in_features", "type": "size_t", "pointer": False, "const": False},
+        {"name": "out_features", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -41,13 +51,15 @@ class matmul_swish(Problem):
             
             return output
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for matrix multiplication with Swish activation.
         
         Returns:
             List of test case dictionaries with varying sizes
         """
+        dtype = self.param_dtype(0)
+
         test_configs = [
             (128, 1024, 512, 2.0),    # Standard size
             (256, 2048, 1024, 1.5),   # Larger size
@@ -76,13 +88,15 @@ class matmul_swish(Problem):
             })
         return test_cases
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> Dict[str, Any]:
+    def generate_sample(self) -> Dict[str, Any]:
         """
         Generate sample test case for matrix multiplication with Swish activation.
 
         Returns:
             Dictionary containing the sample test case with predictable inputs.
         """
+        dtype = self.param_dtype(0)
+
         return {
             "name": "sample_8x8",
             "batch_size": 8,
@@ -98,7 +112,7 @@ class matmul_swish(Problem):
         }
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the result is correct.
         
@@ -140,27 +154,6 @@ class matmul_swish(Problem):
             }
         
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the solution.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # input_matrix
-                ctypes.POINTER(ctypes.c_float),  # weight_matrix
-                ctypes.POINTER(ctypes.c_float),  # bias
-                ctypes.c_float,                  # scaling_factor
-                ctypes.POINTER(ctypes.c_float),  # output
-                ctypes.c_size_t,                 # batch_size
-                ctypes.c_size_t,                 # in_features
-                ctypes.c_size_t,                 # out_features
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

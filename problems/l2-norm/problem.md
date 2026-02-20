@@ -4,27 +4,6 @@ title: "L2 Normalization"
 difficulty: "EASY"
 author: "sarthak"
 tags: ["normalization"]
-parameters:
-  - name: "X"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-
-  - name: "Y"
-    type: "[VAR]"
-    pointer: "true"
-    const: "false"
-
-  - name: "B"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
-  - name: "D"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
 ---
 
 Implement L2 Normalization for a 2D tensor. L2 normalization is a technique where each row of the input tensor is normalized by the Euclidean (L2) norm of its elements.

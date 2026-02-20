@@ -1,5 +1,4 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 from problem import Problem
 
@@ -7,6 +6,15 @@ class mse_loss(Problem):
     """Mean Squared Error loss problem."""
     
     is_exact = False
+
+    parameters = [
+        {"name": "predictions", "type": "float", "pointer": True, "const": True},
+        {"name": "targets", "type": "float", "pointer": True, "const": True},
+        {"name": "output", "type": "float", "pointer": True, "const": False},
+        {"name": "shape", "type": "size_t", "pointer": True, "const": True},
+        {"name": "ndim", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -27,13 +35,15 @@ class mse_loss(Problem):
         with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=predictions.dtype):
             return torch.mean((predictions - targets) ** 2)
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for MSE loss function.
         
         Returns:
             List of test case dictionaries with varying sizes and dimensions
         """
+        dtype = self.param_dtype(0)
+
         test_configs = [        
             (4096, 4096),             
             (8192, 8192),          
@@ -57,13 +67,15 @@ class mse_loss(Problem):
             })
         return test_cases
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A list containing a single test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         shape = (8, 8)  # Sample dimensions
         return {
             "name": f"shape={shape}",
@@ -75,7 +87,7 @@ class mse_loss(Problem):
         }
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the MSE loss result is correct.
         
@@ -103,24 +115,6 @@ class mse_loss(Problem):
             }
         
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the MSE loss solution.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # predictions
-                ctypes.POINTER(ctypes.c_float),  # targets
-                ctypes.POINTER(ctypes.c_float),  # output (scalar)
-                ctypes.POINTER(ctypes.c_size_t), # shape
-                ctypes.c_size_t,                 # ndim
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

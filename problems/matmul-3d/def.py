@@ -1,14 +1,23 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
-
 
 class matmul_3d(Problem):
     """3D matrix multiplication problem."""
     
     is_exact = False
+
+    parameters = [
+        {"name": "A", "type": "float", "pointer": True, "const": True},
+        {"name": "B", "type": "float", "pointer": True, "const": True},
+        {"name": "C", "type": "float", "pointer": True, "const": False},
+        {"name": "n", "type": "size_t", "pointer": False, "const": False},
+        {"name": "m", "type": "size_t", "pointer": False, "const": False},
+        {"name": "k", "type": "size_t", "pointer": False, "const": False},
+        {"name": "l", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -29,13 +38,15 @@ class matmul_3d(Problem):
         with torch.no_grad(), torch.autocast("cuda", enabled=False, dtype=A.dtype):
             return torch.matmul(A, B)
     
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for 3D tensor-matrix multiplication.
         
         Returns:
             List of test case dictionaries with varying dimensions
         """
+        dtype = self.param_dtype(0)
+
         # Matrix dimensions: (N, M, K) × (K, L) = (N, M, L)
         # dims represents (N, M, K, L)
         test_matrices = [
@@ -72,13 +83,15 @@ class matmul_3d(Problem):
             })
         return test_cases
     
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A list containing a single test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         N, M, K, L = (4, 4, 4, 4)
         return {
             "name": f"Sample ({N}x{M}x{K} * {K}x{L})",
@@ -90,7 +103,7 @@ class matmul_3d(Problem):
         }
     
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the matrix multiplication result is correct.
         
@@ -115,35 +128,6 @@ class matmul_3d(Problem):
             }
         
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for 3D tensor-matrix multiplication.
-        
-        IMPORTANT: Comments are required. Outline the FLOPs calculation.
-        
-        For 3D tensor-matrix multiplication:
-        - Input A has shape (N, M, K)
-        - Input B has shape (K, L)
-        - Output C has shape (N, M, L)
-        - For each of the N*M output elements, we perform K multiply-adds
-        - Total FLOPs = 2 * N * M * K * L
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # matrix_a (N, M, K)
-                ctypes.POINTER(ctypes.c_float),  # matrix_b (K, L)
-                ctypes.POINTER(ctypes.c_float),  # matrix_c (output) (N, M, L)
-                ctypes.c_size_t,                 # N (first dim of A)
-                ctypes.c_size_t,                 # M (second dim of A)
-                ctypes.c_size_t,                 # K (third dim of A, first dim of B)
-                ctypes.c_size_t                  # L (second dim of B)
-            ],
-            "restype": None
-        }
     
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

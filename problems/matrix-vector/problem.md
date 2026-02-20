@@ -4,31 +4,6 @@ title: "Matrix Vector Multiplication"
 difficulty: "EASY"
 author: "sarthak"
 tags: ["matmul", "vector"]
-parameters:
-  - name: "input_a"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-  
-  - name: "input_b"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-
-  - name: "output_c" 
-    type: "[VAR]"
-    pointer: "true"
-    const: "false"
-
-  - name: "m" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "k"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
 ---
 
 Perform multiplication of a matrix and a vector:

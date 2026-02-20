@@ -4,36 +4,6 @@ title: "Matrix Multiplication with Sigmoid and Sum"
 difficulty: "MEDIUM"
 author: "sarthak"
 tags: ["matmul", "reduction", "fused"]
-parameters:
-  - name: "A"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-  
-  - name: "B"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-
-  - name: "output" 
-    type: "[VAR]"
-    pointer: "true"
-    const: "false"
-
-  - name: "M"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "N" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "K"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
 ---
 
 Perform a matrix multiplication followed by sigmoid activation followed by summation:

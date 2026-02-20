@@ -4,42 +4,6 @@ title: "3D Tensor-Matrix Multiplication"
 difficulty: "HARD"
 author: "sarthak"
 tags: ["matmul"]
-parameters:
-  - name: "A"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-  
-  - name: "B"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-
-  - name: "C" 
-    type: "[VAR]"
-    pointer: "true"
-    const: "false"
-
-  - name: "n" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
-  - name: "m"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "k"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-  
-  - name: "l"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
 ---
 
 Perform 3D tensor-matrix multiplication of two tensors:

@@ -4,48 +4,6 @@ title: "Layer Normalization"
 difficulty: "MEDIUM"
 author: "sarthak"
 tags: ["normalization"]
-parameters:
-  - name: "X"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-
-  - name: "gamma"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-
-  - name: "beta"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-  
-  - name: "Y"
-    type: "[VAR]"
-    pointer: "true"
-    const: "false"
-
-
-  - name: "B"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
-  - name: "F"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
-  - name: "D1"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
-  - name: "D2"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
 ---
 
 Implement Layer Normalization over the last 3 dimensions (F, D1, D2) of a 4D tensor.

@@ -4,27 +4,6 @@ title: "Single Source Shortest Path"
 difficulty: "MEDIUM"
 author: "sarthak"
 tags: ["graphs"]
-parameters:
-  - name: "d_adj_matrix"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-  
-  - name: "source"
-    type: "int"
-    pointer: "false"
-    constant: "false"
-  
-  - name: "d_distances"
-    type: "[VAR]"
-    pointer: "true"
-    const: "false"
-
-  - name: "n" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
 ---
 
 Find the shortest path distances from a source node to all other nodes in a weighted directed graph.

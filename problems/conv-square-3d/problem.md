@@ -4,31 +4,6 @@ title: "3D Square Convolution"
 difficulty: "HARD" 
 author: "sarthak"
 tags: ["convolution"]
-parameters:
-  - name: "A"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-
-  - name: "B" 
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-
-  - name: "C" 
-    type: "[VAR]"
-    pointer: "true"
-    const: "false"
-
-  - name: "size"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "K" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
 ---
 
 Perform 3D convolution between an input volume and a cubic kernel:

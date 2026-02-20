@@ -1,6 +1,5 @@
 
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 from problem import Problem
 
@@ -11,6 +10,13 @@ class poly_multiply_ff(Problem):
     """Polynomial multiplication over F_p with p = 2^31 - 1 (Mersenne), using uint32 coefficients."""
 
     is_exact = True
+
+    parameters = [
+        {"name": "d_input1", "type": "uint32_t", "pointer": True, "const": True},
+        {"name": "d_input2", "type": "uint32_t", "pointer": True, "const": True},
+        {"name": "d_output", "type": "uint32_t", "pointer": True, "const": False},
+        {"name": "n", "type": "size_t", "pointer": False, "const": False},
+    ]
 
     def __init__(self):
         super().__init__(name="poly-multiply-ff")
@@ -47,7 +53,9 @@ class poly_multiply_ff(Problem):
     # ---------------------------
     # Test-case generation
     # ---------------------------
-    def generate_test_cases(self, dtype: torch.dtype = torch.uint32) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
+        dtype = self.param_dtype(0)
+
         sizes = [("n = 2^6", 64), ("n = 2^8", 256), ("n = 2^10", 1024)]
         tests: List[Dict[str, Any]] = []
         for name, n in sizes:
@@ -64,7 +72,9 @@ class poly_multiply_ff(Problem):
     # ---------------------------
     # Sample (small)
     # ---------------------------
-    def generate_sample(self, dtype: torch.dtype = torch.uint32) -> Dict[str, Any]:
+    def generate_sample(self) -> Dict[str, Any]:
+        dtype = self.param_dtype(0)
+
         def make_sample():
             A = torch.tensor([1, 2, 3, 4], dtype=torch.uint32, device="cuda")
             B = torch.tensor([4, 3, 2, 1], dtype=torch.uint32, device="cuda")
@@ -78,7 +88,6 @@ class poly_multiply_ff(Problem):
         self,
         expected_output: torch.Tensor,
         actual_output: torch.Tensor,
-        dtype: torch.dtype,
     ) -> Tuple[bool, Dict[str, Any]]:
         # Compare as uint32 (already mod P)
         exp = expected_output.to(torch.uint32)
@@ -101,25 +110,6 @@ class poly_multiply_ff(Problem):
     # ---------------------------
     # CUDA C ABI
     # ---------------------------
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        void solution(
-            const uint32_t* A,   // length n
-            const uint32_t* B,   // length n
-            uint32_t*       C,   // length (2*n - 1)
-            size_t          n
-        );
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_uint32),  # A
-                ctypes.POINTER(ctypes.c_uint32),  # B
-                ctypes.POINTER(ctypes.c_uint32),  # C
-                ctypes.c_size_t,                  # n
-            ],
-            "restype": None,
-        }
-
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         n = test_case["dims"][0]
         return 2 * n * n  # one mul + one add per term

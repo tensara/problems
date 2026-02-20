@@ -4,26 +4,6 @@ title: "RMS Normalization"
 difficulty: "EASY"
 author: "sarthak"
 tags: ["normalization"]
-parameters:
-  - name: "X"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-  
-  - name: "Y"
-    type: "[VAR]"
-    pointer: "true"
-    const: "false"
-
-  - name: "B"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
-  - name: "N"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
 ---
 
 Implement RMS (Root Mean Square) Normalization for a 2D tensor.

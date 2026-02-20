@@ -1,5 +1,4 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 import math
 
@@ -9,6 +8,14 @@ class shortest_path(Problem):
     """Single source shortest path problem using Dijkstra's algorithm."""
     
     is_exact = True
+
+    parameters = [
+        {"name": "d_adj_matrix", "type": "float", "pointer": True, "const": True},
+        {"name": "source", "type": "int", "pointer": False, "const": False},
+        {"name": "d_distances", "type": "float", "pointer": True, "const": False},
+        {"name": "n", "type": "size_t", "pointer": False, "const": False},
+    ]
+
     
     def __init__(self):
         super().__init__(
@@ -43,13 +50,15 @@ class shortest_path(Problem):
             dist = torch.where(torch.isinf(dist), -1.0, dist)
             return dist
 
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for shortest path.
         
         Returns:
             List of test case dictionaries with varying graph sizes
         """
+        dtype = self.param_dtype(0)
+
         sizes = [
             ("n = 512", 512),
             ("n = 2048", 2048),
@@ -100,13 +109,15 @@ class shortest_path(Problem):
         source = torch.randint(0, size, (1,), device="cuda", generator=generator).item()
         return adj_matrix, source
 
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> Dict[str, Any]:
+    def generate_sample(self) -> Dict[str, Any]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         name = "Sample (n = 4)"
         size = 4
         
@@ -127,7 +138,7 @@ class shortest_path(Problem):
         }
  
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the shortest path result is correct.
         
@@ -154,24 +165,6 @@ class shortest_path(Problem):
             }
         
         return is_close, debug_info
-    
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the shortest path solution.
-        
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # adjacency matrix
-                ctypes.c_int,                    # source node
-                ctypes.POINTER(ctypes.c_float),  # output distances
-                ctypes.c_size_t,                 # N (number of nodes)
-            ],
-            "restype": None
-        }
-    
     
     def get_extra_params(self, test_case: Dict[str, Any]) -> List[Any]:
         """

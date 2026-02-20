@@ -4,46 +4,6 @@ title: "Scaled Dot-Product Attention"
 difficulty: "HARD" 
 author: "sarthak"
 tags: ["attention"]
-parameters:
-  - name: "Q"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-
-  - name: "K" 
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-
-  - name: "V" 
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-
-  - name: "output" 
-    type: "[VAR]"
-    pointer: "true"
-    const: "false"
-
-  - name: "B"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "H" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-  
-  - name: "S"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "E" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
 ---
 
 Implement scaled dot-product attention, a key component of transformer architectures:

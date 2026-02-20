@@ -4,32 +4,6 @@ title: "Cosine Similarity"
 difficulty: "EASY"
 author: "sarthak"
 tags: ["loss-function"]
-parameters:
-  - name: "predictions"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-  
-  - name: "targets"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-
-  - name: "output" 
-    type: "[VAR]"
-    pointer: "true"
-    const: "false"
-
-  - name: "n"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
-  - name: "d"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
 ---
 
 Compute the element-wise cosine similarity between two input tensors, `predictions` and `targets`.

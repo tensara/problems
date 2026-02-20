@@ -4,26 +4,6 @@ title: "Lower Triangular Matrix Multiplication"
 difficulty: "MEDIUM"
 author: "sarthak" 
 tags: ["matmul"]
-parameters:
-  - name: "input_a"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-  
-  - name: "input_b"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-
-  - name: "output_c" 
-    type: "[VAR]"
-    pointer: "true"
-    const: "false"
-
-  - name: "n"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
 ---
 
 Perform matrix multiplication of two lower triangular matrices:

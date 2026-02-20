@@ -4,47 +4,6 @@ title: "4D Tensor-Matrix Multiplication"
 difficulty: "HARD"
 author: "sarthak"
 tags: ["matmul"]
-parameters:
-  - name: "A"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-  
-  - name: "B"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-
-  - name: "C" 
-    type: "[VAR]"
-    pointer: "true"
-    const: "false"
-
-  - name: "b" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
-  - name: "i"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "j"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-  
-  - name: "l"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
-  - name: "k"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
 ---
 
 Perform 4D tensor-matrix multiplication of two tensors:

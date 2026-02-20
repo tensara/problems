@@ -4,27 +4,6 @@ title: "Matrix Scalar Multiplication"
 difficulty: "EASY"
 author: "sarthak"
 tags: ["matmul", "scalar"]
-parameters:
-  - name: "input_matrix"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-  
-  - name: "scalar"
-    type: "[VAR]"
-    pointer: "false"
-    const: "true"
-
-  - name: "output_matrix" 
-    type: "[VAR]"
-    pointer: "true"
-    const: "false"
-
-  - name: "n" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
 ---
 
 Perform multiplication of a matrix with a scalar value:

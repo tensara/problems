@@ -4,21 +4,6 @@ title: "Cumulative Sum"
 difficulty: "MEDIUM"
 author: "sarthak"
 tags: ["scan"]
-parameters:
-  - name: "input"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-
-  - name: "output" 
-    type: "[VAR]"
-    pointer: "true"
-    const: "false"
-
-  - name: "N"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
 ---
 
 Compute the cumulative sum (also known as prefix sum or scan) of an input array:

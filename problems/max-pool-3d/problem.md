@@ -4,52 +4,6 @@ title: "3D Max Pooling"
 difficulty: "HARD" 
 author: "sarthak"
 tags: ["pooling"]
-parameters:
-  - name: "input"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-
-  - name: "kernel_size"
-    type: "int"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "stride" 
-    type: "int"
-    pointer: "false"
-    constant: "false"
-
-  - name: "padding"
-    type: "int"
-    pointer: "false"
-    constant: "false"
-
-  - name: "dilation"
-    type: "int"
-    pointer: "false"
-    constant: "false"
-
-  - name: "output" 
-    type: "[VAR]"
-    pointer: "true"
-    const: "false"
-
-  - name: "H"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "W" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
-  - name: "D"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-  
 ---
 
 Perform 3D max pooling on an input tensor:

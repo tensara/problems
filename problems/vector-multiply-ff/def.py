@@ -1,5 +1,4 @@
 import torch
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem
@@ -11,6 +10,13 @@ class vector_multiply_ff(Problem):
     """Vector multiplication over F_p with p = 2^31 - 1 (Mersenne)."""
 
     is_exact = True
+
+    parameters = [
+        {"name": "d_input1", "type": "uint32_t", "pointer": True, "const": True},
+        {"name": "d_input2", "type": "uint32_t", "pointer": True, "const": True},
+        {"name": "d_output", "type": "uint32_t", "pointer": True, "const": False},
+        {"name": "n", "type": "size_t", "pointer": False, "const": False},
+    ]
 
     def __init__(self):
         super().__init__(name="vector-multiply-ff")
@@ -31,7 +37,9 @@ class vector_multiply_ff(Problem):
     # ---------------------------
     # Test-case generation
     # ---------------------------
-    def generate_test_cases(self, dtype: torch.dtype = torch.uint32) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
+        dtype = self.param_dtype(0)
+
         sizes = [
             ("n = 2^20", 1_048_576),
             ("n = 2^22", 4_194_304),
@@ -52,7 +60,9 @@ class vector_multiply_ff(Problem):
     # ---------------------------
     # Sample (small)
     # ---------------------------
-    def generate_sample(self, dtype: torch.dtype = torch.uint32) -> Dict[str, Any]:
+    def generate_sample(self) -> Dict[str, Any]:
+        dtype = self.param_dtype(0)
+
         name = "Sample (n = 8)"
         size = 8
         return {
@@ -71,7 +81,6 @@ class vector_multiply_ff(Problem):
         self,
         expected_output: torch.Tensor,
         actual_output: torch.Tensor,
-        dtype: torch.dtype,
     ) -> Tuple[bool, Dict[str, Any]]:
         exp = expected_output.to(torch.uint32)
         act = actual_output.to(torch.uint32)
@@ -93,25 +102,6 @@ class vector_multiply_ff(Problem):
     # ---------------------------
     # C ABI
     # ---------------------------
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        void solution(
-            const uint32_t* A,  // length N
-            const uint32_t* B,  // length N
-            uint32_t*       C,  // length N
-            size_t          N
-        );
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_uint32),  # A
-                ctypes.POINTER(ctypes.c_uint32),  # B
-                ctypes.POINTER(ctypes.c_uint32),  # C
-                ctypes.c_size_t,                  # N
-            ],
-            "restype": None,
-        }
-
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         # One multiply + one modular reduction per element (approximate as 2 ops)
         return 2 * test_case["dims"][0]

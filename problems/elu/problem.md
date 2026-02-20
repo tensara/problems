@@ -4,31 +4,6 @@ title: "ELU"
 difficulty: "EASY"
 author: "sarthak"
 tags: ["activation-function"]
-parameters:
-  - name: "input"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-  
-  - name: "output"
-    type: "[VAR]"
-    pointer: "true"
-    const: "false"
-
-  - name: "n" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "m"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "alpha"
-    type: "float"
-    pointer: "false"
-    constant: "false"
 ---
 
 Perform the ELU (Exponential Linear Unit) activation function on an input matrix:

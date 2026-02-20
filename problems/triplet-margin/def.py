@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import ctypes
 from typing import List, Dict, Tuple, Any
 
 from problem import Problem 
@@ -9,6 +8,16 @@ class triplet_margin(Problem):
     """Triplet Margin Loss problem."""
 
     is_exact = False
+
+    parameters = [
+        {"name": "anchor", "type": "float", "pointer": True, "const": True},
+        {"name": "positive", "type": "float", "pointer": True, "const": True},
+        {"name": "negative", "type": "float", "pointer": True, "const": True},
+        {"name": "loss", "type": "float", "pointer": True, "const": False},
+        {"name": "B", "type": "size_t", "pointer": False, "const": False},
+        {"name": "E", "type": "size_t", "pointer": False, "const": False},
+        {"name": "margin", "type": "float", "pointer": False, "const": False},
+    ]
 
     def __init__(self):
         super().__init__(
@@ -40,7 +49,7 @@ class triplet_margin(Problem):
             
             return loss
 
-    def generate_test_cases(self, dtype: torch.dtype) -> List[Dict[str, Any]]:
+    def generate_test_cases(self) -> List[Dict[str, Any]]:
         """
         Generate test cases for Triplet Margin Loss.
 
@@ -48,6 +57,8 @@ class triplet_margin(Problem):
             List of test case dictionaries with varying sizes
         """
         
+        dtype = self.param_dtype(0)
+
         # Define configurations: (batch_size, embedding_dim)
         test_configs = [
             (128, 4096),      
@@ -74,13 +85,15 @@ class triplet_margin(Problem):
             })
         return test_cases
 
-    def generate_sample(self, dtype: torch.dtype = torch.float32) -> List[Dict[str, Any]]:
+    def generate_sample(self) -> List[Dict[str, Any]]:
         """
         Generate a single sample test case for debugging or interactive runs.
         
         Returns:
             A list containing a single test case dictionary
         """
+        dtype = self.param_dtype(0)
+
         batch, embedding_dim = (8, 8)  # Updated to ensure dimensions are at least 8x8 and powers of 2
         return {
             "name": f"batch={batch}, embedding_dim={embedding_dim}",
@@ -115,7 +128,7 @@ class triplet_margin(Problem):
         }
 
     def verify_result(self, expected_output: torch.Tensor, 
-                     actual_output: torch.Tensor, dtype: torch.dtype) -> Tuple[bool, Dict[str, Any]]:
+                     actual_output: torch.Tensor) -> Tuple[bool, Dict[str, Any]]:
         """
         Verify if the Triplet Margin Loss result is correct.
 
@@ -138,26 +151,6 @@ class triplet_margin(Problem):
             }
         
         return is_close, debug_info
-
-    def get_function_signature(self) -> Dict[str, Any]:
-        """
-        Get the function signature for the Triplet Margin Loss solution.
-
-        Returns:
-            Dictionary with argtypes and restype for ctypes
-        """
-        return {
-            "argtypes": [
-                ctypes.POINTER(ctypes.c_float),  # anchor (input)
-                ctypes.POINTER(ctypes.c_float),  # positive (input)
-                ctypes.POINTER(ctypes.c_float),  # negative (input)
-                ctypes.POINTER(ctypes.c_float),  # loss (output)
-                ctypes.c_size_t,                 # batch_size
-                ctypes.c_size_t,                 # embedding_dim
-                ctypes.c_float,                  # margin
-            ],
-            "restype": None
-        }
 
     def get_flops(self, test_case: Dict[str, Any]) -> int:
         """

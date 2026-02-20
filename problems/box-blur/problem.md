@@ -4,32 +4,6 @@ title: "Box Blur"
 difficulty: "EASY"
 author: "sarthak"
 tags: ["graphics", "convolution"]
-parameters:
-  - name: "input_image"
-    type: "[VAR]"
-    pointer: "true"
-    const: "true"
-  
-  - name: "kernel_size" 
-    type: "int"
-    pointer: "false"
-    constant: "false"
-
-  - name: "output_image" 
-    type: "[VAR]"
-    pointer: "true"
-    const: "false"
-
-  - name: "height"
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-    
-  - name: "width" 
-    type: "size_t"
-    pointer: "false"
-    constant: "false"
-
 ---
 
 Apply a box blur filter to a grayscale image by averaging pixels in a square neighborhood:
