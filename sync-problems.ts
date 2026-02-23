@@ -5,6 +5,17 @@ import matter from "gray-matter";
 
 const prisma = new PrismaClient();
 
+const ALL_GPUS = [
+  "T4",
+  "H100",
+  "H200",
+  "B200",
+  "A100-80GB",
+  "A10G",
+  "L40S",
+  "L4",
+] as const;
+
 // Path utility functions
 const getProblemsDir = () => path.join(process.cwd(), "problems");
 const getProblemPath = (slug: string) =>
@@ -203,6 +214,12 @@ async function main() {
       console.warn(`  Warning: No parameters found for ${slug} in def.py or problem.md`);
     }
 
+    const frontmatterGpus = frontmatter.gpus;
+    const gpus =
+      Array.isArray(frontmatterGpus) && frontmatterGpus.length > 0
+        ? frontmatterGpus.map((g: unknown) => String(g))
+        : [...ALL_GPUS];
+
     // Upsert problem in database
     const problem = await prisma.problem.upsert({
       where: { slug },
@@ -216,6 +233,7 @@ async function main() {
         getFlops: getFlops,
         parameters: parameters,
         tags: frontmatter.tags,
+        gpus,
       },
       create: {
         slug,
@@ -228,6 +246,7 @@ async function main() {
         getFlops: getFlops,
         parameters: parameters,
         tags: frontmatter.tags,
+        gpus,
       },
     });
 
@@ -240,6 +259,7 @@ async function main() {
     console.log(`  - Reference Solution: ${referenceSolution ? "✓" : "✗"}`);
     console.log(`  - Get Flops: ${getFlops ? "✓" : "✗"}`);
     console.log(`  - Tags: ${frontmatter.tags ? "✓" : "✗"}`);
+    console.log(`  - GPUs: ${gpus.join(", ")}`);
   }
 }
 

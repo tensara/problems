@@ -4,6 +4,7 @@ title: "NVFP4 Quantization"
 difficulty: "HARD"
 author: "sarthak"
 tags: ["quantization"]
+gpus: ["B200"]
 ---
 
 Quantize an input FP16 matrix into the [NVFP4 format](https://developer.nvidia.com/blog/introducing-nvfp4-for-efficient-and-accurate-low-precision-inference/). It uses a two-level scaling strategy: a global scale moves the entire tensor into the representable range of a block (FP4 $\times$ FP8), then a local per-block scale moves each block into FP4 range. A rough outline is to:
