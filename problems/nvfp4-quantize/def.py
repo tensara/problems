@@ -14,7 +14,7 @@ class nvfp4_quantize(Problem):
         {"name": "a", "type": "float16", "pointer": True, "const": True},
         {"name": "sf_g", "type": "float", "pointer": False, "const": True},
         {"name": "q", "type": "uint8_t", "pointer": True, "const": False},
-        {"name": "scale", "type": "uint8_t", "pointer": True, "const": False},
+        {"name": "scale", "type": "float8", "pointer": True, "const": False},
         {"name": "m", "type": "size_t", "pointer": False, "const": False},
         {"name": "k", "type": "size_t", "pointer": False, "const": False},
     ]
