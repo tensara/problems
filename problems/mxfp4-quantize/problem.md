@@ -3,7 +3,7 @@ slug: "mxfp4-quantize"
 title: "MXFP4 Quantization"
 difficulty: "MEDIUM"
 author: "sarthak"
-tags: ["quantization"]
+tags: ["quantization", "mxfp4"]
 gpus: ["B200"]
 ---
 
