@@ -3,7 +3,7 @@ slug: "nvfp4-quantize"
 title: "NVFP4 Quantization"
 difficulty: "MEDIUM"
 author: "sarthak"
-tags: ["quantization"]
+tags: ["quantization", "nvfp4"]
 gpus: ["B200"]
 ---
 

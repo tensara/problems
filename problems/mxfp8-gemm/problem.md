@@ -3,7 +3,7 @@ slug: "mxfp8-gemm"
 title: "MXFP8 GEMM"
 difficulty: "HARD"
 author: "sarthak"
-tags: ["quantization", "gemm"]
+tags: ["quantization", "mxfp8", "matrix-multiplication"]
 gpus: ["B200"]
 ---
 

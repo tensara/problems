@@ -7,7 +7,11 @@ tags: ["quantization", "mxfp4"]
 gpus: ["B200"]
 ---
 
-Dequantize an MXFP4-encoded matrix back to FP32. See the [MXFP4 format](https://www.opencompute.org/documents/ocp-microscaling-formats-mx-v1-0-spec-final-pdf) for more background.
+Dequantize an MXFP4-encoded matrix back to FP32. Conceptually, decode the packed MXFP4 payload and scales ($q$ and $scale$) into an FP32 matrix $A_{\mathrm{dequant}} \in \mathbb{R}^{M \times K}$. See the [MXFP4 format](https://www.opencompute.org/documents/ocp-microscaling-formats-mx-v1-0-spec-final-pdf) for more background.
+
+$$
+out_{ij} = A_{\mathrm{dequant},ij}.
+$$
 
 ## Input
 - $q$: packed MXFP4 payload bytes for matrix $A$ of shape $M \times K$ (given as a `uint8_t` pointer)

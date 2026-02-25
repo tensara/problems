@@ -12,7 +12,7 @@ Dequantize an NVFP4-encoded matrix back to FP32. See the [NVFP4 format blog](htt
 ## Input
 - $q$: packed NVFP4 E2M1 payload bytes for matrix $A$ of logical shape $M \times K$ (given as a `uint8_t` pointer)
 - $scale$: NVFP4 per-block FP8 scale bytes (given as a `uint8_t` pointer)
-- $sf_g$: global NVFP4 scale factor
+- $sf_g$: global NVFP4 encode factor
 - $M$, $K$: matrix dimensions ($K$ divisible by 16)
 
 ## Output
