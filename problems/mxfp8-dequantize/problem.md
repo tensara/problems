@@ -15,7 +15,7 @@ $$
 
 ## Input
 - $q$: MXFP8 payload bytes for matrix $A$ of shape $M \times K$ (given as a `uint8_t` pointer)
-- $scale$: per-block E8M0 scale bytes for $A$ (given as a `uint8_t` pointer)
+- $scale$: per-block E8M0 scale bytes for $A$, logical shape $M \times K/32$ (given as a `uint8_t` pointer)
 - $M$, $K$: matrix dimensions ($K$ divisible by 32)
 
 ## Output
@@ -23,3 +23,4 @@ $$
 
 ## Notes
 - Dequantization semantics match [TorchAO MXTensor](https://github.com/pytorch/ao/blob/main/torchao/prototype/mx_formats/mx_tensor.py) (`to_dtype`) for MXFP8.
+- The `scale` input is row-major blocked order (not swizzled).

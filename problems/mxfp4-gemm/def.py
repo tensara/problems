@@ -36,13 +36,7 @@ class mxfp4_gemm(Problem):
             ) from e
         return to_mx
 
-    def reference_solution(
-        self,
-        q_a: torch.Tensor,
-        scale_a: torch.Tensor,
-        q_b: torch.Tensor,
-        scale_b: torch.Tensor,
-    ) -> torch.Tensor:
+    def reference_solution(self, q_a: torch.Tensor, scale_a: torch.Tensor, q_b: torch.Tensor, scale_b: torch.Tensor) -> torch.Tensor:
         if not hasattr(F, "scaled_mm"):
             raise RuntimeError("torch.nn.functional.scaled_mm is required for this problem.")
 

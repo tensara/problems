@@ -27,15 +27,7 @@ class nvfp4_gemm(Problem):
     def __init__(self):
         super().__init__(name="nvfp4-gemm")
 
-    def reference_solution(
-        self,
-        q_a: torch.Tensor,
-        scale_a: torch.Tensor,
-        sf_g_a: float,
-        q_b: torch.Tensor,
-        scale_b: torch.Tensor,
-        sf_g_b: float,
-    ) -> torch.Tensor:
+    def reference_solution(self, q_a: torch.Tensor, scale_a: torch.Tensor, sf_g_a: float, q_b: torch.Tensor, scale_b: torch.Tensor, sf_g_b: float) -> torch.Tensor:
         from torch.nn.functional import scaled_mm, ScalingType, SwizzleType  
 
         with torch.no_grad():

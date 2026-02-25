@@ -3,7 +3,7 @@ slug: "nvfp4-gemm"
 title: "NVFP4 GEMM"
 difficulty: "HARD"
 author: "sarthak"
-tags: ["quantization", "nvfp4", "matrix-multiplication"]
+tags: ["quantization", "nvfp4", "matmul"]
 gpus: ["B200"]
 ---
 
@@ -19,9 +19,9 @@ $$
 
 ## Input
 - $q_a$: packed NVFP4 E2M1 payload bytes for matrix $A$ of logical shape $M \times K$
-- $scale_a$: NVFP4 per-block FP8 scale bytes for $A$
+- $scale_a$: NVFP4 per-block FP8 scale bytes for $A$, logical shape $M \times K/16$
 - $q_b$: packed NVFP4 E2M1 payload bytes for matrix $B$ of logical shape $N \times K$
-- $scale_b$: NVFP4 per-block FP8 scale bytes for $B$
+- $scale_b$: NVFP4 per-block FP8 scale bytes for $B$, logical shape $N \times K/16$
 - $M$, $N$, $K$: matrix dimensions ($K$ divisible by 16)
 - $sf\_g\_a$: global NVFP4 scale factor for $A$
 - $sf\_g\_b$: global NVFP4 encode factor for $B$
@@ -32,3 +32,4 @@ $$
 ## Notes
 
 - The reference implementation in this problem calls [torch.nn.functional.scaled_mm](https://pytorch.org/docs/stable/generated/torch.nn.functional.scaled_mm.html) and does **not** materialize $A_{\mathrm{dequant}}$ or $B_{\mathrm{dequant}}$.
+- The `scale_a` and `scale_b` inputs are already in swizzled $32 \times 4 \times 4$ layout; do not apply an additional swizzle.

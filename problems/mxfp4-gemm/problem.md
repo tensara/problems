@@ -3,7 +3,7 @@ slug: "mxfp4-gemm"
 title: "MXFP4 GEMM"
 difficulty: "HARD"
 author: "sarthak"
-tags: ["quantization", "mxfp4", "matrix-multiplication"]
+tags: ["quantization", "mxfp4", "matmul"]
 gpus: ["B200"]
 ---
 
@@ -17,9 +17,9 @@ Note: $B$ is stored in row-major as $N \times K$ (i.e. $B_{\mathrm{dequant}}$ is
 
 ## Input
 - $q_a$: MXFP4 payload bytes for matrix $A$ of shape $M \times K$ (row-major)
-- $scale_a$: per-block E8M0 scale bytes for $A$
+- $scale_a$: per-block E8M0 scale bytes for $A$, logical shape $M \times K/32$
 - $q_b$: MXFP4 payload bytes for matrix $B$ of shape $N \times K$ (row-major; transposed before multiply)
-- $scale_b$: per-block E8M0 scale bytes for $B$
+- $scale_b$: per-block E8M0 scale bytes for $B$, logical shape $N \times K/32$
 - $M$, $N$, $K$: matrix dimensions ($K$ and $N$ divisible by 32)
 
 ## Output
