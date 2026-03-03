@@ -31,6 +31,5 @@ This is equivalent to $y = A_{\mathrm{dequant}} x_{\mathrm{dequant}}$ with:
 - $y$: FP16 vector of shape $M$
 
 ## Notes
-- The reference implementation dequantizes NVFP4 inputs with FlashInfer decode semantics, then computes GEMV as `matmul` in FP32 before casting to FP16 output.
-- `scale_a` and `scale_x` are already in NVFP4 swizzled scale layout expected by the decode path; do **not** apply an additional swizzle.
-- Correctness is based on NVFP4 decode semantics (blockwise FP8 scales plus tensorwise global decode factor $1/sf_g$), not on bitwise equality.
+- The reference implementation dequantizes NVFP4 inputs with [FlashInfer decode](https://docs.flashinfer.ai/generated/flashinfer.fp4_quantization.e2m1_and_ufp8sf_scale_to_float.html) semantics, then computes GEMV as `matmul` in FP32 before casting to FP16 output.
+- $scale\_a$ and $scale\_x$ are already in NVFP4 swizzled scale layout expected by the decode path, do **not** apply an additional swizzle.
