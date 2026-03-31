@@ -1,0 +1,20 @@
+name: Validate Problems
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Structural validation
+        run: python scripts/validate_problem.py --runtime none --format text
