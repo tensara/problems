@@ -41,3 +41,30 @@ The `problem.md` file should contain a description of the problem written in Mar
   - `const`: boolean
  
 Once you add a problem, make sure to test both correct (slow/fast) and incorrect submissions. Let us know if you encounter any issues/bugs!
+
+## Contract And Validation
+
+For new work, use the contract-first docs in this repo:
+
+- `docs/problem-authoring-contract.md`
+- `docs/problem-validation-contract.md`
+- `docs/problem-automation-roadmap.md`
+
+There is now a machine-readable validator:
+
+```bash
+python scripts/validate_problem.py --runtime none
+python scripts/validate_problem.py relu softmax --runtime first
+python scripts/validate_problem.py gemm-relu-divide --runtime all --enforce-wrong-answer-rejection
+```
+
+Recommended workflow:
+
+1. pass structural validation in CI
+2. validate locally on CUDA or Together H100
+3. validate through the Modal-backed product runtime before merge when the runtime path matters
+
+Templates for new problems live in:
+
+- `templates/problem-template.def.py`
+- `templates/problem-template.md`
